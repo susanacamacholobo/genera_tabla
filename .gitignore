@@ -5,6 +5,8 @@ coverage/
 
 # Python
 .venv/
+.env
+**/.env
 __pycache__/
 *.py[cod]
 *.egg-info/
@@ -26,4 +28,3 @@ mobile-client/flutter/build/
 .vscode/
 .DS_Store
 Thumbs.db
-
