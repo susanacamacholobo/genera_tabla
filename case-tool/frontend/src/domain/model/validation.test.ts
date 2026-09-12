@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import veterinariaFixture from '../../../../../docs/examples/veterinaria.json';
 import { createAttribute, createClass, createProject } from './factories';
 import type { ProjectModel } from './types';
 import { validateProject } from './validation';
@@ -9,6 +10,13 @@ const ids = (...values: string[]) => {
 };
 
 describe('validateProject', () => {
+  it('keeps the documented Veterinaria JSON fixture valid', () => {
+    expect(validateProject(veterinariaFixture as ProjectModel)).toEqual({
+      valid: true,
+      issues: [],
+    });
+  });
+
   it('accepts a structurally valid canonical model', () => {
     const project = createProject('Veterinaria', ids('project'));
     const cliente = createClass('Cliente', { x: 10, y: 20 }, ids('cliente'));
@@ -83,4 +91,3 @@ describe('validateProject', () => {
     expect(validateProject(project).issues.map((item) => item.code)).toContain('GENERALIZATION_CYCLE');
   });
 });
-
