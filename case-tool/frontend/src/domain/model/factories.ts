@@ -47,6 +47,8 @@ export function createAttribute(
     ...(input.defaultValue !== undefined
       ? { defaultValue: input.defaultValue }
       : {}),
+    ...(input.externalReferences !== undefined
+      ? { externalReferences: structuredClone(input.externalReferences) }
+      : {}),
   };
 }
-

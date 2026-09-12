@@ -2,6 +2,9 @@ import {
   BUILT_IN_DATA_TYPES,
   MULTIPLICITIES,
   RELATIONSHIP_TYPES,
+  type ExternalPackageReference,
+  type ExternalReference,
+  type ExternallyReferenceable,
   type ProjectModel,
 } from './types';
 
@@ -17,6 +20,7 @@ export interface ModelValidationResult {
 }
 
 const ID_PATTERN = /^[\p{L}\p{N}][\p{L}\p{N}_.-]*$/u;
+const EXTERNAL_ID_FIELDS = ['externalId', 'guid', 'xmiId'] as const;
 
 function normalized(value: string): string {
   return value.trim().toLocaleLowerCase('es');
@@ -67,6 +71,98 @@ function validateId(
   seenIds.add(id);
 }
 
+function hasNonEmptyValue(value: string | undefined): boolean {
+  return value !== undefined && value.trim().length > 0;
+}
+
+function validateExternalPackage(
+  packageReference: ExternalPackageReference,
+  path: string,
+  issues: ValidationIssue[],
+): void {
+  const fields = ['name', ...EXTERNAL_ID_FIELDS] as const;
+  if (!fields.some((field) => hasNonEmptyValue(packageReference[field]))) {
+    issues.push({
+      code: 'EMPTY_EXTERNAL_PACKAGE_REFERENCE',
+      path,
+      message: 'La referencia de package externo debe contener nombre o identificador.',
+    });
+  }
+  fields.forEach((field) => {
+    if (packageReference[field] !== undefined && !hasNonEmptyValue(packageReference[field])) {
+      issues.push({
+        code: 'EMPTY_EXTERNAL_REFERENCE_VALUE',
+        path: `${path}.${field}`,
+        message: `El valor externo '${field}' no puede estar vacío.`,
+      });
+    }
+  });
+}
+
+function externalReferenceKey(reference: ExternalReference): string {
+  return [
+    reference.source.trim(),
+    reference.scope?.trim() ?? '',
+    reference.externalId?.trim() ?? '',
+    reference.guid?.trim() ?? '',
+    reference.xmiId?.trim() ?? '',
+  ].join('\u0000');
+}
+
+function validateExternalReferences(
+  owner: ExternallyReferenceable,
+  path: string,
+  issues: ValidationIssue[],
+): void {
+  const seen = new Set<string>();
+  owner.externalReferences?.forEach((reference, index) => {
+    const referencePath = `${path}.externalReferences[${index}]`;
+    if (!reference.source.trim()) {
+      issues.push({
+        code: 'EMPTY_EXTERNAL_SOURCE',
+        path: `${referencePath}.source`,
+        message: 'La referencia externa debe indicar su fuente.',
+      });
+    }
+    if (!EXTERNAL_ID_FIELDS.some((field) => hasNonEmptyValue(reference[field]))) {
+      issues.push({
+        code: 'MISSING_EXTERNAL_IDENTITY',
+        path: referencePath,
+        message: 'La referencia externa debe conservar al menos un identificador.',
+      });
+    }
+    if (reference.scope !== undefined && !hasNonEmptyValue(reference.scope)) {
+      issues.push({
+        code: 'EMPTY_EXTERNAL_REFERENCE_VALUE',
+        path: `${referencePath}.scope`,
+        message: "El valor externo 'scope' no puede estar vacío.",
+      });
+    }
+    EXTERNAL_ID_FIELDS.forEach((field) => {
+      if (reference[field] !== undefined && !hasNonEmptyValue(reference[field])) {
+        issues.push({
+          code: 'EMPTY_EXTERNAL_REFERENCE_VALUE',
+          path: `${referencePath}.${field}`,
+          message: `El valor externo '${field}' no puede estar vacío.`,
+        });
+      }
+    });
+    if (reference.package) {
+      validateExternalPackage(reference.package, `${referencePath}.package`, issues);
+    }
+
+    const key = externalReferenceKey(reference);
+    if (seen.has(key)) {
+      issues.push({
+        code: 'DUPLICATE_EXTERNAL_REFERENCE',
+        path: referencePath,
+        message: 'La misma referencia externa está repetida en el elemento.',
+      });
+    }
+    seen.add(key);
+  });
+}
+
 function detectGeneralizationCycles(project: ProjectModel): ValidationIssue[] {
   const graph = new Map<string, string[]>();
   for (const relationship of project.relationships) {
@@ -111,6 +207,7 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
   const seenIds = new Set<string>();
 
   validateId(project.id, 'id', seenIds, issues);
+  validateExternalReferences(project, 'project', issues);
   if (!project.name.trim()) {
     issues.push({ code: 'EMPTY_NAME', path: 'name', message: 'El proyecto debe tener nombre.' });
   }
@@ -142,6 +239,7 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
   project.classes.forEach((umlClass, classIndex) => {
     const classPath = `classes[${classIndex}]`;
     validateId(umlClass.id, `${classPath}.id`, seenIds, issues);
+    validateExternalReferences(umlClass, classPath, issues);
     if (!umlClass.name.trim()) {
       issues.push({ code: 'EMPTY_NAME', path: `${classPath}.name`, message: 'La clase debe tener nombre.' });
     }
@@ -157,6 +255,7 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
     umlClass.attributes.forEach((attribute, attributeIndex) => {
       const attributePath = `${classPath}.attributes[${attributeIndex}]`;
       validateId(attribute.id, `${attributePath}.id`, seenIds, issues);
+      validateExternalReferences(attribute, attributePath, issues);
       if (!attribute.name.trim()) {
         issues.push({
           code: 'EMPTY_NAME',
@@ -187,6 +286,7 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
   project.enumerations.forEach((enumeration, enumIndex) => {
     const enumPath = `enumerations[${enumIndex}]`;
     validateId(enumeration.id, `${enumPath}.id`, seenIds, issues);
+    validateExternalReferences(enumeration, enumPath, issues);
     if (!enumeration.name.trim()) {
       issues.push({ code: 'EMPTY_NAME', path: `${enumPath}.name`, message: 'La enumeración debe tener nombre.' });
     }
@@ -216,6 +316,7 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
   project.relationships.forEach((relationship, relationshipIndex) => {
     const relationshipPath = `relationships[${relationshipIndex}]`;
     validateId(relationship.id, `${relationshipPath}.id`, seenIds, issues);
+    validateExternalReferences(relationship, relationshipPath, issues);
     if (!(RELATIONSHIP_TYPES as readonly string[]).includes(relationship.type)) {
       issues.push({
         code: 'INVALID_RELATIONSHIP_TYPE',

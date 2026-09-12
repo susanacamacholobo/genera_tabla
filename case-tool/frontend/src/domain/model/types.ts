@@ -25,7 +25,27 @@ export interface Position {
   y: number;
 }
 
-export interface AttributeModel {
+export interface ExternalPackageReference {
+  name?: string;
+  externalId?: string;
+  guid?: string;
+  xmiId?: string;
+}
+
+export interface ExternalReference {
+  source: string;
+  scope?: string;
+  externalId?: string;
+  guid?: string;
+  xmiId?: string;
+  package?: ExternalPackageReference;
+}
+
+export interface ExternallyReferenceable {
+  externalReferences?: ExternalReference[];
+}
+
+export interface AttributeModel extends ExternallyReferenceable {
   id: string;
   name: string;
   dataType: DataType;
@@ -35,14 +55,14 @@ export interface AttributeModel {
   defaultValue?: JsonScalar;
 }
 
-export interface ClassModel {
+export interface ClassModel extends ExternallyReferenceable {
   id: string;
   name: string;
   position: Position;
   attributes: AttributeModel[];
 }
 
-export interface RelationshipModel {
+export interface RelationshipModel extends ExternallyReferenceable {
   id: string;
   type: RelationshipType;
   sourceClassId: string;
@@ -53,13 +73,13 @@ export interface RelationshipModel {
   targetRole?: string;
 }
 
-export interface EnumerationModel {
+export interface EnumerationModel extends ExternallyReferenceable {
   id: string;
   name: string;
   values: string[];
 }
 
-export interface ProjectModel {
+export interface ProjectModel extends ExternallyReferenceable {
   id: string;
   name: string;
   revision: number;
@@ -67,4 +87,3 @@ export interface ProjectModel {
   relationships: RelationshipModel[];
   enumerations: EnumerationModel[];
 }
-
