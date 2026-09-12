@@ -62,6 +62,35 @@ describe('CommandExecutor', () => {
     expect(project.classes).toEqual([]);
   });
 
+  it('preserves external identity when an imported class is edited', () => {
+    project.classes.push({
+      id: 'cliente-interno',
+      name: 'Cliente',
+      position: { x: 10, y: 20 },
+      attributes: [],
+      externalReferences: [
+        {
+          source: 'enterprise-architect',
+          scope: 'veterinaria-repository',
+          guid: '{A1B2C3D4-E5F6-47A8-9012-123456789ABC}',
+          xmiId: 'EAID_A1B2C3D4_E5F6_47A8_9012_123456789ABC',
+        },
+      ],
+    });
+
+    const renamed = executor.execute(project, command({
+      id: 'cmd-rename',
+      type: 'RENAME_CLASS',
+      targetId: 'cliente-interno',
+      payload: { name: 'ClientePreferente' },
+    }));
+
+    expect(renamed.classes[0]?.name).toBe('ClientePreferente');
+    expect(renamed.classes[0]?.externalReferences).toEqual(
+      project.classes[0]?.externalReferences,
+    );
+  });
+
   it('adds, updates and deletes attributes', () => {
     let state = executor.execute(project, command({
       id: 'cmd-1', type: 'ADD_CLASS', payload: { id: 'cliente', name: 'Cliente' },

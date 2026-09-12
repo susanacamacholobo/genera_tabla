@@ -45,3 +45,15 @@ y mensaje legible. Comprueba:
 La validación para generar Spring será más estricta y se agregará en su fase.
 Un ejemplo serializado está en `docs/examples/veterinaria.json`.
 
+## Referencias externas
+
+Los modelos que participan en interoperabilidad pueden incluir una colección
+opcional `externalReferences`. Cada referencia conserva `source`, un `scope`
+opcional, uno o más identificadores (`externalId`, `guid`, `xmiId`) y metadata
+mínima opcional del package. Los modelos creados localmente no necesitan esta
+propiedad.
+
+Esta abstracción es reutilizable y evita acoplar el dominio a Enterprise
+Architect. Los IDs externos se validan como valores opacos no vacíos y nunca se
+convierten en el `id` interno. El contrato completo de round-trip se documenta
+en `docs/enterprise-architect.md`.

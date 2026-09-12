@@ -5,12 +5,13 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas exclusivamente las fases 0, 1 y 2 del plan:
+Están implementadas las fases 0, 1, 2 y la preparación 2.5 del plan:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
 - validación estructural del modelo;
 - patrón Command con historial undo/redo.
+- contrato de referencias externas para el futuro round-trip XMI 2.1.
 
 React Flow, persistencia, colaboración, generación Spring, XMI e IA quedan
 deliberadamente fuera de este incremento.
@@ -55,4 +56,3 @@ flutter build apk --debug
 ```
 
 Los contratos y decisiones están descritos en [docs/](docs/).
-
