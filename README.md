@@ -5,7 +5,9 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0, 1, 2, la preparación 2.5 y la fase 3:
+Están implementadas las fases 0, 1, 2, la preparación 2.5 y la fase 3. La
+implementación de la fase 4 está completa y pendiente únicamente de validar la
+conexión contra la instancia PostgreSQL local:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -13,8 +15,9 @@ Están implementadas las fases 0, 1, 2, la preparación 2.5 y la fase 3:
 - patrón Command con historial undo/redo;
 - contrato de referencias externas para el futuro round-trip XMI 2.1.
 - editor UML visual con React Flow, atributos, relaciones y multiplicidades.
+- API CRUD de proyectos con FastAPI, SQLAlchemy, PostgreSQL y Alembic.
 
-Persistencia, colaboración, generación Spring, XMI e IA quedan
+Snapshots del modelo, colaboración, generación Spring, XMI e IA quedan
 deliberadamente fuera de este incremento.
 
 ## Estructura
@@ -40,12 +43,16 @@ npm run build
 
 Backend FastAPI:
 
-```bash
+```powershell
 python -m venv .venv
 .venv/Scripts/python -m pip install -e "case-tool/backend[dev]"
 .venv/Scripts/python -m pytest case-tool/backend
 .venv/Scripts/python -m ruff check case-tool/backend
 ```
+
+Para ejecutar la API con PostgreSQL local, consulta
+[case-tool/backend/README.md](case-tool/backend/README.md). No se requiere
+Docker.
 
 Flutter:
 

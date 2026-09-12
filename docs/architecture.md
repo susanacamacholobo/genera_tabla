@@ -47,6 +47,18 @@ una transformación pura `ProjectModel -> Node[] / Edge[]`; no reconstruye el
 dominio desde el grafo. `useNodesState` se limita al movimiento visual
 transitorio y `onNodeDragStop` confirma la posición mediante `MOVE_CLASS`.
 
+La persistencia inicial se organiza por capas en el backend:
+
+```text
+FastAPI router -> ProjectService -> ProjectRepository -> SQLAlchemy -> PostgreSQL
+```
+
+Los routers resuelven HTTP y validación de entrada; los servicios contienen los
+casos de uso y los repositorios encapsulan las consultas. Alembic es el único
+mecanismo para evolucionar el esquema. En fase 4 sólo se almacena la identidad
+y metadata del proyecto; el modelo canónico y sus revisiones se incorporarán
+como snapshots y eventos en la fase 5.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.
@@ -63,3 +75,5 @@ transitorio y `onNodeDragStop` confirma la posición mediante `MOVE_CLASS`.
   a cada adaptador visual o XMI.
 - Selección y viewport pertenecen a la UI; clases, atributos, relaciones y
   posiciones pertenecen exclusivamente al modelo canónico.
+- La configuración de PostgreSQL se recibe por variables de entorno o por un
+  `.env` local ignorado por Git; ninguna contraseña tiene valor por defecto.

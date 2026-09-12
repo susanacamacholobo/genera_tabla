@@ -13,16 +13,21 @@
 
 ## IN PROGRESS
 
-- Ninguna fase.
+- Fase 4: CRUD de proyectos, capas API/servicio/repositorio, configuración de
+  PostgreSQL y primera migración Alembic implementados. Pendiente ejecutar la
+  migración y el CRUD contra la instancia PostgreSQL local configurada por el
+  usuario.
 
 ## TODO
 
-- Fase 4: proyectos y persistencia inicial con FastAPI, PostgreSQL y Alembic.
-- Fases 5 y posteriores según el plan maestro.
+- Fase 5: persistencia de snapshots del modelo y eventos de cambio.
+- Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 2.
+- No se conocen defectos en el alcance de las fases 0 a 3.
+- PostgreSQL local exige autenticación SCRAM; la verificación real de la fase 4
+  requiere que el usuario complete el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
   una carencia del editor, porque debe admitir modelos parciales mientras se
   construyen.
