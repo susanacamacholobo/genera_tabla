@@ -7,6 +7,9 @@
 - Fase 2: comandos, validación, ejecutor, undo/redo y tests.
 - Fase 2.5: preparación de interoperabilidad XMI con referencias externas,
   packages mínimos, fronteras de adaptadores y contrato de round-trip.
+- Fase 3: editor UML visual con clases, atributos, enumeraciones básicas,
+  asociaciones, generalizaciones, multiplicidades, selección, errores y
+  undo/redo.
 
 ## IN PROGRESS
 
@@ -14,8 +17,8 @@
 
 ## TODO
 
-- Fase 3: editor React con `@xyflow/react`.
-- Fases 4 y posteriores según el plan maestro.
+- Fase 4: proyectos y persistencia inicial con FastAPI, PostgreSQL y Alembic.
+- Fases 5 y posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
@@ -25,3 +28,5 @@
   construyen.
 - La compatibilidad XMI exacta no puede validarse hasta disponer de fixtures
   reales exportados desde la versión de Enterprise Architect del proyecto.
+- Las enumeraciones se renderizan en modo básico y no se pueden mover ni editar
+  porque el modelo y los comandos actuales no definen esas operaciones.

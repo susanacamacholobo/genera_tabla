@@ -11,13 +11,13 @@ generators/spring-generator generador determinista futuro
 mobile-client/flutter       cliente móvil genérico
 ```
 
-En las fases 1 y 2 el núcleo ejecutable vive en
+Desde las fases 1 y 2 el núcleo ejecutable vive en
 `case-tool/frontend/src/domain`. Es TypeScript puro: no importa React, Vite ni
-ninguna librería de diagramación. La futura capa React Flow deberá ser un
-adaptador que proyecte este estado y traduzca gestos a comandos.
+ninguna librería de diagramación. La capa de la fase 3 proyecta este estado a
+React Flow y traduce los gestos a comandos.
 
 ```text
-UI / futuro ReactFlowAdapter
+UI / ReactFlowAdapter
           |
           v
 Command -> CommandValidator -> CommandExecutor
@@ -42,6 +42,11 @@ colección opcional y genérica de referencias externas; no conoce clases ni
 formatos propios de Sparx Systems. Los IDs internos nunca se reemplazan por IDs
 externos.
 
+El editor visual está aislado en `src/features/diagram`. `ReactFlowAdapter` es
+una transformación pura `ProjectModel -> Node[] / Edge[]`; no reconstruye el
+dominio desde el grafo. `useNodesState` se limita al movimiento visual
+transitorio y `onNodeDragStop` confirma la posición mediante `MOVE_CLASS`.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.
@@ -56,3 +61,5 @@ externos.
   `scope`, además de metadata mínima del package externo.
 - `Position` permanece en el dominio y la conversión de coordenadas corresponde
   a cada adaptador visual o XMI.
+- Selección y viewport pertenecen a la UI; clases, atributos, relaciones y
+  posiciones pertenecen exclusivamente al modelo canónico.
