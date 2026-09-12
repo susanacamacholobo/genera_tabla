@@ -1,0 +1,29 @@
+# JavaScript
+node_modules/
+dist/
+coverage/
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+build/
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+mobile-client/flutter/.idea/
+mobile-client/flutter/android/.gradle/
+mobile-client/flutter/build/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+

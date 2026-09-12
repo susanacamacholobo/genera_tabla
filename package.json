@@ -1,0 +1,14 @@
+{
+  "name": "software1-project",
+  "version": "0.1.0",
+  "private": true,
+  "workspaces": [
+    "case-tool/frontend"
+  ],
+  "scripts": {
+    "test": "npm run test --workspace @software1/case-frontend",
+    "lint": "npm run lint --workspace @software1/case-frontend",
+    "build": "npm run build --workspace @software1/case-frontend"
+  }
+}
+
