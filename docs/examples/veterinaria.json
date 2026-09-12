@@ -1,0 +1,58 @@
+{
+  "id": "project-veterinaria",
+  "name": "Veterinaria",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-cliente",
+      "name": "Cliente",
+      "position": { "x": 120, "y": 160 },
+      "attributes": [
+        {
+          "id": "attribute-cliente-id",
+          "name": "id",
+          "dataType": "Long",
+          "nullable": false,
+          "unique": true,
+          "primaryKey": true
+        },
+        {
+          "id": "attribute-cliente-nombre",
+          "name": "nombre",
+          "dataType": "String",
+          "nullable": false,
+          "unique": false,
+          "primaryKey": false
+        }
+      ]
+    },
+    {
+      "id": "class-mascota",
+      "name": "Mascota",
+      "position": { "x": 480, "y": 160 },
+      "attributes": [
+        {
+          "id": "attribute-mascota-id",
+          "name": "id",
+          "dataType": "Long",
+          "nullable": false,
+          "unique": true,
+          "primaryKey": true
+        }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "relationship-cliente-mascotas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-cliente",
+      "targetClassId": "class-mascota",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "targetRole": "mascotas"
+    }
+  ],
+  "enumerations": []
+}
+
