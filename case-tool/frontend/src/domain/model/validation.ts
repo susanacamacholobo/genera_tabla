@@ -124,11 +124,17 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
 
   addDuplicateNameIssues(project.classes, 'classes', issues);
   addDuplicateNameIssues(project.enumerations, 'enumerations', issues);
-  addDuplicateNameIssues(
-    [...project.classes, ...project.enumerations],
-    'types',
-    issues,
-  );
+
+  const classNames = new Set(project.classes.map((item) => normalized(item.name)));
+  project.enumerations.forEach((enumeration, index) => {
+    if (classNames.has(normalized(enumeration.name))) {
+      issues.push({
+        code: 'DUPLICATE_TYPE_NAME',
+        path: `enumerations[${index}].name`,
+        message: `El tipo '${enumeration.name}' ya está definido como clase.`,
+      });
+    }
+  });
 
   const classIds = new Set(project.classes.map((item) => item.id));
   const enumNames = new Set(project.enumerations.map((item) => item.name));
@@ -260,4 +266,3 @@ export function validateProject(project: ProjectModel): ModelValidationResult {
   issues.push(...detectGeneralizationCycles(project));
   return { valid: issues.length === 0, issues };
 }
-
