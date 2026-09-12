@@ -53,6 +53,15 @@ describe('CommandExecutor', () => {
     expect(state.classes[0]?.id).toBe('generated-1');
   });
 
+  it('rejects a collision produced by the ID generator', () => {
+    const brokenExecutor = new CommandExecutor(() => 'project');
+
+    expect(() => brokenExecutor.execute(project, command({
+      id: 'cmd-1', type: 'ADD_CLASS', payload: { name: 'Cliente' },
+    }))).toThrow(CommandValidationError);
+    expect(project.classes).toEqual([]);
+  });
+
   it('adds, updates and deletes attributes', () => {
     let state = executor.execute(project, command({
       id: 'cmd-1', type: 'ADD_CLASS', payload: { id: 'cliente', name: 'Cliente' },

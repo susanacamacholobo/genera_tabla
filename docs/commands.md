@@ -34,8 +34,9 @@ Ejemplo:
 ## Flujo
 
 1. `CommandValidator` revisa precondiciones y simula el resultado.
-2. La validación canónica comprueba el estado resultante completo.
-3. `CommandExecutor` crea una copia, aplica el cambio y aumenta `revision`.
+2. La validación canónica comprueba el estado resultante simulado completo.
+3. `CommandExecutor` crea una copia, aplica el cambio, aumenta `revision` y
+   vuelve a validar el estado real (incluidos los IDs recién asignados).
 4. `CommandHistory` conserva el estado anterior y vacía redo tras una nueva
    rama de edición.
 

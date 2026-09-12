@@ -89,6 +89,8 @@ export class CommandExecutor {
         break;
     }
 
+    const result = validateProject(next);
+    if (!result.valid) throw new CommandValidationError(result.issues);
     return next;
   }
 
