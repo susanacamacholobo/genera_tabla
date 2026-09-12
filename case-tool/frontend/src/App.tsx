@@ -1,15 +1,7 @@
-export function App() {
-  return (
-    <main className="shell">
-      <section className="status-card">
-        <p className="eyebrow">Software 1 · CASE Tool</p>
-        <h1>Base del dominio preparada</h1>
-        <p>
-          El modelo canónico, sus validadores y el historial de comandos están
-          listos. El editor visual se incorporará en la fase 3.
-        </p>
-      </section>
-    </main>
-  );
-}
+import type { ProjectModel } from './domain';
+import veterinariaFixture from '../../../docs/examples/veterinaria.json';
+import { DiagramEditor } from './features/diagram';
 
+export function App() {
+  return <DiagramEditor initialProject={veterinariaFixture as ProjectModel} />;
+}

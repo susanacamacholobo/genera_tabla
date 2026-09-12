@@ -91,6 +91,61 @@ describe('CommandExecutor', () => {
     );
   });
 
+  it('preserves external identities across move and element updates', () => {
+    const externalReferences = [
+      {
+        source: 'enterprise-architect',
+        scope: 'veterinaria-repository',
+        guid: '{A1B2C3D4-E5F6-47A8-9012-123456789ABC}',
+      },
+    ];
+    project.classes = [
+      {
+        id: 'cliente',
+        name: 'Cliente',
+        position: { x: 0, y: 0 },
+        externalReferences,
+        attributes: [
+          {
+            id: 'nombre',
+            name: 'nombre',
+            dataType: 'String',
+            nullable: false,
+            unique: false,
+            primaryKey: false,
+            externalReferences,
+          },
+        ],
+      },
+      { id: 'mascota', name: 'Mascota', position: { x: 300, y: 0 }, attributes: [] },
+    ];
+    project.relationships = [
+      {
+        id: 'cliente-mascota',
+        type: 'ASSOCIATION',
+        sourceClassId: 'cliente',
+        targetClassId: 'mascota',
+        sourceMultiplicity: '1',
+        targetMultiplicity: '0..*',
+        externalReferences,
+      },
+    ];
+
+    let state = executor.execute(project, command({
+      id: 'move', type: 'MOVE_CLASS', targetId: 'cliente', payload: { position: { x: 50, y: 80 } },
+    }));
+    state = executor.execute(state, command({
+      id: 'attribute', type: 'UPDATE_ATTRIBUTE', targetId: 'nombre', payload: { unique: true },
+    }));
+    state = executor.execute(state, command({
+      id: 'relationship', type: 'UPDATE_RELATIONSHIP', targetId: 'cliente-mascota', payload: { targetMultiplicity: '1..*' },
+    }));
+
+    expect(state.classes[0]?.externalReferences).toEqual(externalReferences);
+    expect(state.classes[0]?.attributes[0]?.externalReferences).toEqual(externalReferences);
+    expect(state.relationships[0]?.externalReferences).toEqual(externalReferences);
+  });
+
   it('adds, updates and deletes attributes', () => {
     let state = executor.execute(project, command({
       id: 'cmd-1', type: 'ADD_CLASS', payload: { id: 'cliente', name: 'Cliente' },

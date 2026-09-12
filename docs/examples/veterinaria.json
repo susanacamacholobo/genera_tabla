@@ -23,6 +23,14 @@
           "nullable": false,
           "unique": false,
           "primaryKey": false
+        },
+        {
+          "id": "attribute-cliente-telefono",
+          "name": "telefono",
+          "dataType": "String",
+          "nullable": true,
+          "unique": false,
+          "primaryKey": false
         }
       ]
     },
@@ -38,6 +46,22 @@
           "nullable": false,
           "unique": true,
           "primaryKey": true
+        },
+        {
+          "id": "attribute-mascota-nombre",
+          "name": "nombre",
+          "dataType": "String",
+          "nullable": false,
+          "unique": false,
+          "primaryKey": false
+        },
+        {
+          "id": "attribute-mascota-especie",
+          "name": "especie",
+          "dataType": "String",
+          "nullable": false,
+          "unique": false,
+          "primaryKey": false
         }
       ]
     }
@@ -55,4 +79,3 @@
   ],
   "enumerations": []
 }
-
