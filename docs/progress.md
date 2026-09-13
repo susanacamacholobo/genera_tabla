@@ -13,6 +13,11 @@
 - Fase 4: CRUD de proyectos, capas API/servicio/repositorio, PostgreSQL local y
   primera migración Alembic. Migración y flujo HTTP verificados contra
   PostgreSQL 17.
+- Fase 5: snapshots JSONB del modelo canónico, event log de comandos,
+  validación estructural, control de revisión optimista y migración Alembic.
+  Flujo completo y conflictos verificados contra PostgreSQL 17.
+- Fase 6: `CommandHistory`, undo/redo y UI básica, implementados anticipadamente
+  durante las fases 2 y 3.
 
 ## IN PROGRESS
 
@@ -20,12 +25,12 @@
 
 ## TODO
 
-- Fase 5: persistencia de snapshots del modelo y eventos de cambio.
+- Fase 7: comandos de texto deterministas.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 4.
+- No se conocen defectos en el alcance de las fases 0 a 6.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -35,3 +40,5 @@
   reales exportados desde la versión de Enterprise Architect del proyecto.
 - Las enumeraciones se renderizan en modo básico y no se pueden mover ni editar
   porque el modelo y los comandos actuales no definen esas operaciones.
+- El editor visual todavía utiliza un fixture local; el adaptador HTTP que
+  conectará la UI con proyectos y snapshots pertenece a un incremento posterior.

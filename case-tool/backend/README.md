@@ -1,7 +1,8 @@
 # CASE backend
 
-API FastAPI de la herramienta CASE. La fase 4 incorpora persistencia de
-proyectos mediante SQLAlchemy, PostgreSQL y migraciones Alembic.
+API FastAPI de la herramienta CASE. Incorpora persistencia de proyectos,
+snapshots UML y eventos de cambio mediante SQLAlchemy, PostgreSQL y migraciones
+Alembic.
 
 ## Requisitos
 
@@ -59,4 +60,5 @@ La configuración de ejecución y las migraciones apuntan exclusivamente a
 PostgreSQL.
 
 El contrato de los endpoints se describe en
-[docs/projects-api.md](../../docs/projects-api.md).
+[docs/projects-api.md](../../docs/projects-api.md) y
+[docs/model-history.md](../../docs/model-history.md).

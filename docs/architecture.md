@@ -55,9 +55,22 @@ FastAPI router -> ProjectService -> ProjectRepository -> SQLAlchemy -> PostgreSQ
 
 Los routers resuelven HTTP y validación de entrada; los servicios contienen los
 casos de uso y los repositorios encapsulan las consultas. Alembic es el único
-mecanismo para evolucionar el esquema. En fase 4 sólo se almacena la identidad
-y metadata del proyecto; el modelo canónico y sus revisiones se incorporarán
-como snapshots y eventos en la fase 5.
+mecanismo para evolucionar el esquema.
+
+Desde la fase 5, cada revisión aceptada se confirma en una única transacción:
+
+```text
+comprobar base_revision y bloquear proyecto
+                  |
+                  v
+change_event + project_snapshot + project.revision
+```
+
+`project_snapshots.model_json` y `change_events.command_json` son columnas
+JSONB. El modelo canónico permanece como documento completo y no se fragmenta
+en tablas por clase o atributo. Las restricciones únicas por proyecto y
+revisión impiden bifurcaciones accidentales; el bloqueo de fila y
+`base_revision` implementan concurrencia optimista para el MVP.
 
 ## Decisiones
 
@@ -77,3 +90,7 @@ como snapshots y eventos en la fase 5.
   posiciones pertenecen exclusivamente al modelo canónico.
 - La configuración de PostgreSQL se recibe por variables de entorno o por un
   `.env` local ignorado por Git; ninguna contraseña tiene valor por defecto.
+- Cada proyecto nace con un snapshot vacío en revisión 0. Un cambio aceptado
+  produce exactamente un evento y un snapshot en la revisión siguiente.
+- Los snapshots son inmutables; eliminar el proyecto borra snapshots y eventos
+  mediante claves foráneas con `ON DELETE CASCADE`.
