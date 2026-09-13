@@ -15,6 +15,10 @@ class ProjectRepository:
     def get(self, project_id: str) -> ProjectRecord | None:
         return self.session.get(ProjectRecord, project_id)
 
+    def get_for_update(self, project_id: str) -> ProjectRecord | None:
+        statement = select(ProjectRecord).where(ProjectRecord.id == project_id).with_for_update()
+        return self.session.scalar(statement)
+
     def add(self, project: ProjectRecord) -> ProjectRecord:
         self.session.add(project)
         self.session.flush()
@@ -23,4 +27,3 @@ class ProjectRepository:
     def delete(self, project: ProjectRecord) -> None:
         self.session.delete(project)
         self.session.flush()
-

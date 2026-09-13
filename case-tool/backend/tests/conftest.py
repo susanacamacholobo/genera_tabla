@@ -2,7 +2,7 @@ from collections.abc import AsyncGenerator, Generator
 
 import httpx
 import pytest
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
@@ -15,6 +15,13 @@ test_engine = create_engine(
     poolclass=StaticPool,
 )
 TestingSession = sessionmaker(bind=test_engine, autoflush=False, expire_on_commit=False)
+
+
+@event.listens_for(test_engine, "connect")
+def enable_sqlite_foreign_keys(dbapi_connection: object, _connection_record: object) -> None:
+    cursor = dbapi_connection.cursor()
+    cursor.execute("PRAGMA foreign_keys=ON")
+    cursor.close()
 
 
 @pytest.fixture
@@ -45,4 +52,3 @@ async def client() -> AsyncGenerator[httpx.AsyncClient, None]:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as test_client:
         yield test_client
     app.dependency_overrides.clear()
-

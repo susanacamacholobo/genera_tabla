@@ -5,12 +5,8 @@ from sqlalchemy.orm import Session
 from case_backend.models import ProjectRecord
 from case_backend.repositories import ProjectRepository
 from case_backend.schemas import ProjectCreate, ProjectUpdate
-
-
-class ProjectNotFoundError(Exception):
-    def __init__(self, project_id: str) -> None:
-        super().__init__(f"No existe el proyecto '{project_id}'.")
-        self.project_id = project_id
+from case_backend.services.errors import ProjectNotFoundError
+from case_backend.services.model_history_service import ModelHistoryService
 
 
 class ProjectService:
@@ -30,6 +26,7 @@ class ProjectService:
     def create_project(self, data: ProjectCreate) -> ProjectRecord:
         project = ProjectRecord(id=str(uuid4()), name=data.name, revision=0)
         self.repository.add(project)
+        ModelHistoryService(self.session).add_initial_snapshot(project.id, project.name)
         self.session.commit()
         self.session.refresh(project)
         return project
@@ -45,4 +42,3 @@ class ProjectService:
         project = self.get_project(project_id)
         self.repository.delete(project)
         self.session.commit()
-
