@@ -1,8 +1,9 @@
 # Generador Spring Boot
 
 Genera un proyecto CRUD determinista desde el modelo canónico de GeneraTabla.
-Las fases 8 a 10 producen `pom.xml`, aplicación, entidades JPA, repositorios,
-servicios, controladores REST, configuración PostgreSQL, relaciones y pruebas.
+Las fases 8 a 11 producen `pom.xml`, aplicación, entidades JPA, repositorios,
+servicios, controladores REST, DTOs, mapeadores, validación, errores,
+configuración PostgreSQL, relaciones y pruebas.
 
 ## Instalar
 
@@ -58,7 +59,7 @@ mvn spring-boot:run
 
 `mvn test` no necesita PostgreSQL: activa el perfil `test` y usa una base H2
 aislada. Genera pruebas de contexto, CRUD HTTP, metadata JPA, persistencia de
-relaciones y serialización JSON.
+relaciones, serialización JSON, validación y resolución de relaciones por ID.
 
 La API queda disponible en `http://localhost:8080/api/clientes`. En otra
 terminal se puede crear y consultar un registro:
@@ -93,9 +94,16 @@ Detén la aplicación con `Ctrl+C`.
 - Roles de asociación opcionales; cuando faltan se derivan de las clases.
 - `mappedBy`, `@JoinColumn` y `@JoinTable` generados de forma determinista.
 - Serialización protegida contra ciclos con `@JsonIgnoreProperties`.
+- Records `Request` y `Response`; las entidades JPA no forman parte del
+  contrato de los controladores.
+- Relaciones de entrada mediante `rolId` o `rolIds` en el lado propietario y
+  relaciones de salida siempre mediante IDs.
+- Bean Validation derivada de nulabilidad y multiplicidad UML.
+- Error JSON uniforme para solicitudes inválidas, recursos inexistentes y
+  conflictos de integridad.
 - PostgreSQL local configurado mediante `DB_HOST`, `DB_PORT`, `DB_NAME`,
   `DB_USERNAME` y `DB_PASSWORD`.
 - H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.
-- Sin generalización, asociaciones reflexivas, DTO ni Bean Validation todavía.
+- Sin generalización ni asociaciones reflexivas todavía.
 
-DTO, Bean Validation y excepciones estructuradas pertenecen a la fase 11.
+OpenAPI y `domain-model.json` pertenecen a la fase 12.

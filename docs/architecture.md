@@ -7,7 +7,7 @@ La raíz del repositorio es el monorepo. Los productos se mantienen separados:
 ```text
 case-tool/frontend          interfaz CASE y dominio TypeScript
 case-tool/backend           API FastAPI
-generators/spring-generator generador determinista futuro
+generators/spring-generator generador determinista Spring Boot
 mobile-client/flutter       cliente móvil genérico
 ```
 
@@ -121,9 +121,18 @@ sourceMultiplicity + targetMultiplicity
          dos JavaAssociation coordinadas
 ```
 
-La protección transitoria de serialización vive en las entidades generadas. Al
-introducir DTOs en la fase 11, el contrato JSON dejará de depender de la forma
-del grafo de persistencia.
+La fase 11 establece una frontera DTO explícita:
+
+```text
+HTTP -> Request DTO -> Bean Validation -> Service -> Entity / Repository
+HTTP <- Response DTO <- Mapper <---------+
+```
+
+El API representa asociaciones mediante IDs; el servicio resuelve únicamente
+los IDs del lado propietario y el mapper proyecta ambos lados a `rolId` o
+`rolIds`. Así, el contrato JSON no depende de la forma ni de los ciclos del
+grafo de persistencia. Un advice global traduce validación, ausencia de recursos
+y restricciones de integridad a un único esquema `ApiError`.
 
 ## Decisiones
 
@@ -153,3 +162,5 @@ del grafo de persistencia.
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,
   servicio, repositorio y mapeo JPA que usa la aplicación.
+- Los controladores generados dependen de DTOs, nunca de entidades; la clave
+  primaria y las relaciones se resuelven dentro de la capa de servicio.

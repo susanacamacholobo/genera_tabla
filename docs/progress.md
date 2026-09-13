@@ -32,6 +32,10 @@
   `ManyToMany`, con propietario determinista, `mappedBy`, columnas/tablas de
   unión, control de ciclos JSON y pruebas generadas de metadata, persistencia y
   serialización. Cliente–Mascota verificado también contra PostgreSQL 17.6.
+- Fase 11: DTOs de solicitud/respuesta, mapeadores, Bean Validation, relaciones
+  expresadas por IDs y respuestas de error uniformes para 400, 404 y 409. Los
+  fixtures simple, uno-a-uno, uno-a-muchos y muchos-a-muchos compilan y pasan
+  sus pruebas Maven generadas.
 
 ## IN PROGRESS
 
@@ -39,7 +43,7 @@
 
 ## TODO
 
-- Fase 11: DTO, mapeadores, Bean Validation y excepciones.
+- Fase 12: OpenAPI y `domain-model.json`.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES

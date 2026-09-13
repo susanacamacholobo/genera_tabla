@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 10, además de la preparación 2.5:
+Están implementadas las fases 0 a 11, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -22,10 +22,10 @@ Están implementadas las fases 0 a 10, además de la preparación 2.5:
   reproducible y verificación Maven.
 - configuración PostgreSQL local y pruebas CRUD en los proyectos generados.
 - generación bidireccional de relaciones JPA a partir de multiplicidades UML.
+- API generada con DTOs, mapeadores, Bean Validation y errores JSON uniformes.
 
 Colaboración en tiempo real, round-trip XMI e IA quedan deliberadamente fuera
-de este incremento. DTO y validación del backend generado corresponden a la
-fase siguiente.
+de este incremento. OpenAPI y metadata corresponden a la fase siguiente.
 
 ## Estructura
 

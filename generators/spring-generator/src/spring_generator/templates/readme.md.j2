@@ -44,6 +44,18 @@ PostgreSQL. Endpoints generados:
 {% for entity in project.entities %}
 - `/api/{{ entity.endpoint_name }}`
 {% endfor %}
+
+## Contrato JSON
+
+Los controladores reciben records `*Request` validados y devuelven records
+`*Response`; las entidades JPA no se exponen. La clave primaria generada sólo
+aparece en la respuesta. Las relaciones propietarias se envían mediante
+`rolId` o `rolIds`, y todas las relaciones se devuelven como IDs.
+
+Los errores tienen los campos `timestamp`, `status`, `error`, `message`,
+`path` y `fieldErrors`. Una solicitud inválida responde 400, un recurso o ID de
+relación inexistente responde 404 y un conflicto de integridad responde 409.
+
 {% if project.relationships %}
 Relaciones JPA generadas:
 

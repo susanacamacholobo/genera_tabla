@@ -55,8 +55,31 @@ normal nunca cae silenciosamente a H2.
 
 Hibernate utiliza `ddl-auto: update` para materializar el esquema del MVP. La
 administración versionada de esquemas podrá reemplazar esta estrategia cuando
-el contrato generado se estabilice. Los DTO permanecen fuera de alcance hasta
-la fase 11.
+el contrato generado se estabilice.
+
+## Contrato REST y validación
+
+Desde la fase 11 los controladores no exponen entidades JPA. Por cada entidad
+se generan:
+
+- un record `EntidadRequest`, sin la clave primaria generada;
+- un record `EntidadResponse`, con la clave primaria y todos los campos;
+- un `EntidadMapper` para aplicar escalares y producir respuestas;
+- servicios que resuelven relaciones mediante repositorios.
+
+Los `String` obligatorios usan `@NotBlank`; los otros escalares obligatorios y
+las relaciones singulares requeridas usan `@NotNull`; una colección `1..*`
+propietaria usa `@NotEmpty`. `POST` y `PUT` reciben el mismo contrato validado.
+Como `PUT` reemplaza el estado editable, omitir una relación opcional la deja en
+`null` o vacía.
+
+Las relaciones nunca anidan entidades en el API. El lado propietario acepta
+`rolId` o `rolIds`; las respuestas de ambos lados contienen esos IDs. El
+servicio rechaza con 404 cualquier ID relacionado inexistente.
+
+`GlobalExceptionHandler` devuelve `ApiError` con `timestamp`, `status`,
+`error`, `message`, `path` y `fieldErrors`. La validación y el JSON inválido
+producen 400, los recursos ausentes 404 y las restricciones de integridad 409.
 
 ## Relaciones JPA
 
@@ -76,18 +99,20 @@ respectivamente, el campo navegable en la clase origen y en la clase destino.
 Si faltan, los nombres se derivan de las clases y de si el extremo es singular
 o colección.
 
-Las colecciones usan `Set` inicializado y carga eager durante esta etapa para
-que los controladores que todavía exponen entidades puedan serializarlas con
-`open-in-view: false`. `@JsonIgnoreProperties` omite sólo el enlace de regreso
-al anidar una entidad y evita ciclos. La fase 11 reemplazará esta frontera por
-DTOs, permitiendo volver a estrategias de carga ajustadas al contrato REST.
+Las colecciones usan `Set` inicializado y carga eager durante esta etapa. Los
+DTOs eliminan los ciclos en la frontera REST y representan relaciones mediante
+IDs. `@JsonIgnoreProperties` se conserva por compatibilidad al manipular una
+entidad fuera de esa frontera; una fase posterior podrá ajustar la estrategia
+de carga sin cambiar el contrato HTTP.
 
 El validador rechaza referencias rotas, multiplicidades y roles inválidos,
 colisiones con atributos/campos generados, asociaciones reflexivas y
 generalizaciones. Estas dos últimas no forman parte del alcance de la fase 10.
 
-Cada proyecto con asociaciones incorpora pruebas de metadata JPA y pruebas que
-persisten, recargan y serializan cada relación.
+Cada proyecto con asociaciones incorpora pruebas de metadata JPA, persistencia
+y serialización. También prueba que los DTO resuelvan relaciones válidas y
+rechacen IDs inexistentes. Los tests de controlador cubren CRUD, validación y
+errores 404 estructurados.
 
 Los comandos completos de instalación, generación y prueba están en
 [`generators/spring-generator/README.md`](../generators/spring-generator/README.md).
