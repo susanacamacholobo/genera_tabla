@@ -1,3 +1,4 @@
+import json
 import re
 import unicodedata
 from dataclasses import dataclass
@@ -13,6 +14,18 @@ JAVA_TYPE_MAPPING = {
     "Date": ("LocalDate", "java.time.LocalDate"),
     "DateTime": ("LocalDateTime", "java.time.LocalDateTime"),
     "UUID": ("UUID", "java.util.UUID"),
+}
+
+JSON_TEST_VALUE_MAPPING: dict[str, object] = {
+    "String": "example",
+    "Integer": 7,
+    "Long": 7,
+    "Double": 7.5,
+    "Decimal": 7.5,
+    "Boolean": True,
+    "Date": "2026-01-15",
+    "DateTime": "2026-01-15T10:30:00",
+    "UUID": "00000000-0000-0000-0000-000000000001",
 }
 
 
@@ -58,6 +71,7 @@ class JavaField:
     nullable: bool
     unique: bool
     primary_key: bool
+    json_test_value: object
 
     @property
     def capitalized_name(self) -> str:
@@ -83,6 +97,14 @@ class JavaEntity:
     @property
     def imports(self) -> tuple[str, ...]:
         return tuple(sorted({field.import_name for field in self.fields if field.import_name}))
+
+    @property
+    def test_request_body(self) -> str:
+        values = {
+            field.name: field.json_test_value
+            for field in self.mutable_fields
+        }
+        return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
 
 
 @dataclass(frozen=True)
@@ -157,4 +179,5 @@ class SpringModelMapper:
             nullable=bool(attribute.get("nullable", True)),
             unique=bool(attribute.get("unique", False)),
             primary_key=bool(attribute.get("primaryKey", False)),
+            json_test_value=JSON_TEST_VALUE_MAPPING[attribute["dataType"]],
         )

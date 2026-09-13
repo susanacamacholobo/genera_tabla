@@ -18,6 +18,9 @@ def test_maps_canonical_names_and_types(simple_entity_model: dict[str, Any]) -> 
     assert entity.endpoint_name == "clientes"
     assert entity.id_field.java_type == "Long"
     assert entity.imports == ("java.math.BigDecimal", "java.time.LocalDateTime")
+    assert entity.test_request_body == (
+        '{"nombre":"example","saldo":7.5,"fechaRegistro":"2026-01-15T10:30:00"}'
+    )
 
 
 def test_rejects_an_invalid_java_group_id() -> None:

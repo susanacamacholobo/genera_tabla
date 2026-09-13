@@ -1,0 +1,66 @@
+package {{ project.package_name }};
+
+import {{ project.package_name }}.controller.{{ entity.class_name }}Controller;
+import {{ project.package_name }}.repository.{{ entity.class_name }}Repository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@SpringBootTest
+@ActiveProfiles("test")
+class {{ entity.class_name }}ControllerTests {
+
+    @Autowired
+    private {{ entity.class_name }}Controller controller;
+
+    @Autowired
+    private {{ entity.class_name }}Repository repository;
+
+    private MockMvc mvc;
+
+    @BeforeEach
+    void setUp() {
+        repository.deleteAll();
+        mvc = MockMvcBuilders.standaloneSetup(controller).build();
+    }
+
+    @Test
+    void generatedCrudWorks() throws Exception {
+        String requestBody = {{ entity.test_request_body | tojson }};
+
+        mvc.perform(post("/api/{{ entity.endpoint_name }}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.{{ entity.id_field.name }}").isNumber());
+
+        var id = repository.findAll().getFirst().get{{ entity.id_field.capitalized_name }}();
+
+        mvc.perform(get("/api/{{ entity.endpoint_name }}/{id}", id))
+                .andExpect(status().isOk());
+
+        mvc.perform(put("/api/{{ entity.endpoint_name }}/{id}", id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isOk());
+
+        mvc.perform(delete("/api/{{ entity.endpoint_name }}/{id}", id))
+                .andExpect(status().isNoContent());
+
+        mvc.perform(get("/api/{{ entity.endpoint_name }}"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isEmpty());
+    }
+}

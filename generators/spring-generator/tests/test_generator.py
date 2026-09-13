@@ -23,6 +23,7 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         f"{root}/repository/ClienteRepository.java",
         f"{root}/service/ClienteService.java",
         f"{root}/controller/ClienteController.java",
+        "src/test/java/com/example/veterinaria/ClienteControllerTests.java",
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java",
         "src/test/resources/application-test.yml",
     }
@@ -46,6 +47,11 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     assert '@ActiveProfiles("test")' in generated.files[
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java"
     ]
+    controller_test = generated.files[
+        "src/test/java/com/example/veterinaria/ClienteControllerTests.java"
+    ]
+    assert 'post("/api/clientes")' in controller_test
+    assert 'delete("/api/clientes/{id}", id)' in controller_test
 
 
 def test_generation_and_zip_are_byte_deterministic(simple_entity_model: dict[str, Any]) -> None:

@@ -99,6 +99,9 @@ class SpringGenerator:
             files[f"{source_root}/controller/{entity.class_name}Controller.java"] = (
                 self._render("controller.java.j2", **context)
             )
+            files[f"{test_root}/{entity.class_name}ControllerTests.java"] = self._render(
+                "controller_test.java.j2", **context
+            )
         return dict(sorted(files.items()))
 
     def _render(self, template_name: str, **context: object) -> str:
