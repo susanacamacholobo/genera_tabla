@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 7, además de la preparación 2.5:
+Están implementadas las fases 0 a 8, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -18,16 +18,19 @@ Están implementadas las fases 0 a 7, además de la preparación 2.5:
   revisión optimista.
 - parser determinista de comandos escritos y barra de ejecución integrada al
   editor.
+- generador Spring Boot para entidades simples, con CRUD JPA, salida
+  reproducible y verificación Maven.
 
-Colaboración en tiempo real, generación Spring, XMI e IA quedan deliberadamente
-fuera de este incremento.
+Colaboración en tiempo real, round-trip XMI e IA quedan deliberadamente fuera
+de este incremento. PostgreSQL generado, relaciones y DTO corresponden a las
+fases siguientes.
 
 ## Estructura
 
 ```text
 case-tool/frontend/            React + TypeScript + Vite
 case-tool/backend/             FastAPI
-generators/spring-generator/   Paquete Python reservado para el generador
+generators/spring-generator/   Generador determinista de Spring Boot
 mobile-client/flutter/         Flutter (Android)
 docs/                          Arquitectura y contratos
 ```
@@ -55,6 +58,18 @@ python -m venv .venv
 Para ejecutar la API con PostgreSQL local, consulta
 [case-tool/backend/README.md](case-tool/backend/README.md). No se requiere
 Docker.
+
+Generador Spring:
+
+```powershell
+.venv/Scripts/python -m pip install -e "generators/spring-generator[dev]"
+.venv/Scripts/spring-generator `
+  generators/spring-generator/tests/fixtures/simple_entity.json `
+  generated/veterinaria
+```
+
+Consulta [su guía](generators/spring-generator/README.md) para compilar y probar
+el backend generado.
 
 Flutter:
 

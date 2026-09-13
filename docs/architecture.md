@@ -83,6 +83,17 @@ gramática explícita y no modifica el modelo directamente. Una futura
 implementación con LLM deberá satisfacer la misma interfaz y producir los
 mismos comandos tipados.
 
+La generación Spring también cruza una frontera explícita:
+
+```text
+modelo canónico -> validación de generación -> modelo Spring -> plantillas
+```
+
+El mapeador es la única capa que conoce tipos y convenciones Java. Las
+plantillas reciben un modelo intermedio ya validado, sin interpretar el JSON
+canónico. `GeneratedProject` mantiene el resultado en memoria y permite
+materializar exactamente los mismos archivos en un directorio o un ZIP.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.
@@ -107,3 +118,5 @@ mismos comandos tipados.
   mediante claves foráneas con `ON DELETE CASCADE`.
 - El parser de texto resuelve nombres a IDs, pero delega todas las reglas de
   negocio a `CommandValidator` y la ejecución a `CommandHistory`.
+- El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
+  para producir artefactos reproducibles a partir de la misma entrada.

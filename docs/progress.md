@@ -21,6 +21,9 @@
 - Fase 7: interfaz `NaturalLanguageCommandParser`, parser determinista para
   crear/eliminar clases y agregar atributos, barra de texto, errores tipados e
   integración con el historial existente.
+- Fase 8: generador determinista de proyectos Spring Boot para entidades
+  simples, con validación previa, mapeo intermedio, plantillas Jinja2, salida a
+  directorio/ZIP y CRUD JPA probado sobre H2.
 
 ## IN PROGRESS
 
@@ -28,12 +31,12 @@
 
 ## TODO
 
-- Fase 8: generador Spring Boot básico.
+- Fase 9: configuración PostgreSQL del proyecto generado y pruebas de backend.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 7.
+- No se conocen defectos en el alcance de las fases 0 a 8.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
