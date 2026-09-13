@@ -1,0 +1,40 @@
+package {{ project.package_name }};
+
+{% for entity in project.entities %}
+import {{ project.package_name }}.model.{{ entity.class_name }};
+{% endfor %}
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.metamodel.Attribute.PersistentAttributeType;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest
+@ActiveProfiles("test")
+class RelationshipMappingTests {
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Test
+    void canonicalMultiplicitiesMapToJpaAssociations() {
+{% for relationship in project.relationships %}
+        var sourceAttribute{{ loop.index }} = entityManager.getMetamodel()
+                .managedType({{ relationship.source_class_name }}.class)
+                .getAttribute("{{ relationship.source_field_name }}");
+        assertEquals(
+                PersistentAttributeType.{{ relationship.source_kind }},
+                sourceAttribute{{ loop.index }}.getPersistentAttributeType());
+
+        var targetAttribute{{ loop.index }} = entityManager.getMetamodel()
+                .managedType({{ relationship.target_class_name }}.class)
+                .getAttribute("{{ relationship.target_field_name }}");
+        assertEquals(
+                PersistentAttributeType.{{ relationship.target_kind }},
+                targetAttribute{{ loop.index }}.getPersistentAttributeType());
+{% endfor %}
+    }
+}

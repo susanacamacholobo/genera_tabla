@@ -87,3 +87,32 @@ def test_refuses_to_overwrite_non_empty_directory(
         SpringGenerator().generate(simple_entity_model).write_to(output)
 
     assert (output / "owned-by-user.txt").read_text(encoding="utf-8") == "preserve"
+
+
+def test_generates_bidirectional_jpa_annotations(association_model: dict[str, Any]) -> None:
+    generated = SpringGenerator().generate(association_model)
+    project_folder = association_model["name"].lower().replace(" ", "")
+    root = f"src/main/java/com/example/{project_folder}/model"
+    sources = "\n".join(
+        content
+        for path, content in generated.files.items()
+        if path.startswith(root) and path.endswith(".java")
+    )
+
+    assert "@JsonIgnoreProperties" in sources
+    assert "src/test/java/com/example/" in "\n".join(generated.files)
+    assert "RelationshipMappingTests.java" in "\n".join(generated.files)
+    assert "RelationshipPersistenceTests.java" in "\n".join(generated.files)
+
+    if association_model["name"] == "Identidad":
+        assert "@OneToOne(optional = false)" in sources
+        assert '@OneToOne(mappedBy = "pasaporte")' in sources
+        assert 'name = "pasaporte_id", nullable = false, unique = true' in sources
+    elif association_model["name"] == "Veterinaria Relaciones":
+        assert '@OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)' in sources
+        assert "@ManyToOne(optional = false)" in sources
+        assert 'name = "cliente_id", nullable = false' in sources
+    else:
+        assert "@ManyToMany(fetch = FetchType.EAGER)" in sources
+        assert '@ManyToMany(mappedBy = "cursos", fetch = FetchType.EAGER)' in sources
+        assert 'name = "estudiantes_cursos"' in sources

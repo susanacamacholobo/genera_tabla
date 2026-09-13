@@ -9,6 +9,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+{% if entity.associations %}
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
+import java.util.LinkedHashSet;
+import java.util.Set;
+{% endif %}
 
 @Entity
 @Table(name = "{{ entity.table_name }}")
@@ -23,6 +35,30 @@ public class {{ entity.class_name }} {
     private {{ field.java_type }} {{ field.name }};
 
 {% endfor %}
+{% for association in entity.associations %}
+    @JsonIgnoreProperties("{{ association.opposite_name }}")
+{% if association.kind == "ONE_TO_ONE" and association.owning %}
+    @OneToOne(optional = {{ "true" if association.optional else "false" }})
+    @JoinColumn(name = "{{ association.join_column_name }}", nullable = {{ "true" if association.optional else "false" }}, unique = true)
+{% elif association.kind == "ONE_TO_ONE" %}
+    @OneToOne(mappedBy = "{{ association.mapped_by }}")
+{% elif association.kind == "ONE_TO_MANY" %}
+    @OneToMany(mappedBy = "{{ association.mapped_by }}", fetch = FetchType.EAGER)
+{% elif association.kind == "MANY_TO_ONE" %}
+    @ManyToOne(optional = {{ "true" if association.optional else "false" }})
+    @JoinColumn(name = "{{ association.join_column_name }}", nullable = {{ "true" if association.optional else "false" }})
+{% elif association.owning %}
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "{{ association.join_table_name }}",
+            joinColumns = @JoinColumn(name = "{{ association.join_table_column }}"),
+            inverseJoinColumns = @JoinColumn(name = "{{ association.inverse_join_table_column }}"))
+{% else %}
+    @ManyToMany(mappedBy = "{{ association.mapped_by }}", fetch = FetchType.EAGER)
+{% endif %}
+    private {{ association.java_type }} {{ association.name }}{% if association.collection %} = new LinkedHashSet<>(){% endif %};
+
+{% endfor %}
     public {{ entity.class_name }}() {
     }
 
@@ -33,6 +69,16 @@ public class {{ entity.class_name }} {
 
     public void set{{ field.capitalized_name }}({{ field.java_type }} {{ field.name }}) {
         this.{{ field.name }} = {{ field.name }};
+    }
+
+{% endfor %}
+{% for association in entity.associations %}
+    public {{ association.java_type }} get{{ association.capitalized_name }}() {
+        return {{ association.name }};
+    }
+
+    public void set{{ association.capitalized_name }}({{ association.java_type }} {{ association.name }}) {
+        this.{{ association.name }} = {{ association.name }};
     }
 
 {% endfor %}

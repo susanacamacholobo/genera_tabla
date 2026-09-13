@@ -99,8 +99,16 @@ class SpringGenerator:
             files[f"{source_root}/controller/{entity.class_name}Controller.java"] = (
                 self._render("controller.java.j2", **context)
             )
-            files[f"{test_root}/{entity.class_name}ControllerTests.java"] = self._render(
-                "controller_test.java.j2", **context
+            if entity.standalone_creatable:
+                files[f"{test_root}/{entity.class_name}ControllerTests.java"] = self._render(
+                    "controller_test.java.j2", **context
+                )
+        if project.relationships:
+            files[f"{test_root}/RelationshipMappingTests.java"] = self._render(
+                "relationship_mapping_test.java.j2", project=project
+            )
+            files[f"{test_root}/RelationshipPersistenceTests.java"] = self._render(
+                "relationship_persistence_test.java.j2", project=project
             )
         return dict(sorted(files.items()))
 

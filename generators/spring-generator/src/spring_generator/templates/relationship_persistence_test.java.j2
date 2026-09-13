@@ -1,0 +1,84 @@
+package {{ project.package_name }};
+
+{% for entity in project.entities %}
+import {{ project.package_name }}.model.{{ entity.class_name }};
+import {{ project.package_name }}.repository.{{ entity.class_name }}Repository;
+{% endfor %}
+import jakarta.persistence.EntityManager;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.json.JsonMapper;
+
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+class RelationshipPersistenceTests {
+
+    @Autowired
+    private EntityManager entityManager;
+
+    @Autowired
+    private JsonMapper jsonMapper;
+
+{% for entity in project.entities %}
+    @Autowired
+    private {{ entity.class_name }}Repository {{ entity.repository_variable_name }};
+
+{% endfor %}
+{% for relationship in project.relationships %}
+    @Test
+    void relationship{{ loop.index }}PersistsAndSerializesWithoutCycles() {
+        var source = new {{ relationship.source_entity.class_name }}();
+{% for field in relationship.source_entity.mutable_fields %}
+        source.set{{ field.capitalized_name }}({{ field.java_test_value }});
+{% endfor %}
+        var target = new {{ relationship.target_entity.class_name }}();
+{% for field in relationship.target_entity.mutable_fields %}
+        target.set{{ field.capitalized_name }}({{ field.java_test_value }});
+{% endfor %}
+
+{% if relationship.source_kind == "ONE_TO_MANY" %}
+        source = {{ relationship.source_entity.repository_variable_name }}.saveAndFlush(source);
+        target.set{{ relationship.target_field_name[:1] | upper }}{{ relationship.target_field_name[1:] }}(source);
+        target = {{ relationship.target_entity.repository_variable_name }}.saveAndFlush(target);
+{% elif relationship.source_kind == "MANY_TO_MANY" %}
+        target = {{ relationship.target_entity.repository_variable_name }}.saveAndFlush(target);
+        source.get{{ relationship.source_field_name[:1] | upper }}{{ relationship.source_field_name[1:] }}().add(target);
+        source = {{ relationship.source_entity.repository_variable_name }}.saveAndFlush(source);
+{% else %}
+        target = {{ relationship.target_entity.repository_variable_name }}.saveAndFlush(target);
+        source.set{{ relationship.source_field_name[:1] | upper }}{{ relationship.source_field_name[1:] }}(target);
+        source = {{ relationship.source_entity.repository_variable_name }}.saveAndFlush(source);
+{% endif %}
+
+        var sourceId = source.get{{ relationship.source_entity.id_field.capitalized_name }}();
+        var targetId = target.get{{ relationship.target_entity.id_field.capitalized_name }}();
+        entityManager.clear();
+        var reloaded = {{ relationship.source_entity.repository_variable_name }}
+                .findById(sourceId)
+                .orElseThrow();
+{% if relationship.source_kind in ["ONE_TO_MANY", "MANY_TO_MANY"] %}
+        assertTrue(reloaded.get{{ relationship.source_field_name[:1] | upper }}{{ relationship.source_field_name[1:] }}().stream()
+                .anyMatch(item -> targetId.equals(item.get{{ relationship.target_entity.id_field.capitalized_name }}())));
+{% else %}
+        assertEquals(
+                targetId,
+                reloaded.get{{ relationship.source_field_name[:1] | upper }}{{ relationship.source_field_name[1:] }}()
+                        .get{{ relationship.target_entity.id_field.capitalized_name }}());
+{% endif %}
+        assertDoesNotThrow(() -> jsonMapper.writeValueAsString(reloaded));
+    }
+
+{% endfor %}
+}

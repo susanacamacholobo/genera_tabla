@@ -1,7 +1,7 @@
 import json
 import re
 import unicodedata
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any
 
 JAVA_TYPE_MAPPING = {
@@ -26,6 +26,18 @@ JSON_TEST_VALUE_MAPPING: dict[str, object] = {
     "Date": "2026-01-15",
     "DateTime": "2026-01-15T10:30:00",
     "UUID": "00000000-0000-0000-0000-000000000001",
+}
+
+JAVA_TEST_VALUE_MAPPING = {
+    "String": '"example"',
+    "Integer": "7",
+    "Long": "7L",
+    "Double": "7.5",
+    "Decimal": 'new BigDecimal("7.5")',
+    "Boolean": "true",
+    "Date": "LocalDate.of(2026, 1, 15)",
+    "DateTime": "LocalDateTime.of(2026, 1, 15, 10, 30)",
+    "UUID": 'UUID.fromString("00000000-0000-0000-0000-000000000001")',
 }
 
 
@@ -72,10 +84,37 @@ class JavaField:
     unique: bool
     primary_key: bool
     json_test_value: object
+    java_test_value: str
 
     @property
     def capitalized_name(self) -> str:
         return self.name[:1].upper() + self.name[1:]
+
+
+@dataclass(frozen=True)
+class JavaAssociation:
+    name: str
+    target_class_name: str
+    kind: str
+    collection: bool
+    owning: bool
+    opposite_name: str
+    mapped_by: str | None = None
+    optional: bool | None = None
+    join_column_name: str | None = None
+    join_table_name: str | None = None
+    join_table_column: str | None = None
+    inverse_join_table_column: str | None = None
+
+    @property
+    def capitalized_name(self) -> str:
+        return self.name[:1].upper() + self.name[1:]
+
+    @property
+    def java_type(self) -> str:
+        if self.collection:
+            return f"Set<{self.target_class_name}>"
+        return self.target_class_name
 
 
 @dataclass(frozen=True)
@@ -85,6 +124,7 @@ class JavaEntity:
     table_name: str
     endpoint_name: str
     fields: tuple[JavaField, ...]
+    associations: tuple[JavaAssociation, ...] = ()
 
     @property
     def id_field(self) -> JavaField:
@@ -106,6 +146,32 @@ class JavaEntity:
         }
         return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
 
+    @property
+    def standalone_creatable(self) -> bool:
+        return not any(
+            association.owning
+            and not association.collection
+            and association.optional is False
+            for association in self.associations
+        )
+
+    @property
+    def repository_variable_name(self) -> str:
+        return f"{self.variable_name}Repository"
+
+
+@dataclass(frozen=True)
+class JavaRelationship:
+    relationship_id: str
+    source_class_name: str
+    target_class_name: str
+    source_field_name: str
+    target_field_name: str
+    source_kind: str
+    target_kind: str
+    source_entity: JavaEntity
+    target_entity: JavaEntity
+
 
 @dataclass(frozen=True)
 class SpringProject:
@@ -117,6 +183,7 @@ class SpringProject:
     boot_version: str
     java_version: int
     entities: tuple[JavaEntity, ...]
+    relationships: tuple[JavaRelationship, ...]
 
     @property
     def package_path(self) -> str:
@@ -145,7 +212,31 @@ class SpringModelMapper:
         application_name = pascal_case(project_name) or "Generated"
         if application_name[0].isdigit():
             application_name = f"App{application_name}"
-        entities = tuple(self._map_entity(item) for item in project["classes"])
+        entity_order = [str(item["id"]) for item in project["classes"]]
+        entities_by_id = {
+            str(item["id"]): self._map_entity(item) for item in project["classes"]
+        }
+        relationship_fields: dict[str, list[JavaAssociation]] = {
+            entity_id: [] for entity_id in entity_order
+        }
+        relationships: list[JavaRelationship] = []
+        for relationship in sorted(project.get("relationships", []), key=lambda item: item["id"]):
+            mapped, source_field, target_field = self._map_relationship(
+                relationship,
+                entities_by_id,
+            )
+            relationships.append(mapped)
+            relationship_fields[str(relationship["sourceClassId"])].append(source_field)
+            relationship_fields[str(relationship["targetClassId"])].append(target_field)
+        entities = tuple(
+            replace(
+                entities_by_id[entity_id],
+                associations=tuple(
+                    sorted(relationship_fields[entity_id], key=lambda item: item.name)
+                ),
+            )
+            for entity_id in entity_order
+        )
         return SpringProject(
             group_id=self.group_id,
             artifact_id=artifact_id,
@@ -155,6 +246,7 @@ class SpringModelMapper:
             boot_version=self.boot_version,
             java_version=self.java_version,
             entities=entities,
+            relationships=tuple(relationships),
         )
 
     def _map_entity(self, uml_class: dict[str, Any]) -> JavaEntity:
@@ -180,4 +272,126 @@ class SpringModelMapper:
             unique=bool(attribute.get("unique", False)),
             primary_key=bool(attribute.get("primaryKey", False)),
             json_test_value=JSON_TEST_VALUE_MAPPING[attribute["dataType"]],
+            java_test_value=JAVA_TEST_VALUE_MAPPING[attribute["dataType"]],
         )
+
+    def _map_relationship(
+        self,
+        relationship: dict[str, Any],
+        entities_by_id: dict[str, JavaEntity],
+    ) -> tuple[JavaRelationship, JavaAssociation, JavaAssociation]:
+        source = entities_by_id[str(relationship["sourceClassId"])]
+        target = entities_by_id[str(relationship["targetClassId"])]
+        source_multiplicity = str(relationship["sourceMultiplicity"])
+        target_multiplicity = str(relationship["targetMultiplicity"])
+        source_many = source_multiplicity.endswith("*")
+        target_many = target_multiplicity.endswith("*")
+        source_field_name = camel_case(
+            relationship.get("targetRole")
+            or self._default_role_name(target, target_many)
+        )
+        target_field_name = camel_case(
+            relationship.get("sourceRole")
+            or self._default_role_name(source, source_many)
+        )
+
+        if not source_many and not target_many:
+            source_field = JavaAssociation(
+                name=source_field_name,
+                target_class_name=target.class_name,
+                kind="ONE_TO_ONE",
+                collection=False,
+                owning=True,
+                opposite_name=target_field_name,
+                optional=target_multiplicity == "0..1",
+                join_column_name=f"{snake_case(source_field_name)}_id",
+            )
+            target_field = JavaAssociation(
+                name=target_field_name,
+                target_class_name=source.class_name,
+                kind="ONE_TO_ONE",
+                collection=False,
+                owning=False,
+                opposite_name=source_field_name,
+                mapped_by=source_field_name,
+                optional=source_multiplicity == "0..1",
+            )
+        elif not source_many and target_many:
+            source_field = JavaAssociation(
+                name=source_field_name,
+                target_class_name=target.class_name,
+                kind="ONE_TO_MANY",
+                collection=True,
+                owning=False,
+                opposite_name=target_field_name,
+                mapped_by=target_field_name,
+            )
+            target_field = JavaAssociation(
+                name=target_field_name,
+                target_class_name=source.class_name,
+                kind="MANY_TO_ONE",
+                collection=False,
+                owning=True,
+                opposite_name=source_field_name,
+                optional=source_multiplicity == "0..1",
+                join_column_name=f"{snake_case(target_field_name)}_id",
+            )
+        elif source_many and not target_many:
+            source_field = JavaAssociation(
+                name=source_field_name,
+                target_class_name=target.class_name,
+                kind="MANY_TO_ONE",
+                collection=False,
+                owning=True,
+                opposite_name=target_field_name,
+                optional=target_multiplicity == "0..1",
+                join_column_name=f"{snake_case(source_field_name)}_id",
+            )
+            target_field = JavaAssociation(
+                name=target_field_name,
+                target_class_name=source.class_name,
+                kind="ONE_TO_MANY",
+                collection=True,
+                owning=False,
+                opposite_name=source_field_name,
+                mapped_by=source_field_name,
+            )
+        else:
+            source_field = JavaAssociation(
+                name=source_field_name,
+                target_class_name=target.class_name,
+                kind="MANY_TO_MANY",
+                collection=True,
+                owning=True,
+                opposite_name=target_field_name,
+                join_table_name=f"{source.table_name}_{target.table_name}",
+                join_table_column=f"{snake_case(source.variable_name)}_id",
+                inverse_join_table_column=f"{snake_case(target.variable_name)}_id",
+            )
+            target_field = JavaAssociation(
+                name=target_field_name,
+                target_class_name=source.class_name,
+                kind="MANY_TO_MANY",
+                collection=True,
+                owning=False,
+                opposite_name=source_field_name,
+                mapped_by=source_field_name,
+            )
+
+        mapped = JavaRelationship(
+            relationship_id=str(relationship["id"]),
+            source_class_name=source.class_name,
+            target_class_name=target.class_name,
+            source_field_name=source_field_name,
+            target_field_name=target_field_name,
+            source_kind=source_field.kind,
+            target_kind=target_field.kind,
+            source_entity=source,
+            target_entity=target,
+        )
+        return mapped, source_field, target_field
+
+    def _default_role_name(self, entity: JavaEntity, collection: bool) -> str:
+        if collection:
+            return pluralize(entity.variable_name)
+        return entity.variable_name
