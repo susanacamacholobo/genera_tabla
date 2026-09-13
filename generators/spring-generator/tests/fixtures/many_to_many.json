@@ -1,0 +1,38 @@
+{
+  "id": "project-academia",
+  "name": "Academia",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-estudiante",
+      "name": "Estudiante",
+      "position": { "x": 100, "y": 100 },
+      "attributes": [
+        { "id": "estudiante-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "estudiante-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-curso",
+      "name": "Curso",
+      "position": { "x": 400, "y": 100 },
+      "attributes": [
+        { "id": "curso-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "curso-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "estudiantes-cursos",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-estudiante",
+      "targetClassId": "class-curso",
+      "sourceMultiplicity": "0..*",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "estudiantes",
+      "targetRole": "cursos"
+    }
+  ],
+  "enumerations": []
+}

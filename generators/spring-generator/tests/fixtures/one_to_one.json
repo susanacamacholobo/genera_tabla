@@ -1,0 +1,38 @@
+{
+  "id": "project-identidad",
+  "name": "Identidad",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-persona",
+      "name": "Persona",
+      "position": { "x": 100, "y": 100 },
+      "attributes": [
+        { "id": "persona-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "persona-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-pasaporte",
+      "name": "Pasaporte",
+      "position": { "x": 400, "y": 100 },
+      "attributes": [
+        { "id": "pasaporte-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "pasaporte-numero", "name": "numero", "dataType": "String", "nullable": false, "unique": true, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "persona-pasaporte",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-persona",
+      "targetClassId": "class-pasaporte",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "1",
+      "sourceRole": "titular",
+      "targetRole": "pasaporte"
+    }
+  ],
+  "enumerations": []
+}

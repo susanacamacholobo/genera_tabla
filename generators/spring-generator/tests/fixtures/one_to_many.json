@@ -1,0 +1,38 @@
+{
+  "id": "project-veterinaria-relaciones",
+  "name": "Veterinaria Relaciones",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-cliente",
+      "name": "Cliente",
+      "position": { "x": 100, "y": 100 },
+      "attributes": [
+        { "id": "cliente-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "cliente-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-mascota",
+      "name": "Mascota",
+      "position": { "x": 400, "y": 100 },
+      "attributes": [
+        { "id": "mascota-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "mascota-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "cliente-mascotas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-cliente",
+      "targetClassId": "class-mascota",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "cliente",
+      "targetRole": "mascotas"
+    }
+  ],
+  "enumerations": []
+}

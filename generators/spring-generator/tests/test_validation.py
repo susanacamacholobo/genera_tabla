@@ -18,11 +18,56 @@ def test_accepts_a_simple_entity(simple_entity_model: dict[str, Any]) -> None:
     assert result.issues == ()
 
 
-def test_rejects_relationships_until_phase_10(simple_entity_model: dict[str, Any]) -> None:
-    model = deepcopy(simple_entity_model)
-    model["relationships"] = [{"id": "relationship-1"}]
+def test_accepts_supported_associations(association_model: dict[str, Any]) -> None:
+    assert ModelValidator().validate(association_model).valid
 
-    assert "UNSUPPORTED_RELATIONSHIPS" in issue_codes(model)
+
+def test_rejects_broken_relationship_references(simple_entity_model: dict[str, Any]) -> None:
+    model = deepcopy(simple_entity_model)
+    model["relationships"] = [
+        {
+            "id": "relationship-1",
+            "type": "ASSOCIATION",
+            "sourceClassId": "class-cliente",
+            "targetClassId": "missing",
+            "sourceMultiplicity": "1",
+            "targetMultiplicity": "0..*",
+        }
+    ]
+
+    assert "MISSING_TARGET_CLASS" in issue_codes(model)
+
+
+def test_rejects_generalization_until_inheritance_is_supported(
+    simple_entity_model: dict[str, Any],
+) -> None:
+    model = deepcopy(simple_entity_model)
+    second = deepcopy(model["classes"][0])
+    second.update({"id": "class-premium", "name": "ClientePremium"})
+    model["classes"].append(second)
+    model["relationships"] = [
+        {
+            "id": "inheritance-1",
+            "type": "GENERALIZATION",
+            "sourceClassId": "class-premium",
+            "targetClassId": "class-cliente",
+            "sourceMultiplicity": "1",
+            "targetMultiplicity": "1",
+        }
+    ]
+
+    assert "UNSUPPORTED_GENERALIZATION" in issue_codes(model)
+
+
+def test_rejects_relationship_field_collisions(association_model: dict[str, Any]) -> None:
+    model = deepcopy(association_model)
+    relationship = model["relationships"][0]
+    source = next(
+        item for item in model["classes"] if item["id"] == relationship["sourceClassId"]
+    )
+    relationship["targetRole"] = source["attributes"][1]["name"]
+
+    assert "DUPLICATE_GENERATED_FIELD" in issue_codes(model)
 
 
 @pytest.mark.parametrize(
