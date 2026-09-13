@@ -10,13 +10,13 @@
 - Fase 3: editor UML visual con clases, atributos, enumeraciones básicas,
   asociaciones, generalizaciones, multiplicidades, selección, errores y
   undo/redo.
+- Fase 4: CRUD de proyectos, capas API/servicio/repositorio, PostgreSQL local y
+  primera migración Alembic. Migración y flujo HTTP verificados contra
+  PostgreSQL 17.
 
 ## IN PROGRESS
 
-- Fase 4: CRUD de proyectos, capas API/servicio/repositorio, configuración de
-  PostgreSQL y primera migración Alembic implementados. Pendiente ejecutar la
-  migración y el CRUD contra la instancia PostgreSQL local configurada por el
-  usuario.
+- Ninguna fase.
 
 ## TODO
 
@@ -25,9 +25,9 @@
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 3.
-- PostgreSQL local exige autenticación SCRAM; la verificación real de la fase 4
-  requiere que el usuario complete el archivo privado `case-tool/backend/.env`.
+- No se conocen defectos en el alcance de las fases 0 a 4.
+- PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
+  en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
   una carencia del editor, porque debe admitir modelos parciales mientras se
   construyen.

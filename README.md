@@ -5,9 +5,8 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0, 1, 2, la preparación 2.5 y la fase 3. La
-implementación de la fase 4 está completa y pendiente únicamente de validar la
-conexión contra la instancia PostgreSQL local:
+Están implementadas las fases 0, 1, 2, la preparación 2.5, la fase 3 y la fase
+4:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
