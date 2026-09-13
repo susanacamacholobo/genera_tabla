@@ -105,6 +105,26 @@ La contraseña no tiene valor por defecto. El perfil de pruebas evita depender
 de infraestructura externa, pero no modifica el comportamiento productivo. La
 instalación objetivo usa PostgreSQL local; no existe una ruta Docker paralela.
 
+Las asociaciones se convierten en dos campos JPA coordinados. La dirección del
+modelo canónico determina el propietario en relaciones simétricas; en una
+relación uno-a-muchos, el extremo `ManyToOne` es siempre propietario de la FK.
+El extremo inverso referencia exactamente ese campo con `mappedBy`. Para
+muchos-a-muchos, el origen posee una tabla de unión con nombres estables.
+
+```text
+sourceMultiplicity + targetMultiplicity
+                    |
+                    v
+         kind, owner, mappedBy, join metadata
+                    |
+                    v
+         dos JavaAssociation coordinadas
+```
+
+La protección transitoria de serialización vive en las entidades generadas. Al
+introducir DTOs en la fase 11, el contrato JSON dejará de depender de la forma
+del grafo de persistencia.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.

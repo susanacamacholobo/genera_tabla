@@ -103,6 +103,7 @@ def test_generates_bidirectional_jpa_annotations(association_model: dict[str, An
     assert "src/test/java/com/example/" in "\n".join(generated.files)
     assert "RelationshipMappingTests.java" in "\n".join(generated.files)
     assert "RelationshipPersistenceTests.java" in "\n".join(generated.files)
+    assert "Relaciones JPA generadas:" in generated.files["README.md"]
 
     if association_model["name"] == "Identidad":
         assert "@OneToOne(optional = false)" in sources

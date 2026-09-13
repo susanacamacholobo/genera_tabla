@@ -28,6 +28,10 @@
   variables de entorno, `.env.example`, perfil H2 aislado para tests y pruebas
   CRUD MockMvc por entidad. Compilación, CRUD y persistencia tras reinicio
   verificados contra PostgreSQL 17.6 sin Docker.
+- Fase 10: asociaciones bidireccionales `OneToOne`, `OneToMany`/`ManyToOne` y
+  `ManyToMany`, con propietario determinista, `mappedBy`, columnas/tablas de
+  unión, control de ciclos JSON y pruebas generadas de metadata, persistencia y
+  serialización. Cliente–Mascota verificado también contra PostgreSQL 17.6.
 
 ## IN PROGRESS
 
@@ -35,12 +39,12 @@
 
 ## TODO
 
-- Fase 10: relaciones JPA.
+- Fase 11: DTO, mapeadores, Bean Validation y excepciones.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 9.
+- No se conocen defectos en el alcance de las fases 0 a 10.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -54,3 +58,5 @@
   conectará la UI con proyectos y snapshots pertenece a un incremento posterior.
 - Maven no está instalado globalmente en el equipo; la verificación del backend
   generado se realizó con Maven 3.9.16 descargado y verificado temporalmente.
+- La generalización y las asociaciones reflexivas permanecen fuera del alcance
+  del generador; se rechazan con errores explícitos.

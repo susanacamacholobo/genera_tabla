@@ -22,7 +22,8 @@ ModelValidator -> SpringModelMapper -> plantillas Jinja2 -> GeneratedProject
 - una entidad no tiene exactamente una clave primaria numérica;
 - un nombre no es un identificador Java válido;
 - aparece un tipo canónico no soportado;
-- existen relaciones o enumeraciones, reservadas para fases posteriores.
+- una asociación tiene referencias, multiplicidades o roles inválidos;
+- existen enumeraciones, reservadas para una fase posterior.
 
 Esta validación es deliberadamente más estricta que la del editor: un diagrama
 parcial es válido durante el diseño, pero no necesariamente es generable.
@@ -52,10 +53,41 @@ H2 permanece exclusivamente como dependencia de alcance `test`. El perfil
 MockMvc, por lo que `mvn test` no depende de una base externa. La ejecución
 normal nunca cae silenciosamente a H2.
 
-Hibernate utiliza `ddl-auto: update` para materializar el esquema sencillo del
-MVP. La administración versionada de esquemas podrá reemplazar esta estrategia
-cuando se incorporen relaciones. Las relaciones y los DTO permanecen fuera de
-alcance hasta las fases 10 y 11.
+Hibernate utiliza `ddl-auto: update` para materializar el esquema del MVP. La
+administración versionada de esquemas podrá reemplazar esta estrategia cuando
+el contrato generado se estabilice. Los DTO permanecen fuera de alcance hasta
+la fase 11.
+
+## Relaciones JPA
+
+La fase 10 interpreta la multiplicidad de cada extremo desde la perspectiva
+del extremo opuesto:
+
+| Origen | Destino | Campo origen | Campo destino |
+| --- | --- | --- | --- |
+| uno | uno | `@OneToOne` propietario | `@OneToOne(mappedBy=...)` |
+| uno | muchos | `@OneToMany(mappedBy=...)` | `@ManyToOne` propietario |
+| muchos | uno | `@ManyToOne` propietario | `@OneToMany(mappedBy=...)` |
+| muchos | muchos | `@ManyToMany` + `@JoinTable` | `@ManyToMany(mappedBy=...)` |
+
+El lado propietario se elige por la dirección canónica, no por el orden en que
+se renderizan archivos. Los roles `targetRole` y `sourceRole` nombran,
+respectivamente, el campo navegable en la clase origen y en la clase destino.
+Si faltan, los nombres se derivan de las clases y de si el extremo es singular
+o colección.
+
+Las colecciones usan `Set` inicializado y carga eager durante esta etapa para
+que los controladores que todavía exponen entidades puedan serializarlas con
+`open-in-view: false`. `@JsonIgnoreProperties` omite sólo el enlace de regreso
+al anidar una entidad y evita ciclos. La fase 11 reemplazará esta frontera por
+DTOs, permitiendo volver a estrategias de carga ajustadas al contrato REST.
+
+El validador rechaza referencias rotas, multiplicidades y roles inválidos,
+colisiones con atributos/campos generados, asociaciones reflexivas y
+generalizaciones. Estas dos últimas no forman parte del alcance de la fase 10.
+
+Cada proyecto con asociaciones incorpora pruebas de metadata JPA y pruebas que
+persisten, recargan y serializan cada relación.
 
 Los comandos completos de instalación, generación y prueba están en
 [`generators/spring-generator/README.md`](../generators/spring-generator/README.md).

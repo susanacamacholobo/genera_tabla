@@ -1,9 +1,8 @@
 # Generador Spring Boot
 
 Genera un proyecto CRUD determinista desde el modelo canónico de GeneraTabla.
-Las fases 8 y 9 soportan entidades simples y producen `pom.xml`, aplicación,
-entidades JPA, repositorios, servicios, controladores REST, configuración
-PostgreSQL y pruebas CRUD.
+Las fases 8 a 10 producen `pom.xml`, aplicación, entidades JPA, repositorios,
+servicios, controladores REST, configuración PostgreSQL, relaciones y pruebas.
 
 ## Instalar
 
@@ -58,7 +57,8 @@ mvn spring-boot:run
 ```
 
 `mvn test` no necesita PostgreSQL: activa el perfil `test` y usa una base H2
-aislada. Genera una prueba de contexto y una prueba CRUD HTTP por entidad.
+aislada. Genera pruebas de contexto, CRUD HTTP, metadata JPA, persistencia de
+relaciones y serialización JSON.
 
 La API queda disponible en `http://localhost:8080/api/clientes`. En otra
 terminal se puede crear y consultar un registro:
@@ -88,10 +88,14 @@ Detén la aplicación con `Ctrl+C`.
 
 - Una clave primaria numérica (`Integer` o `Long`) por entidad.
 - Tipos escalares canónicos soportados por el mapeador.
-- Sin relaciones ni enumeraciones; se rechazan antes de renderizar.
+- Asociaciones bidireccionales `OneToOne`, `OneToMany`/`ManyToOne` y
+  `ManyToMany` según las multiplicidades UML.
+- Roles de asociación opcionales; cuando faltan se derivan de las clases.
+- `mappedBy`, `@JoinColumn` y `@JoinTable` generados de forma determinista.
+- Serialización protegida contra ciclos con `@JsonIgnoreProperties`.
 - PostgreSQL local configurado mediante `DB_HOST`, `DB_PORT`, `DB_NAME`,
   `DB_USERNAME` y `DB_PASSWORD`.
 - H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.
-- Sin DTO ni Bean Validation todavía.
+- Sin generalización, asociaciones reflexivas, DTO ni Bean Validation todavía.
 
-Las relaciones pertenecen a la fase 10 y DTO/validación a la fase 11.
+DTO, Bean Validation y excepciones estructuradas pertenecen a la fase 11.

@@ -44,5 +44,18 @@ PostgreSQL. Endpoints generados:
 {% for entity in project.entities %}
 - `/api/{{ entity.endpoint_name }}`
 {% endfor %}
+{% if project.relationships %}
+Relaciones JPA generadas:
+
+{% for relationship in project.relationships %}
+- `{{ relationship.source_class_name }}.{{ relationship.source_field_name }}`
+  (`{{ relationship.source_kind }}`) ↔
+  `{{ relationship.target_class_name }}.{{ relationship.target_field_name }}`
+  (`{{ relationship.target_kind }}`)
+{% endfor %}
+
+Las pruebas `RelationshipMappingTests` y `RelationshipPersistenceTests`
+verifican metadata JPA, persistencia y serialización sin ciclos.
+{% endif %}
 
 Detén la aplicación con `Ctrl+C`.
