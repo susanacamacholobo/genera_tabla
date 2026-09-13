@@ -1,0 +1,7 @@
+package {{ project.package_name }}.repository;
+
+import {{ project.package_name }}.model.{{ entity.class_name }};
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface {{ entity.class_name }}Repository extends JpaRepository<{{ entity.class_name }}, {{ entity.id_field.java_type }}> {
+}

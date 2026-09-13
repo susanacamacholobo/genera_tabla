@@ -1,0 +1,53 @@
+package {{ project.package_name }}.service;
+
+import java.util.List;
+
+import {{ project.package_name }}.model.{{ entity.class_name }};
+import {{ project.package_name }}.repository.{{ entity.class_name }}Repository;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+@Service
+@Transactional(readOnly = true)
+public class {{ entity.class_name }}Service {
+
+    private final {{ entity.class_name }}Repository repository;
+
+    public {{ entity.class_name }}Service({{ entity.class_name }}Repository repository) {
+        this.repository = repository;
+    }
+
+    public List<{{ entity.class_name }}> findAll() {
+        return repository.findAll();
+    }
+
+    public {{ entity.class_name }} findById({{ entity.id_field.java_type }} id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND,
+                        "{{ entity.class_name }} no encontrado"));
+    }
+
+    @Transactional
+    public {{ entity.class_name }} create({{ entity.class_name }} input) {
+        input.set{{ entity.id_field.capitalized_name }}(null);
+        return repository.save(input);
+    }
+
+    @Transactional
+    public {{ entity.class_name }} update({{ entity.id_field.java_type }} id, {{ entity.class_name }} input) {
+        {{ entity.class_name }} current = findById(id);
+{% for field in entity.mutable_fields %}
+        current.set{{ field.capitalized_name }}(input.get{{ field.capitalized_name }}());
+{% endfor %}
+        return repository.save(current);
+    }
+
+    @Transactional
+    public void delete({{ entity.id_field.java_type }} id) {
+        {{ entity.class_name }} current = findById(id);
+        repository.delete(current);
+    }
+}

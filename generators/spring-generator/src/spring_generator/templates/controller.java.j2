@@ -1,0 +1,57 @@
+package {{ project.package_name }}.controller;
+
+import java.util.List;
+
+import {{ project.package_name }}.model.{{ entity.class_name }};
+import {{ project.package_name }}.service.{{ entity.class_name }}Service;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("/api/{{ entity.endpoint_name }}")
+public class {{ entity.class_name }}Controller {
+
+    private final {{ entity.class_name }}Service service;
+
+    public {{ entity.class_name }}Controller({{ entity.class_name }}Service service) {
+        this.service = service;
+    }
+
+    @GetMapping
+    public List<{{ entity.class_name }}> findAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/{id}")
+    public {{ entity.class_name }} findById(@PathVariable {{ entity.id_field.java_type }} id) {
+        return service.findById(id);
+    }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public {{ entity.class_name }} create(@RequestBody {{ entity.class_name }} input) {
+        return service.create(input);
+    }
+
+    @PutMapping("/{id}")
+    public {{ entity.class_name }} update(
+            @PathVariable {{ entity.id_field.java_type }} id,
+            @RequestBody {{ entity.class_name }} input) {
+        return service.update(id, input);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable {{ entity.id_field.java_type }} id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}

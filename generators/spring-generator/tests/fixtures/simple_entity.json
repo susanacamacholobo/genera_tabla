@@ -1,0 +1,48 @@
+{
+  "id": "project-veterinaria",
+  "name": "Veterinaria",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-cliente",
+      "name": "Cliente",
+      "position": { "x": 100, "y": 120 },
+      "attributes": [
+        {
+          "id": "attribute-id",
+          "name": "id",
+          "dataType": "Long",
+          "nullable": false,
+          "unique": true,
+          "primaryKey": true
+        },
+        {
+          "id": "attribute-nombre",
+          "name": "nombre",
+          "dataType": "String",
+          "nullable": false,
+          "unique": false,
+          "primaryKey": false
+        },
+        {
+          "id": "attribute-saldo",
+          "name": "saldo",
+          "dataType": "Decimal",
+          "nullable": true,
+          "unique": false,
+          "primaryKey": false
+        },
+        {
+          "id": "attribute-fecha-registro",
+          "name": "fechaRegistro",
+          "dataType": "DateTime",
+          "nullable": false,
+          "unique": false,
+          "primaryKey": false
+        }
+      ]
+    }
+  ],
+  "relationships": [],
+  "enumerations": []
+}

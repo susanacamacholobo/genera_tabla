@@ -5,11 +5,29 @@ build-backend = "hatchling.build"
 [project]
 name = "software1-spring-generator"
 version = "0.1.0"
-description = "Deterministic Spring Boot generator (implementation begins in phase 8)"
+description = "Deterministic Spring Boot generator for the GeneraTabla canonical model"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "jinja2>=3.1.6,<4",
+]
+
+[project.optional-dependencies]
+dev = [
+    "build>=1.2,<2",
+    "pytest>=8.3,<9",
+    "ruff>=0.11,<1",
+]
+
+[project.scripts]
+spring-generator = "spring_generator.cli:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/spring_generator"]
 
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
