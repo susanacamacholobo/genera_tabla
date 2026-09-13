@@ -72,6 +72,17 @@ en tablas por clase o atributo. Las restricciones únicas por proyecto y
 revisión impiden bifurcaciones accidentales; el bloqueo de fila y
 `base_revision` implementan concurrencia optimista para el MVP.
 
+Los comandos escritos entran por otra frontera de adaptador:
+
+```text
+texto -> NaturalLanguageCommandParser -> Command -> CommandValidator -> modelo
+```
+
+`RuleBasedCommandParser` es la primera implementación. Sólo reconoce una
+gramática explícita y no modifica el modelo directamente. Una futura
+implementación con LLM deberá satisfacer la misma interfaz y producir los
+mismos comandos tipados.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.
@@ -94,3 +105,5 @@ revisión impiden bifurcaciones accidentales; el bloqueo de fila y
   produce exactamente un evento y un snapshot en la revisión siguiente.
 - Los snapshots son inmutables; eliminar el proyecto borra snapshots y eventos
   mediante claves foráneas con `ON DELETE CASCADE`.
+- El parser de texto resuelve nombres a IDs, pero delega todas las reglas de
+  negocio a `CommandValidator` y la ejecución a `CommandHistory`.

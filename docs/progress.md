@@ -18,6 +18,9 @@
   Flujo completo y conflictos verificados contra PostgreSQL 17.
 - Fase 6: `CommandHistory`, undo/redo y UI básica, implementados anticipadamente
   durante las fases 2 y 3.
+- Fase 7: interfaz `NaturalLanguageCommandParser`, parser determinista para
+  crear/eliminar clases y agregar atributos, barra de texto, errores tipados e
+  integración con el historial existente.
 
 ## IN PROGRESS
 
@@ -25,12 +28,12 @@
 
 ## TODO
 
-- Fase 7: comandos de texto deterministas.
+- Fase 8: generador Spring Boot básico.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 6.
+- No se conocen defectos en el alcance de las fases 0 a 7.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es

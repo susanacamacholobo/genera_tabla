@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 5, además de la preparación 2.5:
+Están implementadas las fases 0 a 7, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -16,6 +16,8 @@ Están implementadas las fases 0 a 5, además de la preparación 2.5:
 - API CRUD de proyectos con FastAPI, SQLAlchemy, PostgreSQL y Alembic.
 - snapshots JSONB del modelo canónico y bitácora de comandos con control de
   revisión optimista.
+- parser determinista de comandos escritos y barra de ejecución integrada al
+  editor.
 
 Colaboración en tiempo real, generación Spring, XMI e IA quedan deliberadamente
 fuera de este incremento.

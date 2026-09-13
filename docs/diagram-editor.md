@@ -33,6 +33,7 @@ el modelo completo y `externalReferences`.
 - `UMLEnumNode`: representación básica y de sólo lectura de enumeraciones.
 - `RelationshipEdge`: dibuja el enlace y las multiplicidades en ambos extremos.
 - `PropertiesPanel`: comandos de clases, atributos y relaciones.
+- `TextCommandBar`: convierte instrucciones escritas a comandos de dominio.
 - `useDiagramEditor`: conecta React con una única instancia de `CommandHistory`.
 
 ## Interacciones y comandos
@@ -46,6 +47,7 @@ el modelo completo y `externalReferences`.
 | Arrastrar entre handles | `ADD_RELATIONSHIP` |
 | Guardar tipo o multiplicidades | `UPDATE_RELATIONSHIP` |
 | Eliminar selección | `DELETE_CLASS` o `DELETE_RELATIONSHIP` |
+| Ejecutar una instrucción escrita | Comando producido por `RuleBasedCommandParser` |
 
 Una conexión nueva se crea como asociación `1` → `0..*` y queda seleccionada
 inmediatamente para editar tipo y multiplicidades. Los errores del dominio se
@@ -99,3 +101,7 @@ npm run dev --workspace @software1/case-frontend
 El editor inicia con `docs/examples/veterinaria.json` y ofrece controles de zoom,
 pan y fit view.
 
+La barra de comandos admite las instrucciones deterministas descritas en
+[text-commands.md](text-commands.md). Un error de sintaxis se muestra junto a
+la barra; un error de dominio utiliza el mismo panel que las interacciones
+visuales.
