@@ -108,6 +108,10 @@ def test_generates_bidirectional_jpa_annotations(association_model: dict[str, An
         assert "@OneToOne(optional = false)" in sources
         assert '@OneToOne(mappedBy = "pasaporte")' in sources
         assert 'name = "pasaporte_id", nullable = false, unique = true' in sources
+        service = generated.files[
+            "src/main/java/com/example/identidad/service/PersonaService.java"
+        ]
+        assert "current.setPasaporte(input.getPasaporte());" in service
     elif association_model["name"] == "Veterinaria Relaciones":
         assert '@OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)' in sources
         assert "@ManyToOne(optional = false)" in sources

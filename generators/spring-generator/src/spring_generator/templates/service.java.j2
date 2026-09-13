@@ -42,6 +42,11 @@ public class {{ entity.class_name }}Service {
 {% for field in entity.mutable_fields %}
         current.set{{ field.capitalized_name }}(input.get{{ field.capitalized_name }}());
 {% endfor %}
+{% for association in entity.associations %}
+{% if association.owning %}
+        current.set{{ association.capitalized_name }}(input.get{{ association.capitalized_name }}());
+{% endif %}
+{% endfor %}
         return repository.save(current);
     }
 
