@@ -1,8 +1,9 @@
 # Generador Spring Boot
 
 Genera un proyecto CRUD determinista desde el modelo canónico de GeneraTabla.
-La fase 8 soporta entidades simples y produce `pom.xml`, aplicación, entidades
-JPA, repositorios, servicios, controladores REST y una prueba de contexto.
+Las fases 8 y 9 soportan entidades simples y producen `pom.xml`, aplicación,
+entidades JPA, repositorios, servicios, controladores REST, configuración
+PostgreSQL y pruebas CRUD.
 
 ## Instalar
 
@@ -24,18 +25,40 @@ El directorio de salida debe ser nuevo o estar vacío:
 ```
 
 Se puede cambiar el paquete base con `--group-id com.miempresa`. El resultado
-usa Java 21, Spring Boot 4.1.1 y una base H2 temporal para poder ejecutarse sin
-configuración adicional en esta fase.
+usa Java 21 y Spring Boot 4.1.1.
+
+## Configurar PostgreSQL local
+
+El proyecto generado contiene `.env.example`. Desde su directorio:
+
+```powershell
+createdb --host 127.0.0.1 --port 5432 --username postgres veterinaria
+Copy-Item .env.example .env
+notepad .env
+
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^([^#=]+)=(.*)$') {
+    [Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process')
+  }
+}
+```
+
+La contraseña permanece en `.env`, archivo ignorado por Git. No se requiere
+Docker.
 
 ## Compilar y ejecutar el resultado
 
-Requiere Java 21 y Maven 3.6.3 o posterior:
+Requiere Java 21, Maven 3.6.3 o posterior y PostgreSQL local para ejecutar la
+aplicación:
 
 ```powershell
 Set-Location .\generated\veterinaria
 mvn test
 mvn spring-boot:run
 ```
+
+`mvn test` no necesita PostgreSQL: activa el perfil `test` y usa una base H2
+aislada. Genera una prueba de contexto y una prueba CRUD HTTP por entidad.
 
 La API queda disponible en `http://localhost:8080/api/clientes`. En otra
 terminal se puede crear y consultar un registro:
@@ -66,7 +89,9 @@ Detén la aplicación con `Ctrl+C`.
 - Una clave primaria numérica (`Integer` o `Long`) por entidad.
 - Tipos escalares canónicos soportados por el mapeador.
 - Sin relaciones ni enumeraciones; se rechazan antes de renderizar.
-- Sin DTO, Bean Validation ni PostgreSQL generado todavía.
+- PostgreSQL local configurado mediante `DB_HOST`, `DB_PORT`, `DB_NAME`,
+  `DB_USERNAME` y `DB_PASSWORD`.
+- H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.
+- Sin DTO ni Bean Validation todavía.
 
-La configuración PostgreSQL pertenece a la fase 9, las relaciones a la fase 10
-y DTO/validación a la fase 11.
+Las relaciones pertenecen a la fase 10 y DTO/validación a la fase 11.

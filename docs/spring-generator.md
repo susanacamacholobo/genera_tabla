@@ -41,9 +41,21 @@ prueba que inicia el contexto de Spring. Los archivos se ordenan antes de
 escribirlos y el ZIP usa fechas fijas, por lo que entradas iguales producen
 salidas reproducibles.
 
-En la fase 8 se incluye H2 en memoria solamente para ejecutar el resultado sin
-infraestructura. La fase 9 sustituirá esa configuración por PostgreSQL local.
-Las relaciones y los DTO permanecen fuera de alcance hasta las fases 10 y 11.
+Desde la fase 9, la ejecución normal usa el driver PostgreSQL y obtiene la
+conexión de `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME` y `DB_PASSWORD`.
+`application.yml` no contiene secretos y `.env` queda ignorado por Git. Por
+decisión del entorno del proyecto se trabaja con PostgreSQL local y no se genera
+`docker-compose.yml`.
+
+H2 permanece exclusivamente como dependencia de alcance `test`. El perfil
+`test` se activa de forma explícita y cada entidad recibe una prueba CRUD con
+MockMvc, por lo que `mvn test` no depende de una base externa. La ejecución
+normal nunca cae silenciosamente a H2.
+
+Hibernate utiliza `ddl-auto: update` para materializar el esquema sencillo del
+MVP. La administración versionada de esquemas podrá reemplazar esta estrategia
+cuando se incorporen relaciones. Las relaciones y los DTO permanecen fuera de
+alcance hasta las fases 10 y 11.
 
 Los comandos completos de instalación, generación y prueba están en
 [`generators/spring-generator/README.md`](../generators/spring-generator/README.md).

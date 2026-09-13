@@ -94,6 +94,17 @@ plantillas reciben un modelo intermedio ya validado, sin interpretar el JSON
 canónico. `GeneratedProject` mantiene el resultado en memoria y permite
 materializar exactamente los mismos archivos en un directorio o un ZIP.
 
+La configuración de datos del resultado separa ejecución y pruebas:
+
+```text
+ejecución normal -> application.yml      -> variables de entorno -> PostgreSQL
+mvn test         -> perfil test explícito -> H2 en memoria
+```
+
+La contraseña no tiene valor por defecto. El perfil de pruebas evita depender
+de infraestructura externa, pero no modifica el comportamiento productivo. La
+instalación objetivo usa PostgreSQL local; no existe una ruta Docker paralela.
+
 ## Decisiones
 
 - Actualizaciones inmutables para facilitar historial, pruebas y colaboración.
@@ -120,3 +131,5 @@ materializar exactamente los mismos archivos en un directorio o un ZIP.
   negocio a `CommandValidator` y la ejecución a `CommandHistory`.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
+- Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,
+  servicio, repositorio y mapeo JPA que usa la aplicación.
