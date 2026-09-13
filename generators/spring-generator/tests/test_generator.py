@@ -13,16 +13,25 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     root = "src/main/java/com/example/veterinaria"
 
     assert set(generated.files) == {
+        ".env.example",
         ".gitignore",
+        "README.md",
         "pom.xml",
+        "src/main/resources/application.yml",
         f"{root}/VeterinariaApplication.java",
         f"{root}/model/Cliente.java",
         f"{root}/repository/ClienteRepository.java",
         f"{root}/service/ClienteService.java",
         f"{root}/controller/ClienteController.java",
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java",
+        "src/test/resources/application-test.yml",
     }
     assert "<version>4.1.1</version>" in generated.files["pom.xml"]
+    assert "<artifactId>postgresql</artifactId>" in generated.files["pom.xml"]
+    assert "<scope>test</scope>" in generated.files["pom.xml"]
+    assert "${DB_PASSWORD}" in generated.files["src/main/resources/application.yml"]
+    assert "replace-with-your-local-password" in generated.files[".env.example"]
+    assert "docker" not in "\n".join(generated.files).lower()
     assert "extends JpaRepository<Cliente, Long>" in generated.files[
         f"{root}/repository/ClienteRepository.java"
     ]
@@ -34,6 +43,9 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     ]
     assert "ClienteRepository" not in generated.files[f"{root}/controller/ClienteController.java"]
     assert "private BigDecimal saldo;" in generated.files[f"{root}/model/Cliente.java"]
+    assert '@ActiveProfiles("test")' in generated.files[
+        "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java"
+    ]
 
 
 def test_generation_and_zip_are_byte_deterministic(simple_entity_model: dict[str, Any]) -> None:

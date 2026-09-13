@@ -1,0 +1,48 @@
+# {{ project.artifact_id }}
+
+Backend Spring Boot generado por GeneraTabla. La aplicación usa PostgreSQL
+local y recibe toda la conexión mediante variables de entorno.
+
+## Requisitos
+
+- Java {{ project.java_version }}
+- Maven 3.6.3 o posterior
+- PostgreSQL local
+
+## Configurar PostgreSQL
+
+Crea la base `{{ project.database_name }}` y prepara un archivo privado:
+
+```powershell
+createdb --host 127.0.0.1 --port 5432 --username postgres {{ project.database_name }}
+Copy-Item .env.example .env
+notepad .env
+```
+
+Antes de ejecutar, importa las variables del archivo en la terminal actual:
+
+```powershell
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^([^#=]+)=(.*)$') {
+    [Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process')
+  }
+}
+```
+
+`.env` está ignorado por Git. No guardes contraseñas en `application.yml`.
+
+## Probar y ejecutar
+
+```powershell
+mvn test
+mvn spring-boot:run
+```
+
+Los tests usan H2 aislado con perfil `test`; la aplicación normal usa
+PostgreSQL. Endpoints generados:
+
+{% for entity in project.entities %}
+- `/api/{{ entity.endpoint_name }}`
+{% endfor %}
+
+Detén la aplicación con `Ctrl+C`.

@@ -9,6 +9,7 @@ def test_maps_canonical_names_and_types(simple_entity_model: dict[str, Any]) -> 
     project = SpringModelMapper().map(simple_entity_model)
 
     assert project.artifact_id == "veterinaria"
+    assert project.database_name == "veterinaria"
     assert project.package_name == "com.example.veterinaria"
     assert project.application_class == "VeterinariaApplication"
     entity = project.entities[0]

@@ -89,6 +89,7 @@ class JavaEntity:
 class SpringProject:
     group_id: str
     artifact_id: str
+    database_name: str
     package_name: str
     application_class: str
     boot_version: str
@@ -126,6 +127,7 @@ class SpringModelMapper:
         return SpringProject(
             group_id=self.group_id,
             artifact_id=artifact_id,
+            database_name=snake_case(project_name) or "generated_application",
             package_name=f"{self.group_id}.{package_segment}",
             application_class=f"{application_name}Application",
             boot_version=self.boot_version,

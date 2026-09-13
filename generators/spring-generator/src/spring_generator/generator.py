@@ -69,9 +69,17 @@ class SpringGenerator:
         test_root = f"src/test/java/{project.package_path}"
         files = {
             ".gitignore": self._render("gitignore.j2", project=project),
+            ".env.example": self._render("env.example.j2", project=project),
+            "README.md": self._render("readme.md.j2", project=project),
             "pom.xml": self._render("pom.xml.j2", project=project),
+            "src/main/resources/application.yml": self._render(
+                "application.yml.j2", project=project
+            ),
             f"{source_root}/{project.application_class}.java": self._render(
                 "application.java.j2", project=project
+            ),
+            "src/test/resources/application-test.yml": self._render(
+                "application-test.yml.j2", project=project
             ),
             f"{test_root}/{project.application_class}Tests.java": self._render(
                 "application_test.java.j2", project=project
