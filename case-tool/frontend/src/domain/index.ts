@@ -5,4 +5,5 @@ export * from './commands/types';
 export * from './commands/CommandValidator';
 export * from './commands/CommandExecutor';
 export * from './commands/CommandHistory';
-
+export * from './language/NaturalLanguageCommandParser';
+export * from './language/RuleBasedCommandParser';
