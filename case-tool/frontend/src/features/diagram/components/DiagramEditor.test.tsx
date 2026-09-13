@@ -130,4 +130,49 @@ describe('DiagramEditor', () => {
 
     expect((await screen.findByRole('alert')).textContent).toContain('Ya existe una clase con ese nombre');
   });
+
+  it('executes deterministic text commands through the same history', async () => {
+    const user = userEvent.setup();
+    const states: ProjectModel[] = [];
+    render(
+      <DiagramEditor
+        initialProject={structuredClone(veterinariaFixture) as ProjectModel}
+        onProjectChange={(project) => states.push(project)}
+      />,
+    );
+
+    const input = screen.getByLabelText('Comando');
+    await user.type(input, 'crea clase Factura');
+    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(true));
+    expect(screen.getByRole('status').textContent).toContain('Comando aplicado');
+
+    await user.type(input, 'agrega total decimal a Factura');
+    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await waitFor(() => expect(
+      states.at(-1)?.classes.find((item) => item.name === 'Factura')?.attributes[0],
+    ).toMatchObject({ name: 'total', dataType: 'Decimal' }));
+
+    await user.click(screen.getByRole('button', { name: 'Deshacer' }));
+    await waitFor(() => expect(
+      states.at(-1)?.classes.find((item) => item.name === 'Factura')?.attributes,
+    ).toHaveLength(0));
+  });
+
+  it('shows parser errors without changing the project', async () => {
+    const user = userEvent.setup();
+    const states: ProjectModel[] = [];
+    render(
+      <DiagramEditor
+        initialProject={structuredClone(veterinariaFixture) as ProjectModel}
+        onProjectChange={(project) => states.push(project)}
+      />,
+    );
+
+    await user.type(screen.getByLabelText('Comando'), 'elimina Fantasma');
+    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+
+    expect((await screen.findByRole('alert')).textContent).toContain('No existe la clase «Fantasma»');
+    expect(states.at(-1)?.classes).toHaveLength(2);
+  });
 });

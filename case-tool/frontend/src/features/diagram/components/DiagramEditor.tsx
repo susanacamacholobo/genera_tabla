@@ -21,6 +21,7 @@ import { useDiagramEditor } from '../hooks/useDiagramEditor';
 import type { DiagramFlowNode } from '../types/reactFlowTypes';
 import { PropertiesPanel } from './PropertiesPanel';
 import { RelationshipEdge } from './RelationshipEdge';
+import { TextCommandBar } from './TextCommandBar';
 import { UMLClassNode } from './UMLClassNode';
 import { UMLEnumNode } from './UMLEnumNode';
 
@@ -146,12 +147,15 @@ export function DiagramEditor({ initialProject, onProjectChange }: DiagramEditor
         <p className="toolbar-hint">Arrastra entre los conectores para crear una relación.</p>
       </nav>
 
-      {editor.error && (
-        <div className="error-banner" role="alert">
-          <span>{editor.error}</span>
-          <button aria-label="Cerrar error" onClick={editor.dismissError}>×</button>
-        </div>
-      )}
+      <div className="command-area">
+        <TextCommandBar project={editor.project} onExecute={editor.execute} />
+        {editor.error && (
+          <div className="error-banner" role="alert">
+            <span>{editor.error}</span>
+            <button aria-label="Cerrar error" onClick={editor.dismissError}>×</button>
+          </div>
+        )}
+      </div>
 
       <div className="editor-layout">
         <section className="diagram-canvas" aria-label="Lienzo UML">
