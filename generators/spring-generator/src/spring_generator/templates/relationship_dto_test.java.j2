@@ -1,0 +1,98 @@
+package {{ project.package_name }};
+
+import {{ project.package_name }}.dto.{{ entity.class_name }}Request;
+import {{ project.package_name }}.exception.ResourceNotFoundException;
+{% for association in entity.owning_repository_associations %}
+import {{ project.package_name }}.model.{{ association.target_class_name }};
+import {{ project.package_name }}.repository.{{ association.target_class_name }}Repository;
+{% endfor %}
+import {{ project.package_name }}.service.{{ entity.class_name }}Service;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+{% if entity.has_writable_collection %}
+import java.util.Set;
+{% endif %}
+import java.util.UUID;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+{% if entity.has_writable_collection %}
+import static org.junit.jupiter.api.Assertions.assertTrue;
+{% endif %}
+
+@SpringBootTest
+@ActiveProfiles("test")
+@Transactional
+class {{ entity.class_name }}RelationshipDtoTests {
+
+    @Autowired
+    private {{ entity.class_name }}Service service;
+
+{% for association in entity.owning_repository_associations %}
+    @Autowired
+    private {{ association.target_class_name }}Repository {{ association.target_repository_variable_name }};
+
+{% endfor %}
+    @Test
+    void relationshipIdsAreResolvedAndReturned() {
+{% for association in entity.owning_repository_associations %}
+        var {{ association.target_variable_name }} = new {{ association.target_class_name }}();
+{% set target = project.entities | selectattr("class_name", "equalto", association.target_class_name) | first %}
+{% for field in target.mutable_fields %}
+        {{ association.target_variable_name }}.set{{ field.capitalized_name }}({{ field.java_test_value }});
+{% endfor %}
+        {{ association.target_variable_name }} = {{ association.target_repository_variable_name }}
+                .saveAndFlush({{ association.target_variable_name }});
+
+{% endfor %}
+        var input = new {{ entity.class_name }}Request(
+{% for field in entity.mutable_fields %}
+                {{ field.java_test_value }},
+{% endfor %}
+{% for association in entity.writable_associations %}
+{% if association.collection %}
+                Set.of({{ association.target_variable_name }}.get{{ association.target_id_capitalized_name }}()){{ "," if not loop.last else "" }}
+{% else %}
+                {{ association.target_variable_name }}.get{{ association.target_id_capitalized_name }}(){{ "," if not loop.last else "" }}
+{% endif %}
+{% endfor %}
+        );
+
+        var response = service.create(input);
+
+{% for association in entity.writable_associations %}
+{% if association.collection %}
+        assertTrue(response.{{ association.request_name }}().contains(
+                {{ association.target_variable_name }}.get{{ association.target_id_capitalized_name }}()));
+{% else %}
+        assertEquals(
+                {{ association.target_variable_name }}.get{{ association.target_id_capitalized_name }}(),
+                response.{{ association.request_name }}());
+{% endif %}
+{% endfor %}
+    }
+
+    @Test
+    void missingRelationshipIdsAreRejected() {
+        var input = new {{ entity.class_name }}Request(
+{% for field in entity.mutable_fields %}
+                {{ field.java_test_value }},
+{% endfor %}
+{% for association in entity.writable_associations %}
+{% if association.collection %}
+                Set.of({{ association.target_id_java_type }}.valueOf(999999)){{ "," if not loop.last else "" }}
+{% else %}
+                {{ association.target_id_java_type }}.valueOf(999999){{ "," if not loop.last else "" }}
+{% endif %}
+{% endfor %}
+        );
+
+        assertThrows(ResourceNotFoundException.class, () -> service.create(input));
+    }
+}

@@ -128,6 +128,7 @@ def test_generates_bidirectional_jpa_annotations(association_model: dict[str, An
     assert "src/test/java/com/example/" in "\n".join(generated.files)
     assert "RelationshipMappingTests.java" in "\n".join(generated.files)
     assert "RelationshipPersistenceTests.java" in "\n".join(generated.files)
+    assert "RelationshipDtoTests.java" in "\n".join(generated.files)
     assert "Relaciones JPA generadas:" in generated.files["README.md"]
 
     if association_model["name"] == "Identidad":
@@ -139,6 +140,11 @@ def test_generates_bidirectional_jpa_annotations(association_model: dict[str, An
         ]
         assert "input.pasaporteId()" in service
         assert "PasaporteRepository pasaporteRepository" in service
+        dto_test = generated.files[
+            "src/test/java/com/example/identidad/PersonaRelationshipDtoTests.java"
+        ]
+        assert "relationshipIdsAreResolvedAndReturned" in dto_test
+        assert "missingRelationshipIdsAreRejected" in dto_test
     elif association_model["name"] == "Veterinaria Relaciones":
         assert '@OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)' in sources
         assert "@ManyToOne(optional = false)" in sources

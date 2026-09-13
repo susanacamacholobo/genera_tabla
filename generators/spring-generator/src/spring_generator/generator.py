@@ -112,6 +112,10 @@ class SpringGenerator:
                 files[f"{test_root}/{entity.class_name}ControllerTests.java"] = self._render(
                     "controller_test.java.j2", **context
                 )
+            if entity.writable_associations:
+                files[f"{test_root}/{entity.class_name}RelationshipDtoTests.java"] = (
+                    self._render("relationship_dto_test.java.j2", **context)
+                )
         files[f"{source_root}/exception/ApiError.java"] = self._render(
             "api_error.java.j2", project=project
         )

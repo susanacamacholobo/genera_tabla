@@ -217,6 +217,10 @@ class JavaEntity:
         )
 
     @property
+    def has_writable_collection(self) -> bool:
+        return any(association.collection for association in self.writable_associations)
+
+    @property
     def imports(self) -> tuple[str, ...]:
         return tuple(sorted({field.import_name for field in self.fields if field.import_name}))
 
