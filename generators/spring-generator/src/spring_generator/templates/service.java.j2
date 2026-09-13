@@ -1,58 +1,109 @@
 package {{ project.package_name }}.service;
 
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
+import {{ project.package_name }}.dto.{{ entity.class_name }}Request;
+import {{ project.package_name }}.dto.{{ entity.class_name }}Response;
+import {{ project.package_name }}.exception.ResourceNotFoundException;
+import {{ project.package_name }}.mapper.{{ entity.class_name }}Mapper;
 import {{ project.package_name }}.model.{{ entity.class_name }};
 import {{ project.package_name }}.repository.{{ entity.class_name }}Repository;
-import org.springframework.http.HttpStatus;
+{% for association in entity.owning_repository_associations %}
+import {{ project.package_name }}.repository.{{ association.target_class_name }}Repository;
+{% endfor %}
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
 @Service
 @Transactional(readOnly = true)
 public class {{ entity.class_name }}Service {
 
     private final {{ entity.class_name }}Repository repository;
+    private final {{ entity.class_name }}Mapper mapper;
+{% for association in entity.owning_repository_associations %}
+    private final {{ association.target_class_name }}Repository {{ association.target_repository_variable_name }};
+{% endfor %}
 
-    public {{ entity.class_name }}Service({{ entity.class_name }}Repository repository) {
+    public {{ entity.class_name }}Service(
+            {{ entity.class_name }}Repository repository,
+            {{ entity.class_name }}Mapper mapper{% for association in entity.owning_repository_associations %},
+            {{ association.target_class_name }}Repository {{ association.target_repository_variable_name }}{% endfor %}) {
         this.repository = repository;
+        this.mapper = mapper;
+{% for association in entity.owning_repository_associations %}
+        this.{{ association.target_repository_variable_name }} = {{ association.target_repository_variable_name }};
+{% endfor %}
     }
 
-    public List<{{ entity.class_name }}> findAll() {
-        return repository.findAll();
+    public List<{{ entity.class_name }}Response> findAll() {
+        return repository.findAll().stream().map(mapper::toResponse).toList();
     }
 
-    public {{ entity.class_name }} findById({{ entity.id_field.java_type }} id) {
-        return repository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "{{ entity.class_name }} no encontrado"));
+    public {{ entity.class_name }}Response findById({{ entity.id_field.java_type }} id) {
+        return mapper.toResponse(requireById(id));
     }
 
     @Transactional
-    public {{ entity.class_name }} create({{ entity.class_name }} input) {
-        input.set{{ entity.id_field.capitalized_name }}(null);
-        return repository.save(input);
+    public {{ entity.class_name }}Response create({{ entity.class_name }}Request input) {
+        var entity = new {{ entity.class_name }}();
+        mapper.updateEntity(input, entity);
+        updateAssociations(input, entity);
+        return mapper.toResponse(repository.save(entity));
     }
 
     @Transactional
-    public {{ entity.class_name }} update({{ entity.id_field.java_type }} id, {{ entity.class_name }} input) {
-        {{ entity.class_name }} current = findById(id);
-{% for field in entity.mutable_fields %}
-        current.set{{ field.capitalized_name }}(input.get{{ field.capitalized_name }}());
-{% endfor %}
-{% for association in entity.associations %}
-{% if association.owning %}
-        current.set{{ association.capitalized_name }}(input.get{{ association.capitalized_name }}());
-{% endif %}
-{% endfor %}
-        return repository.save(current);
+    public {{ entity.class_name }}Response update(
+            {{ entity.id_field.java_type }} id,
+            {{ entity.class_name }}Request input) {
+        var current = requireById(id);
+        mapper.updateEntity(input, current);
+        updateAssociations(input, current);
+        return mapper.toResponse(repository.save(current));
     }
 
     @Transactional
     public void delete({{ entity.id_field.java_type }} id) {
-        {{ entity.class_name }} current = findById(id);
-        repository.delete(current);
+        repository.delete(requireById(id));
+    }
+
+    private {{ entity.class_name }} requireById({{ entity.id_field.java_type }} id) {
+        return repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "{{ entity.class_name }} no encontrado con id " + id));
+    }
+
+    private void updateAssociations(
+            {{ entity.class_name }}Request input,
+            {{ entity.class_name }} entity) {
+{% if not entity.writable_associations %}
+        // Esta entidad no posee el lado modificable de ninguna asociacion.
+{% endif %}
+{% for association in entity.writable_associations %}
+{% if association.collection %}
+        var {{ association.request_name }} = input.{{ association.request_name }}() == null
+                ? Set.<{{ association.target_id_java_type }}>of()
+                : input.{{ association.request_name }}();
+        var resolved{{ association.capitalized_name }} = new LinkedHashSet<>(
+                {{ association.target_repository_variable_name }}.findAllById({{ association.request_name }}));
+        if (resolved{{ association.capitalized_name }}.size() != {{ association.request_name }}.size()) {
+            throw new ResourceNotFoundException(
+                    "Uno o mas IDs de {{ association.request_name }} no existen");
+        }
+        entity.set{{ association.capitalized_name }}(resolved{{ association.capitalized_name }});
+{% else %}
+        if (input.{{ association.request_name }}() == null) {
+            entity.set{{ association.capitalized_name }}(null);
+        } else {
+            entity.set{{ association.capitalized_name }}(
+                    {{ association.target_repository_variable_name }}
+                            .findById(input.{{ association.request_name }}())
+                            .orElseThrow(() -> new ResourceNotFoundException(
+                                    "{{ association.target_class_name }} no encontrado con id "
+                                            + input.{{ association.request_name }}())));
+        }
+{% endif %}
+{% endfor %}
     }
 }

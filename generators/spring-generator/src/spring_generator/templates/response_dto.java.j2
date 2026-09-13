@@ -1,0 +1,15 @@
+package {{ project.package_name }}.dto;
+
+{% for import_name in entity.response_imports %}
+import {{ import_name }};
+{% endfor %}
+
+public record {{ entity.class_name }}Response(
+{% for field in entity.fields %}
+        {{ field.java_type }} {{ field.name }}{{ "," if not loop.last or entity.associations else "" }}
+{% endfor %}
+{% for association in entity.associations %}
+        {{ association.request_java_type }} {{ association.request_name }}{{ "," if not loop.last else "" }}
+{% endfor %}
+) {
+}

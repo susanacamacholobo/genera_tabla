@@ -147,6 +147,7 @@ class ModelValidator:
         class_ids: set[str] = set()
         classes_by_id: dict[str, dict[str, Any]] = {}
         generated_field_names: dict[str, set[str]] = {}
+        dto_field_names: dict[str, set[str]] = {}
         for class_index, uml_class in enumerate(classes):
             path = f"classes[{class_index}]"
             if not isinstance(uml_class, dict):
@@ -183,11 +184,13 @@ class ModelValidator:
                 for attribute in uml_class.get("attributes", [])
                 if isinstance(attribute, dict)
             }
+            dto_field_names[str(class_id)] = set(generated_field_names[str(class_id)])
 
         self._validate_relationships(
             relationships,
             classes_by_id,
             generated_field_names,
+            dto_field_names,
             issues,
         )
 
@@ -275,6 +278,7 @@ class ModelValidator:
         relationships: list[object],
         classes_by_id: dict[str, dict[str, Any]],
         generated_field_names: dict[str, set[str]],
+        dto_field_names: dict[str, set[str]],
         issues: list[GenerationIssue],
     ) -> None:
         relationship_ids: set[str] = set()
@@ -390,6 +394,14 @@ class ModelValidator:
                 self._reserve_relationship_field(
                     str(target_id), str(target_field), f"{path}.sourceRole", generated_field_names, issues
                 )
+                source_dto_field = f"{source_field}{'Ids' if str(target_multiplicity).endswith('*') else 'Id'}"
+                target_dto_field = f"{target_field}{'Ids' if str(source_multiplicity).endswith('*') else 'Id'}"
+                self._reserve_dto_field(
+                    str(source_id), source_dto_field, f"{path}.targetRole", dto_field_names, issues
+                )
+                self._reserve_dto_field(
+                    str(target_id), target_dto_field, f"{path}.sourceRole", dto_field_names, issues
+                )
 
     def _reserve_relationship_field(
         self,
@@ -407,6 +419,27 @@ class ModelValidator:
                     "DUPLICATE_GENERATED_FIELD",
                     path,
                     f"El campo de relación '{field_name}' colisiona con otro campo generado.",
+                )
+            )
+        else:
+            names.add(normalized)
+
+    def _reserve_dto_field(
+        self,
+        class_id: str,
+        field_name: str,
+        path: str,
+        dto_field_names: dict[str, set[str]],
+        issues: list[GenerationIssue],
+    ) -> None:
+        names = dto_field_names.setdefault(class_id, set())
+        normalized = field_name.casefold()
+        if normalized in names:
+            issues.append(
+                issue(
+                    "DUPLICATE_DTO_FIELD",
+                    path,
+                    f"El campo DTO '{field_name}' colisiona con otro campo generado.",
                 )
             )
         else:

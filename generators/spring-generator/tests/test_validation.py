@@ -70,6 +70,25 @@ def test_rejects_relationship_field_collisions(association_model: dict[str, Any]
     assert "DUPLICATE_GENERATED_FIELD" in issue_codes(model)
 
 
+def test_rejects_relationship_dto_field_collisions(
+    one_to_many_model: dict[str, Any],
+) -> None:
+    model = deepcopy(one_to_many_model)
+    mascota = next(item for item in model["classes"] if item["id"] == "class-mascota")
+    mascota["attributes"].append(
+        {
+            "id": "mascota-cliente-id",
+            "name": "clienteId",
+            "dataType": "Long",
+            "nullable": True,
+            "unique": False,
+            "primaryKey": False,
+        }
+    )
+
+    assert "DUPLICATE_DTO_FIELD" in issue_codes(model)
+
+
 @pytest.mark.parametrize(
     ("mutation", "expected_code"),
     [

@@ -1,6 +1,7 @@
 package {{ project.package_name }};
 
 import {{ project.package_name }}.controller.{{ entity.class_name }}Controller;
+import {{ project.package_name }}.exception.GlobalExceptionHandler;
 import {{ project.package_name }}.repository.{{ entity.class_name }}Repository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -33,7 +34,9 @@ class {{ entity.class_name }}ControllerTests {
     @BeforeEach
     void setUp() {
         repository.deleteAll();
-        mvc = MockMvcBuilders.standaloneSetup(controller).build();
+        mvc = MockMvcBuilders.standaloneSetup(controller)
+                .setControllerAdvice(new GlobalExceptionHandler())
+                .build();
     }
 
     @Test
@@ -62,5 +65,25 @@ class {{ entity.class_name }}ControllerTests {
         mvc.perform(get("/api/{{ entity.endpoint_name }}"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    void validationErrorsUseTheGeneratedContract() throws Exception {
+        mvc.perform(post("/api/{{ entity.endpoint_name }}")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("{}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.path").value("/api/{{ entity.endpoint_name }}"))
+                .andExpect(jsonPath("$.fieldErrors").isMap());
+    }
+
+    @Test
+    void missingResourcesUseTheGeneratedContract() throws Exception {
+        mvc.perform(get("/api/{{ entity.endpoint_name }}/{id}", 999999))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.message").value("{{ entity.class_name }} no encontrado con id 999999"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 }

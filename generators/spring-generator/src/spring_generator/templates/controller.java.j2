@@ -2,8 +2,10 @@ package {{ project.package_name }}.controller;
 
 import java.util.List;
 
-import {{ project.package_name }}.model.{{ entity.class_name }};
+import {{ project.package_name }}.dto.{{ entity.class_name }}Request;
+import {{ project.package_name }}.dto.{{ entity.class_name }}Response;
 import {{ project.package_name }}.service.{{ entity.class_name }}Service;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -27,25 +29,26 @@ public class {{ entity.class_name }}Controller {
     }
 
     @GetMapping
-    public List<{{ entity.class_name }}> findAll() {
+    public List<{{ entity.class_name }}Response> findAll() {
         return service.findAll();
     }
 
     @GetMapping("/{id}")
-    public {{ entity.class_name }} findById(@PathVariable {{ entity.id_field.java_type }} id) {
+    public {{ entity.class_name }}Response findById(@PathVariable {{ entity.id_field.java_type }} id) {
         return service.findById(id);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public {{ entity.class_name }} create(@RequestBody {{ entity.class_name }} input) {
+    public {{ entity.class_name }}Response create(
+            @Valid @RequestBody {{ entity.class_name }}Request input) {
         return service.create(input);
     }
 
     @PutMapping("/{id}")
-    public {{ entity.class_name }} update(
+    public {{ entity.class_name }}Response update(
             @PathVariable {{ entity.id_field.java_type }} id,
-            @RequestBody {{ entity.class_name }} input) {
+            @Valid @RequestBody {{ entity.class_name }}Request input) {
         return service.update(id, input);
     }
 

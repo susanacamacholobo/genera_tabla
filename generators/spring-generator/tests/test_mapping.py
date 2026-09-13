@@ -49,6 +49,8 @@ def test_maps_canonical_multiplicities_to_bidirectional_jpa_kinds(
     target_field = next(item for item in target.associations if item.name == relationship.target_field_name)
     assert source_field.opposite_name == target_field.name
     assert target_field.opposite_name == source_field.name
+    assert source_field.request_name.endswith("Ids" if source_field.collection else "Id")
+    assert target_field.request_name.endswith("Ids" if target_field.collection else "Id")
 
 
 def test_required_many_to_one_is_not_standalone_creatable(
@@ -59,6 +61,10 @@ def test_required_many_to_one_is_not_standalone_creatable(
     if association_model["name"] == "Veterinaria Relaciones":
         mascota = next(item for item in project.entities if item.class_name == "Mascota")
         assert not mascota.standalone_creatable
+        cliente = next(item for item in mascota.writable_associations if item.name == "cliente")
+        assert cliente.request_name == "clienteId"
+        assert cliente.request_java_type == "Long"
+        assert cliente.required
 
 
 def test_maps_many_to_one_when_many_end_is_the_source(

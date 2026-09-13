@@ -1,0 +1,43 @@
+package {{ project.package_name }}.mapper;
+
+{% if entity.associations %}
+import java.util.LinkedHashSet;
+import java.util.stream.Collectors;
+
+{% endif %}
+import {{ project.package_name }}.dto.{{ entity.class_name }}Request;
+import {{ project.package_name }}.dto.{{ entity.class_name }}Response;
+import {{ project.package_name }}.model.{{ entity.class_name }};
+import org.springframework.stereotype.Component;
+
+@Component
+public class {{ entity.class_name }}Mapper {
+
+    public {{ entity.class_name }}Response toResponse({{ entity.class_name }} entity) {
+        return new {{ entity.class_name }}Response(
+{% for field in entity.fields %}
+                entity.get{{ field.capitalized_name }}(){{ "," if not loop.last or entity.associations else "" }}
+{% endfor %}
+{% for association in entity.associations %}
+{% if association.collection %}
+                entity.get{{ association.capitalized_name }}().stream()
+                        .map(item -> item.get{{ association.target_id_capitalized_name }}())
+                        .collect(Collectors.toCollection(LinkedHashSet::new)){{ "," if not loop.last else "" }}
+{% else %}
+                entity.get{{ association.capitalized_name }}() == null
+                        ? null
+                        : entity.get{{ association.capitalized_name }}().get{{ association.target_id_capitalized_name }}(){{ "," if not loop.last else "" }}
+{% endif %}
+{% endfor %}
+        );
+    }
+
+    public void updateEntity({{ entity.class_name }}Request input, {{ entity.class_name }} entity) {
+{% if not entity.mutable_fields %}
+        // La entidad no tiene campos escalares editables.
+{% endif %}
+{% for field in entity.mutable_fields %}
+        entity.set{{ field.capitalized_name }}(input.{{ field.name }}());
+{% endfor %}
+    }
+}

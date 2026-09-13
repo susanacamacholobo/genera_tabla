@@ -1,0 +1,75 @@
+package {{ project.package_name }}.exception;
+
+import jakarta.servlet.http.HttpServletRequest;
+import java.time.Instant;
+import java.util.Map;
+import java.util.TreeMap;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ResponseEntity<ApiError> handleNotFound(
+            ResourceNotFoundException exception,
+            HttpServletRequest request) {
+        return response(HttpStatus.NOT_FOUND, exception.getMessage(), request, Map.of());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> handleValidation(
+            MethodArgumentNotValidException exception,
+            HttpServletRequest request) {
+        Map<String, String> fieldErrors = new TreeMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+                fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "La solicitud contiene campos invalidos",
+                request,
+                fieldErrors);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ApiError> handleUnreadableBody(
+            HttpMessageNotReadableException exception,
+            HttpServletRequest request) {
+        return response(
+                HttpStatus.BAD_REQUEST,
+                "El cuerpo JSON no es valido",
+                request,
+                Map.of());
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<ApiError> handleDataIntegrity(
+            DataIntegrityViolationException exception,
+            HttpServletRequest request) {
+        return response(
+                HttpStatus.CONFLICT,
+                "La operacion viola una restriccion de datos",
+                request,
+                Map.of());
+    }
+
+    private ResponseEntity<ApiError> response(
+            HttpStatus status,
+            String message,
+            HttpServletRequest request,
+            Map<String, String> fieldErrors) {
+        var error = new ApiError(
+                Instant.now(),
+                status.value(),
+                status.getReasonPhrase(),
+                message,
+                request.getRequestURI(),
+                fieldErrors);
+        return ResponseEntity.status(status).body(error);
+    }
+}

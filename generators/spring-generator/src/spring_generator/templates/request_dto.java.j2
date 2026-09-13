@@ -1,0 +1,34 @@
+package {{ project.package_name }}.dto;
+
+{% for import_name in entity.request_imports %}
+import {{ import_name }};
+{% endfor %}
+{% if entity.has_required_string %}
+import jakarta.validation.constraints.NotBlank;
+{% endif %}
+{% if entity.has_required_value %}
+import jakarta.validation.constraints.NotNull;
+{% endif %}
+{% if entity.has_required_collection %}
+import jakarta.validation.constraints.NotEmpty;
+{% endif %}
+
+public record {{ entity.class_name }}Request(
+{% for field in entity.mutable_fields %}
+{% if not field.nullable and field.java_type == "String" %}
+        @NotBlank(message = "{{ field.name }} es obligatorio")
+{% elif not field.nullable %}
+        @NotNull(message = "{{ field.name }} es obligatorio")
+{% endif %}
+        {{ field.java_type }} {{ field.name }}{{ "," if not loop.last or entity.writable_associations else "" }}
+{% endfor %}
+{% for association in entity.writable_associations %}
+{% if association.required and association.collection %}
+        @NotEmpty(message = "{{ association.request_name }} debe contener al menos un ID")
+{% elif association.required %}
+        @NotNull(message = "{{ association.request_name }} es obligatorio")
+{% endif %}
+        {{ association.request_java_type }} {{ association.request_name }}{{ "," if not loop.last else "" }}
+{% endfor %}
+) {
+}

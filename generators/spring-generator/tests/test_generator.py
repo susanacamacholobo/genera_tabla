@@ -20,6 +20,12 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         "src/main/resources/application.yml",
         f"{root}/VeterinariaApplication.java",
         f"{root}/model/Cliente.java",
+        f"{root}/dto/ClienteRequest.java",
+        f"{root}/dto/ClienteResponse.java",
+        f"{root}/mapper/ClienteMapper.java",
+        f"{root}/exception/ApiError.java",
+        f"{root}/exception/GlobalExceptionHandler.java",
+        f"{root}/exception/ResourceNotFoundException.java",
         f"{root}/repository/ClienteRepository.java",
         f"{root}/service/ClienteService.java",
         f"{root}/controller/ClienteController.java",
@@ -29,6 +35,9 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     }
     assert "<version>4.1.1</version>" in generated.files["pom.xml"]
     assert "<artifactId>postgresql</artifactId>" in generated.files["pom.xml"]
+    assert "<artifactId>spring-boot-starter-validation</artifactId>" in generated.files[
+        "pom.xml"
+    ]
     assert "<scope>test</scope>" in generated.files["pom.xml"]
     assert "${DB_PASSWORD}" in generated.files["src/main/resources/application.yml"]
     assert "replace-with-your-local-password" in generated.files[".env.example"]
@@ -43,6 +52,22 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         f"{root}/controller/ClienteController.java"
     ]
     assert "ClienteRepository" not in generated.files[f"{root}/controller/ClienteController.java"]
+    controller = generated.files[f"{root}/controller/ClienteController.java"]
+    assert "ClienteResponse" in controller
+    assert "@Valid @RequestBody ClienteRequest input" in controller
+    assert "model.Cliente" not in controller
+    request_dto = generated.files[f"{root}/dto/ClienteRequest.java"]
+    assert '@NotBlank(message = "nombre es obligatorio")' in request_dto
+    assert '@NotNull(message = "fechaRegistro es obligatorio")' in request_dto
+    response_dto = generated.files[f"{root}/dto/ClienteResponse.java"]
+    assert "Long id" in response_dto
+    assert "ClienteMapper" in generated.files[f"{root}/mapper/ClienteMapper.java"]
+    assert "ResourceNotFoundException" in generated.files[
+        f"{root}/service/ClienteService.java"
+    ]
+    assert "MethodArgumentNotValidException" in generated.files[
+        f"{root}/exception/GlobalExceptionHandler.java"
+    ]
     assert "private BigDecimal saldo;" in generated.files[f"{root}/model/Cliente.java"]
     assert '@ActiveProfiles("test")' in generated.files[
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java"
@@ -112,12 +137,26 @@ def test_generates_bidirectional_jpa_annotations(association_model: dict[str, An
         service = generated.files[
             "src/main/java/com/example/identidad/service/PersonaService.java"
         ]
-        assert "current.setPasaporte(input.getPasaporte());" in service
+        assert "input.pasaporteId()" in service
+        assert "PasaporteRepository pasaporteRepository" in service
     elif association_model["name"] == "Veterinaria Relaciones":
         assert '@OneToMany(mappedBy = "cliente", fetch = FetchType.EAGER)' in sources
         assert "@ManyToOne(optional = false)" in sources
         assert 'name = "cliente_id", nullable = false' in sources
+        mascota_request = generated.files[
+            "src/main/java/com/example/veterinariarelaciones/dto/MascotaRequest.java"
+        ]
+        assert "@NotNull" in mascota_request
+        assert "Long clienteId" in mascota_request
+        cliente_response = generated.files[
+            "src/main/java/com/example/veterinariarelaciones/dto/ClienteResponse.java"
+        ]
+        assert "Set<Long> mascotasIds" in cliente_response
     else:
         assert "@ManyToMany(fetch = FetchType.EAGER)" in sources
         assert '@ManyToMany(mappedBy = "cursos", fetch = FetchType.EAGER)' in sources
         assert 'name = "estudiantes_cursos"' in sources
+        estudiante_request = generated.files[
+            "src/main/java/com/example/academia/dto/EstudianteRequest.java"
+        ]
+        assert "Set<Long> cursosIds" in estudiante_request

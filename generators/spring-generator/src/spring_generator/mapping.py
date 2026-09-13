@@ -95,9 +95,13 @@ class JavaField:
 class JavaAssociation:
     name: str
     target_class_name: str
+    target_variable_name: str
+    target_id_field_name: str
+    target_id_java_type: str
     kind: str
     collection: bool
     owning: bool
+    required: bool
     opposite_name: str
     mapped_by: str | None = None
     optional: bool | None = None
@@ -116,6 +120,29 @@ class JavaAssociation:
             return f"Set<{self.target_class_name}>"
         return self.target_class_name
 
+    @property
+    def request_name(self) -> str:
+        suffix = "Ids" if self.collection else "Id"
+        return f"{self.name}{suffix}"
+
+    @property
+    def capitalized_request_name(self) -> str:
+        return self.request_name[:1].upper() + self.request_name[1:]
+
+    @property
+    def request_java_type(self) -> str:
+        if self.collection:
+            return f"Set<{self.target_id_java_type}>"
+        return self.target_id_java_type
+
+    @property
+    def target_repository_variable_name(self) -> str:
+        return f"{self.target_variable_name}Repository"
+
+    @property
+    def target_id_capitalized_name(self) -> str:
+        return self.target_id_field_name[:1].upper() + self.target_id_field_name[1:]
+
 
 @dataclass(frozen=True)
 class JavaEntity:
@@ -133,6 +160,61 @@ class JavaEntity:
     @property
     def mutable_fields(self) -> tuple[JavaField, ...]:
         return tuple(field for field in self.fields if not field.primary_key)
+
+    @property
+    def writable_associations(self) -> tuple[JavaAssociation, ...]:
+        return tuple(association for association in self.associations if association.owning)
+
+    @property
+    def owning_repository_associations(self) -> tuple[JavaAssociation, ...]:
+        repositories: dict[str, JavaAssociation] = {}
+        for association in self.writable_associations:
+            repositories.setdefault(association.target_class_name, association)
+        return tuple(repositories[class_name] for class_name in sorted(repositories))
+
+    @property
+    def request_imports(self) -> tuple[str, ...]:
+        imports = {
+            field.import_name
+            for field in self.mutable_fields
+            if field.import_name is not None
+        }
+        if any(association.collection for association in self.writable_associations):
+            imports.add("java.util.Set")
+        return tuple(sorted(imports))
+
+    @property
+    def response_imports(self) -> tuple[str, ...]:
+        imports = {
+            field.import_name for field in self.fields if field.import_name is not None
+        }
+        if any(association.collection for association in self.associations):
+            imports.add("java.util.Set")
+        return tuple(sorted(imports))
+
+    @property
+    def has_required_string(self) -> bool:
+        return any(
+            not field.nullable and field.java_type == "String"
+            for field in self.mutable_fields
+        )
+
+    @property
+    def has_required_value(self) -> bool:
+        return any(
+            not field.nullable and field.java_type != "String"
+            for field in self.mutable_fields
+        ) or any(
+            association.required and not association.collection
+            for association in self.writable_associations
+        )
+
+    @property
+    def has_required_collection(self) -> bool:
+        return any(
+            association.required and association.collection
+            for association in self.writable_associations
+        )
 
     @property
     def imports(self) -> tuple[str, ...]:
@@ -299,9 +381,13 @@ class SpringModelMapper:
             source_field = JavaAssociation(
                 name=source_field_name,
                 target_class_name=target.class_name,
+                target_variable_name=target.variable_name,
+                target_id_field_name=target.id_field.name,
+                target_id_java_type=target.id_field.java_type,
                 kind="ONE_TO_ONE",
                 collection=False,
                 owning=True,
+                required=target_multiplicity == "1",
                 opposite_name=target_field_name,
                 optional=target_multiplicity == "0..1",
                 join_column_name=f"{snake_case(source_field_name)}_id",
@@ -309,9 +395,13 @@ class SpringModelMapper:
             target_field = JavaAssociation(
                 name=target_field_name,
                 target_class_name=source.class_name,
+                target_variable_name=source.variable_name,
+                target_id_field_name=source.id_field.name,
+                target_id_java_type=source.id_field.java_type,
                 kind="ONE_TO_ONE",
                 collection=False,
                 owning=False,
+                required=source_multiplicity == "1",
                 opposite_name=source_field_name,
                 mapped_by=source_field_name,
                 optional=source_multiplicity == "0..1",
@@ -320,18 +410,26 @@ class SpringModelMapper:
             source_field = JavaAssociation(
                 name=source_field_name,
                 target_class_name=target.class_name,
+                target_variable_name=target.variable_name,
+                target_id_field_name=target.id_field.name,
+                target_id_java_type=target.id_field.java_type,
                 kind="ONE_TO_MANY",
                 collection=True,
                 owning=False,
+                required=target_multiplicity == "1..*",
                 opposite_name=target_field_name,
                 mapped_by=target_field_name,
             )
             target_field = JavaAssociation(
                 name=target_field_name,
                 target_class_name=source.class_name,
+                target_variable_name=source.variable_name,
+                target_id_field_name=source.id_field.name,
+                target_id_java_type=source.id_field.java_type,
                 kind="MANY_TO_ONE",
                 collection=False,
                 owning=True,
+                required=source_multiplicity == "1",
                 opposite_name=source_field_name,
                 optional=source_multiplicity == "0..1",
                 join_column_name=f"{snake_case(target_field_name)}_id",
@@ -340,9 +438,13 @@ class SpringModelMapper:
             source_field = JavaAssociation(
                 name=source_field_name,
                 target_class_name=target.class_name,
+                target_variable_name=target.variable_name,
+                target_id_field_name=target.id_field.name,
+                target_id_java_type=target.id_field.java_type,
                 kind="MANY_TO_ONE",
                 collection=False,
                 owning=True,
+                required=target_multiplicity == "1",
                 opposite_name=target_field_name,
                 optional=target_multiplicity == "0..1",
                 join_column_name=f"{snake_case(source_field_name)}_id",
@@ -350,9 +452,13 @@ class SpringModelMapper:
             target_field = JavaAssociation(
                 name=target_field_name,
                 target_class_name=source.class_name,
+                target_variable_name=source.variable_name,
+                target_id_field_name=source.id_field.name,
+                target_id_java_type=source.id_field.java_type,
                 kind="ONE_TO_MANY",
                 collection=True,
                 owning=False,
+                required=source_multiplicity == "1..*",
                 opposite_name=source_field_name,
                 mapped_by=source_field_name,
             )
@@ -360,9 +466,13 @@ class SpringModelMapper:
             source_field = JavaAssociation(
                 name=source_field_name,
                 target_class_name=target.class_name,
+                target_variable_name=target.variable_name,
+                target_id_field_name=target.id_field.name,
+                target_id_java_type=target.id_field.java_type,
                 kind="MANY_TO_MANY",
                 collection=True,
                 owning=True,
+                required=target_multiplicity == "1..*",
                 opposite_name=target_field_name,
                 join_table_name=f"{source.table_name}_{target.table_name}",
                 join_table_column=f"{snake_case(source.variable_name)}_id",
@@ -371,9 +481,13 @@ class SpringModelMapper:
             target_field = JavaAssociation(
                 name=target_field_name,
                 target_class_name=source.class_name,
+                target_variable_name=source.variable_name,
+                target_id_field_name=source.id_field.name,
+                target_id_java_type=source.id_field.java_type,
                 kind="MANY_TO_MANY",
                 collection=True,
                 owning=False,
+                required=source_multiplicity == "1..*",
                 opposite_name=source_field_name,
                 mapped_by=source_field_name,
             )
