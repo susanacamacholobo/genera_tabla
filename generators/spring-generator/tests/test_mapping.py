@@ -1,3 +1,4 @@
+from copy import deepcopy
 from typing import Any
 
 import pytest
@@ -58,3 +59,25 @@ def test_required_many_to_one_is_not_standalone_creatable(
     if association_model["name"] == "Veterinaria Relaciones":
         mascota = next(item for item in project.entities if item.class_name == "Mascota")
         assert not mascota.standalone_creatable
+
+
+def test_maps_many_to_one_when_many_end_is_the_source(
+    one_to_many_model: dict[str, Any],
+) -> None:
+    model = deepcopy(one_to_many_model)
+    relationship = model["relationships"][0]
+    relationship.update(
+        {
+            "sourceClassId": "class-mascota",
+            "targetClassId": "class-cliente",
+            "sourceMultiplicity": "0..*",
+            "targetMultiplicity": "1",
+            "sourceRole": "mascotas",
+            "targetRole": "cliente",
+        }
+    )
+
+    mapped = SpringModelMapper().map(model).relationships[0]
+
+    assert mapped.source_kind == "MANY_TO_ONE"
+    assert mapped.target_kind == "ONE_TO_MANY"
