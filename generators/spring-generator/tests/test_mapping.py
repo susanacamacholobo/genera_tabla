@@ -13,11 +13,13 @@ def test_maps_canonical_names_and_types(simple_entity_model: dict[str, Any]) -> 
     assert project.database_name == "veterinaria"
     assert project.package_name == "com.example.veterinaria"
     assert project.application_class == "VeterinariaApplication"
+    assert project.springdoc_version == "3.1.1"
     entity = project.entities[0]
     assert entity.class_name == "Cliente"
     assert entity.table_name == "clientes"
     assert entity.endpoint_name == "clientes"
     assert entity.id_field.java_type == "Long"
+    assert entity.id_field.canonical_type == "Long"
     assert entity.imports == ("java.math.BigDecimal", "java.time.LocalDateTime")
     assert entity.test_request_body == (
         '{"nombre":"example","saldo":7.5,"fechaRegistro":"2026-01-15T10:30:00"}'

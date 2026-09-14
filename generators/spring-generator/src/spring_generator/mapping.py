@@ -78,6 +78,7 @@ def pluralize(value: str) -> str:
 @dataclass(frozen=True)
 class JavaField:
     name: str
+    canonical_type: str
     java_type: str
     import_name: str | None
     nullable: bool
@@ -267,6 +268,7 @@ class SpringProject:
     package_name: str
     application_class: str
     boot_version: str
+    springdoc_version: str
     java_version: int
     entities: tuple[JavaEntity, ...]
     relationships: tuple[JavaRelationship, ...]
@@ -281,12 +283,14 @@ class SpringModelMapper:
         self,
         group_id: str = "com.example",
         boot_version: str = "4.1.1",
+        springdoc_version: str = "3.1.1",
         java_version: int = 21,
     ) -> None:
         if not all(part.isascii() and part.isidentifier() for part in group_id.split(".")):
             raise ValueError(f"Group ID inválido: {group_id}")
         self.group_id = group_id
         self.boot_version = boot_version
+        self.springdoc_version = springdoc_version
         self.java_version = java_version
 
     def map(self, project: dict[str, Any]) -> SpringProject:
@@ -330,6 +334,7 @@ class SpringModelMapper:
             package_name=f"{self.group_id}.{package_segment}",
             application_class=f"{application_name}Application",
             boot_version=self.boot_version,
+            springdoc_version=self.springdoc_version,
             java_version=self.java_version,
             entities=entities,
             relationships=tuple(relationships),
@@ -352,6 +357,7 @@ class SpringModelMapper:
         java_type, import_name = JAVA_TYPE_MAPPING[attribute["dataType"]]
         return JavaField(
             name=camel_case(attribute["name"]),
+            canonical_type=str(attribute["dataType"]),
             java_type=java_type,
             import_name=import_name,
             nullable=bool(attribute.get("nullable", True)),

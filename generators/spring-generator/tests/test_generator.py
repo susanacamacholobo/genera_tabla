@@ -17,8 +17,11 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         ".gitignore",
         "README.md",
         "pom.xml",
+        "openapi/openapi.json",
+        "metadata/domain-model.json",
         "src/main/resources/application.yml",
         f"{root}/VeterinariaApplication.java",
+        f"{root}/config/OpenApiConfig.java",
         f"{root}/model/Cliente.java",
         f"{root}/dto/ClienteRequest.java",
         f"{root}/dto/ClienteResponse.java",
@@ -30,6 +33,7 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         f"{root}/service/ClienteService.java",
         f"{root}/controller/ClienteController.java",
         "src/test/java/com/example/veterinaria/ClienteControllerTests.java",
+        "src/test/java/com/example/veterinaria/OpenApiContractTests.java",
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java",
         "src/test/resources/application-test.yml",
     }
@@ -38,6 +42,10 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     assert "<artifactId>spring-boot-starter-validation</artifactId>" in generated.files[
         "pom.xml"
     ]
+    assert "<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>" in generated.files[
+        "pom.xml"
+    ]
+    assert "<version>3.1.1</version>" in generated.files["pom.xml"]
     assert "<scope>test</scope>" in generated.files["pom.xml"]
     assert "${DB_PASSWORD}" in generated.files["src/main/resources/application.yml"]
     assert "replace-with-your-local-password" in generated.files[".env.example"]
@@ -68,6 +76,8 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     assert "MethodArgumentNotValidException" in generated.files[
         f"{root}/exception/GlobalExceptionHandler.java"
     ]
+    assert '@Operation(operationId = "listCliente"' in controller
+    assert 'title("veterinaria API")' in generated.files[f"{root}/config/OpenApiConfig.java"]
     assert "private BigDecimal saldo;" in generated.files[f"{root}/model/Cliente.java"]
     assert '@ActiveProfiles("test")' in generated.files[
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java"

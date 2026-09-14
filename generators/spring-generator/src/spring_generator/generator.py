@@ -8,6 +8,7 @@ from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
 from jinja2 import Environment, PackageLoader, StrictUndefined
 
+from spring_generator.contracts import build_domain_model, build_openapi, json_document
 from spring_generator.mapping import SpringModelMapper, SpringProject
 from spring_generator.validation import ModelValidator
 
@@ -72,17 +73,25 @@ class SpringGenerator:
             ".env.example": self._render("env.example.j2", project=project),
             "README.md": self._render("readme.md.j2", project=project),
             "pom.xml": self._render("pom.xml.j2", project=project),
+            "openapi/openapi.json": json_document(build_openapi(project)),
+            "metadata/domain-model.json": json_document(build_domain_model(project)),
             "src/main/resources/application.yml": self._render(
                 "application.yml.j2", project=project
             ),
             f"{source_root}/{project.application_class}.java": self._render(
                 "application.java.j2", project=project
             ),
+            f"{source_root}/config/OpenApiConfig.java": self._render(
+                "openapi_config.java.j2", project=project
+            ),
             "src/test/resources/application-test.yml": self._render(
                 "application-test.yml.j2", project=project
             ),
             f"{test_root}/{project.application_class}Tests.java": self._render(
                 "application_test.java.j2", project=project
+            ),
+            f"{test_root}/OpenApiContractTests.java": self._render(
+                "openapi_contract_test.java.j2", project=project
             ),
         }
         for entity in project.entities:
