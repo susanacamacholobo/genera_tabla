@@ -28,10 +28,6 @@ DatabaseSession = Annotated[Session, Depends(get_session)]
 move_conflict_resolver = LastWriteWinsMoveResolver()
 
 
-def model_json(model: object) -> dict[str, object]:
-    return model.model_dump(mode="json", by_alias=True, exclude_unset=True)
-
-
 async def reject_connection(websocket: WebSocket, code: str, message: str, close: int) -> None:
     await websocket.accept()
     await websocket.send_json({"type": "protocol.error", "code": code, "message": message})
@@ -158,7 +154,7 @@ async def collaborate(
                         "userId": user_id,
                         "baseRevision": event.base_revision,
                         "revision": event.revision,
-                        "command": model_json(message.command),
+                        "command": event.command_json,
                         "model": snapshot.model_json,
                         "rebased": incoming_revision != event.base_revision,
                         "createdAt": event.created_at.isoformat(),
