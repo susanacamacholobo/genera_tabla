@@ -101,6 +101,11 @@ obligatoriedad, generación de PK, unicidad y relaciones con su entidad destino,
 cardinalidad y capacidad de escritura. No contiene decisiones visuales ni
 genera pantallas Flutter.
 
+Desde la fase 17, el cliente móvil puede copiar este archivo a
+`mobile-client/flutter/assets/domain-model.json`. `DomainModelLoader` comprueba
+su versión y referencias antes de entregarlo a la UI o al futuro sistema de
+intenciones.
+
 El backend incorpora `springdoc-openapi` 3.x para Spring Boot 4. Expone el
 contrato observado en ejecución en `/v3/api-docs` y la interfaz Swagger en
 `/swagger-ui.html`. Una prueba generada comprueba la presencia de cada path y

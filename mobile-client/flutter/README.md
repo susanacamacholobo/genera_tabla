@@ -2,8 +2,23 @@
 
 Base Android reutilizable para el frontend que se desarrollará durante la
 presentación. Incluye configuración, cliente REST, navegación, manejo de errores
-y panel del asistente; todavía no incluye pantallas de un dominio específico ni
-un modelo de IA.
+y panel del asistente. También carga el contrato de dominio generado; todavía no
+incluye pantallas de un dominio específico ni un modelo de IA.
+
+## Cargar el dominio generado
+
+Copia la metadata del proyecto Spring generado antes de compilar Flutter:
+
+```powershell
+Copy-Item `
+  ..\..\generated\mi-sistema\metadata\domain-model.json `
+  assets\domain-model.json
+```
+
+`DomainModelLoader` valida el archivo al iniciar. La pantalla principal muestra
+el nombre de la aplicación y la cantidad de entidades si el contrato es válido;
+si no lo es, presenta un error y permite reintentar. El asset incluido inicialmente
+corresponde al fixture `Veterinaria` del generador.
 
 ## Preparación
 
@@ -61,5 +76,5 @@ build/app/outputs/flutter-apk/app-debug.apk
 ```
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
-Internet; las fases 19 a 22 incorporarán y verificarán voz e IA dentro del
+Internet; las fases 18 a 22 incorporarán intenciones, voz e IA dentro del
 dispositivo Android.

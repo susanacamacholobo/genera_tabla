@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 16, además de la preparación 2.5:
+Están implementadas las fases 0 a 17, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -32,6 +32,8 @@ Están implementadas las fases 0 a 16, además de la preparación 2.5:
   JSON restringida, resolución segura de nombres y proveedor intercambiable.
 - base Flutter modular con configuración por entorno, cliente REST, errores
   tipados, navegación y panel reutilizable para el asistente.
+- contrato de dominio Flutter y cargador validado para consumir
+  `metadata/domain-model.json` generado por la herramienta.
 
 La integración del runtime y modelo dentro de Android continúa separada y se
 realizará en las fases 19 a 22.

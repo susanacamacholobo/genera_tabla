@@ -108,9 +108,27 @@ pantalla de dominio / asistente
 
 `AppDependencies` entrega configuración y cliente sin variables globales. El
 router y `AssistantPanel` no conocen entidades concretas; podrán reutilizarse
-con el contrato de dominio que se cargará en la fase 17. Los errores de
+con el contrato de dominio cargado en la fase 17. Los errores de
 configuración, transporte, estado HTTP y decodificación cruzan una frontera
 tipada antes de convertirse en mensajes para el usuario.
+
+```text
+SpringProject -> metadata/domain-model.json
+                            |
+                            v
+                 DomainModelLoader
+                            |
+                  validación sintáctica
+                    y semántica 1.0.0
+                            |
+                            v
+                     DomainModel Dart
+```
+
+El cargador no analiza OpenAPI ni código Java. Consume el contrato reducido que
+ya se deriva del mismo modelo intermedio del generador. Sus colecciones son
+inmutables y ofrecen búsquedas de entidades, campos y relaciones sin distinguir
+mayúsculas, preparadas para el validador de intenciones de la fase 18.
 
 La generación Spring también cruza una frontera explícita:
 
@@ -235,6 +253,8 @@ y restricciones de integridad a un único esquema `ApiError`.
   emulador usa `10.0.2.2` y un teléfono físico usa la IP LAN de la laptop.
 - `ApiClient` recibe su transporte HTTP por constructor para mantener las
   pruebas locales y permitir cambiar la implementación sin afectar features.
+- `DomainModelLoader` sólo acepta la versión `1.0.0` y rechaza referencias,
+  cardinalidades o rutas inconsistentes antes de exponer el modelo a la UI o IA.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,

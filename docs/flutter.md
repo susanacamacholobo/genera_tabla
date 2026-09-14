@@ -55,4 +55,36 @@ vacías, evita envíos repetidos, muestra progreso y presenta errores seguros. E
 botón de micrófono queda deliberadamente desactivado hasta la fase 19.
 
 El panel todavía no interpreta intenciones ni ejecuta CRUD. Esos comportamientos
-se conectarán después de cargar `domain-model.json` en la fase 17.
+se conectarán al sistema de intenciones en la fase 18.
+
+## Contrato de dominio
+
+La fase 17 incorpora `DomainModelLoader` y modelos Dart inmutables para el
+contrato `metadata/domain-model.json` producido por el generador. La aplicación
+carga por defecto `assets/domain-model.json` y muestra en la pantalla inicial la
+aplicación y cantidad de entidades disponibles.
+
+El contrato reconoce:
+
+- versión de esquema, aplicación, artifact y ruta API base;
+- entidades, endpoints y campos identificadores;
+- campos con tipo canónico, obligatoriedad, generación y unicidad;
+- relaciones, campo usado por la API, entidad destino, cardinalidad y permiso
+  de escritura.
+
+Antes de aceptar el contrato se comprueban tipos JSON, versión `1.0.0`, valores
+obligatorios, nombres y endpoints únicos, pertenencia al `basePath`, claves
+generadas, referencias entre entidades y coherencia entre `kind` y `many`. Las
+rutas con query, fragmentos, barras invertidas o segmentos `..` se rechazan.
+
+Durante la presentación, después de generar el backend, se reemplaza el asset:
+
+```powershell
+Copy-Item `
+  generated\mi-sistema\metadata\domain-model.json `
+  mobile-client\flutter\assets\domain-model.json
+```
+
+Después se desarrollan manualmente las pantallas específicas y se recompila
+Flutter. El cargador también acepta un `String` u objeto JSON en memoria, para
+pruebas y futuras fuentes de metadata.

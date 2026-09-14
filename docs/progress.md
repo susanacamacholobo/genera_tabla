@@ -54,6 +54,9 @@
   `API_BASE_URL`, errores tipados, dependencias inyectables, navegación y
   `AssistantPanel` asíncrono. Acceso HTTP LAN habilitado en Android y APK
   verificado.
+- Fase 17: modelos de contrato Dart, `DomainModelLoader` desde asset/JSON,
+  validación sintáctica y semántica de metadata `1.0.0`, búsquedas inmutables e
+  integración visual del contrato generado en la pantalla Flutter inicial.
 
 ## IN PROGRESS
 
@@ -61,13 +64,13 @@
 
 ## TODO
 
-- Fase 17: cargar y validar `metadata/domain-model.json` en Flutter mediante
-  `DomainModelLoader`.
+- Fase 18: sistema Flutter de `StructuredIntent`, `IntentValidator` y
+  `ApiOperationResolver`, probado con un proveedor de IA fake.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 16.
+- No se conocen defectos en el alcance de las fases 0 a 17.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
