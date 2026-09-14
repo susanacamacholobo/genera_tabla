@@ -34,10 +34,13 @@ class ModelHistoryService:
 
     def add_initial_snapshot(self, project_id: str, name: str) -> ProjectSnapshotRecord:
         model = self.empty_model(project_id, name)
+        return self.add_snapshot(model)
+
+    def add_snapshot(self, model: CanonicalProjectModel) -> ProjectSnapshotRecord:
         snapshot = ProjectSnapshotRecord(
             id=str(uuid4()),
-            project_id=project_id,
-            revision=0,
+            project_id=model.id,
+            revision=model.revision,
             model_json=model.model_dump(mode="json", by_alias=True, exclude_unset=True),
         )
         return self.history.add_snapshot(snapshot)
