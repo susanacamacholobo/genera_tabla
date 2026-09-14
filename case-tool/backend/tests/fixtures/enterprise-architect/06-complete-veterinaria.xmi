@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" name="Veterinaria" visibility="public">
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" name="Cliente" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_1755723D_1AEF_48bf_AE9E_AB756A36FCC7" name="estado" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<type xmi:idref="EAID_C6F01F7F_3371_4e88_9EB3_8B15F5713214"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000001_1AEF_48bf_AE9E_AB756A36FCC7" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000002_1AEF_48bf_AE9E_AB756A36FCC7" value="1"/>
+				</ownedAttribute>
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_20EDB4E5_1A4F_4ab9_8A1F_4C5627BC9EB8" name="nombre" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000003_1A4F_4ab9_8A1F_4C5627BC9EB8" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000004_1A4F_4ab9_8A1F_4C5627BC9EB8" value="1"/>
+					<type xmi:idref="EAJava_String"/>
+				</ownedAttribute>
+				<generalization xmi:type="uml:Generalization" xmi:id="EAID_6F181224_3F5B_4377_A622_66AA02570245" general="EAID_F22AFA49_BD05_423d_A758_72E14DA25295"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Association" xmi:id="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" name="mascotas" visibility="public">
+				<memberEnd xmi:idref="EAID_dst038096_37D6_491e_AA65_0CB79A93E5F4"/>
+				<ownedEnd xmi:type="uml:Property" xmi:id="EAID_dst038096_37D6_491e_AA65_0CB79A93E5F4" name="mascotas" visibility="public" association="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" isStatic="false" isReadOnly="true" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+					<type xmi:idref="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000005__37D6_491e_AA65_0CB79A93E5F4" value="0"/>
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_LI000006__37D6_491e_AA65_0CB79A93E5F4" value="-1"/>
+				</ownedEnd>
+				<memberEnd xmi:idref="EAID_src038096_37D6_491e_AA65_0CB79A93E5F4"/>
+				<ownedEnd xmi:type="uml:Property" xmi:id="EAID_src038096_37D6_491e_AA65_0CB79A93E5F4" visibility="public" association="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" isStatic="false" isReadOnly="true" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+					<type xmi:idref="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000009__37D6_491e_AA65_0CB79A93E5F4" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000010__37D6_491e_AA65_0CB79A93E5F4" value="1"/>
+				</ownedEnd>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7" name="Mascota" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_DE4013D4_0679_4921_B642_3708ABF09177" name="nombre" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000007_0679_4921_B642_3708ABF09177" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000008_0679_4921_B642_3708ABF09177" value="1"/>
+					<type xmi:idref="EAJava_String"/>
+				</ownedAttribute>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_F22AFA49_BD05_423d_A758_72E14DA25295" name="Persona" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_7BF966B0_E3C5_40a2_854A_3AD1587FD049" name="id" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000011_E3C5_40a2_854A_3AD1587FD049" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000012_E3C5_40a2_854A_3AD1587FD049" value="1"/>
+					<type xmi:idref="EAJava_Long"/>
+				</ownedAttribute>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Enumeration" xmi:id="EAID_C6F01F7F_3371_4e88_9EB3_8B15F5713214" name="EstadoCliente" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_BF35C9CB_1803_4efb_8A34_3ACA25098152" name="ACTIVO" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000013_1803_4efb_8A34_3ACA25098152" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000014_1803_4efb_8A34_3ACA25098152" value="1"/>
+				</ownedAttribute>
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_FC8C487B_95EF_4532_9119_AA055DF1C4C1" name="INACTIVO" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000015_95EF_4532_9119_AA055DF1C4C1" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000016_95EF_4532_9119_AA055DF1C4C1" value="1"/>
+				</ownedAttribute>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" xmi:type="uml:Package" name="Veterinaria" scope="public">
+				<model package2="EAID_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" package="EAPK_02BAEABD_6A12_4489_BCA3_8D33C05B81DB" tpos="0" ea_localid="2" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="USUARIO" phase="1.0" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Model"/>
+				<packageproperties tpos="0"/>
+				<paths/>
+				<times created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" xmi:type="uml:Class" name="Cliente" scope="public">
+				<model package="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" tpos="0" ea_localid="3" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Veterinaria"/>
+				<attributes>
+					<attribute xmi:idref="EAID_1755723D_1AEF_48bf_AE9E_AB756A36FCC7" name="estado" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="5" ea_guid="{1755723D-1AEF-48bf-AE9E-AB756A36FCC7}"/>
+						<properties type="EstadoCliente" derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={4410D032-ECE6-48ae-98F1-2E69166FE0AE}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={1755723D-1AEF-48bf-AE9E-AB756A36FCC7}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+					<attribute xmi:idref="EAID_20EDB4E5_1A4F_4ab9_8A1F_4C5627BC9EB8" name="nombre" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="2" ea_guid="{20EDB4E5-1A4F-4ab9-8A1F-4C5627BC9EB8}"/>
+						<properties type="String" derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={5761BDF6-F8E4-495f-A1DA-69F143E33191}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={20EDB4E5-1A4F-4ab9-8A1F-4C5627BC9EB8}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_6F181224_3F5B_4377_A622_66AA02570245" start="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" end="EAID_F22AFA49_BD05_423d_A758_72E14DA25295"/>
+					<Association xmi:id="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" start="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" end="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7" xmi:type="uml:Class" name="Mascota" scope="public">
+				<model package="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" tpos="0" ea_localid="5" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Veterinaria"/>
+				<attributes>
+					<attribute xmi:idref="EAID_DE4013D4_0679_4921_B642_3708ABF09177" name="nombre" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="6" ea_guid="{DE4013D4-0679-4921-B642-3708ABF09177}"/>
+						<properties type="String" derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={E06221E9-3CDE-496b-B6A0-73644E6D9D22}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={DE4013D4-0679-4921-B642-3708ABF09177}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+				<links>
+					<Association xmi:id="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" start="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" end="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_F22AFA49_BD05_423d_A758_72E14DA25295" xmi:type="uml:Class" name="Persona" scope="public">
+				<model package="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" tpos="0" ea_localid="2" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Veterinaria"/>
+				<attributes>
+					<attribute xmi:idref="EAID_7BF966B0_E3C5_40a2_854A_3AD1587FD049" name="id" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="1" ea_guid="{7BF966B0-E3C5-40a2-854A-3AD1587FD049}"/>
+						<properties type="Long" derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={F44E0E17-6F23-4ad9-87EC-A709A9D7F6DE}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=1@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={7BF966B0-E3C5-40a2-854A-3AD1587FD049}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+				<links>
+					<Generalization xmi:id="EAID_6F181224_3F5B_4377_A622_66AA02570245" start="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" end="EAID_F22AFA49_BD05_423d_A758_72E14DA25295"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_C6F01F7F_3371_4e88_9EB3_8B15F5713214" xmi:type="uml:Enumeration" name="EstadoCliente" scope="public">
+				<model package="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" tpos="0" ea_localid="4" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Enumeration" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Veterinaria" ea_attsclassified="{1755723D-1AEF-48bf-AE9E-AB756A36FCC7}"/>
+				<attributes>
+					<attribute xmi:idref="EAID_BF35C9CB_1803_4efb_8A34_3ACA25098152" name="ACTIVO" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="3" ea_guid="{BF35C9CB-1803-4efb-8A34-3ACA25098152}"/>
+						<properties derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={B4E8BAF6-B5E9-4daa-A5DA-66309CA144DC}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={BF35C9CB-1803-4efb-8A34-3ACA25098152}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+					<attribute xmi:idref="EAID_FC8C487B_95EF_4532_9119_AA055DF1C4C1" name="INACTIVO" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="4" ea_guid="{FC8C487B-95EF-4532-9119-AA055DF1C4C1}"/>
+						<properties derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={A36F6695-7EBE-4c38-AAD3-862854F0E499}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={FC8C487B-95EF-4532-9119-AA055DF1C4C1}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_6F181224_3F5B_4377_A622_66AA02570245">
+				<source xmi:idref="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D">
+					<model ea_localid="3" type="Class" name="Cliente"/>
+					<role visibility="Public"/>
+					<type aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Non-Navigable;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_F22AFA49_BD05_423d_A758_72E14DA25295">
+					<model ea_localid="2" type="Class" name="Persona"/>
+					<role visibility="Public"/>
+					<type aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Navigable;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="2"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<parameterSubstitutions/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties/>
+				<style/>
+				<xrefs/>
+				<tags/>
+			</connector>
+			<connector xmi:idref="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" name="mascotas">
+				<source xmi:idref="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D">
+					<model ea_localid="3" type="Class" name="Cliente"/>
+					<role visibility="Public"/>
+					<type multiplicity="1" aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Unspecified;Owned=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7">
+					<model ea_localid="5" type="Class" name="Mascota"/>
+					<role name="mascotas" visibility="Public"/>
+					<type multiplicity="0..*" aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Unspecified;Owned=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="1"/>
+				<properties ea_type="Association" direction="Unspecified"/>
+				<modifiers isRoot="false" isLeaf="false"/>
+				<parameterSubstitutions/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels lb="1" mt="mascotas" rb="0..*" rt="+mascotas"/>
+				<extendedProperties/>
+				<style/>
+				<xrefs/>
+				<tags/>
+			</connector>
+		</connectors>
+		<primitivetypes>
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPrimitiveTypesPackage" name="EA_PrimitiveTypes_Package" visibility="public">
+				<packagedElement xmi:type="uml:Package" xmi:id="EAJavaTypesPackage" name="EA_Java_Types_Package" visibility="public">
+					<packagedElement xmi:type="uml:PrimitiveType" xmi:id="EAJava_String" name="String" visibility="public"/>
+					<packagedElement xmi:type="uml:PrimitiveType" xmi:id="EAJava_Long" name="Long" visibility="public">
+						<generalization xmi:type="uml:Generalization" xmi:id="EAJava_Long_General">
+							<general href="http://schema.omg.org/spec/UML/2.1/uml.xml#UnlimitedNatural"/>
+						</generalization>
+					</packagedElement>
+				</packagedElement>
+			</packagedElement>
+		</primitivetypes>
+		<profiles/>
+		<diagrams>
+			<diagram xmi:id="EAID_8680F6F8_7B18_4db0_A27C_4205A6FFFCD9">
+				<model package="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" localID="1" owner="EAPK_C9499402_FBC0_430e_8C5A_E9D96A20B5EC" tpos="0"/>
+				<properties name="Dominio" type="Class"/>
+				<project version="1" created="2026-09-13 20:39:26" modified="2026-09-13 20:39:26"/>
+				<style1 value="ShowPrivate=1;ShowProtected=1;ShowPublic=1;HideRelationships=0;Locked=0;Border=1;HighlightForeign=1;PackageContents=1;SequenceNotes=0;ScalePrintImage=0;PPgs.cx=0;PPgs.cy=0;DocSize.cx=800;DocSize.cy=1100;ShowDetails=0;Orientation=P;Zoom=100;ShowTags=0;OpParams=1;VisibleAttributeDetail=0;ShowOpRetType=1;ShowIcons=1;CollabNums=0;HideProps=0;ShowReqs=0;ShowCons=0;PaperSize=1;HideParents=0;UseAlias=0;HideAtts=0;HideOps=0;HideStereo=0;HideElemStereo=0;ShowTests=0;ShowMaint=0;ConnectorNotation=UML 2.1;ExplicitNavigability=0;ShowShape=1;AllDockable=0;AdvancedElementProps=1;AdvancedFeatureProps=1;AdvancedConnectorProps=1;m_bElementClassifier=1;SPT=1;ShowNotes=0;SuppressBrackets=0;SuppConnectorLabels=0;PrintPageHeadFoot=0;ShowAsList=0;"/>
+				<style2/>
+				<swimlanes value="locked=false;orientation=0;width=0;inbar=false;names=false;color=-1;bold=false;fcol=0;tcol=-1;ofCol=-1;ufCol=-1;hl=1;ufh=0;hh=0;cls=0;bw=0;hli=0;SwimlaneFont=lfh:-13,lfw:0,lfi:0,lfu:0,lfs:0,lfface:Calibri,lfe:0,lfo:0,lfchar:1,lfop:0,lfcp:0,lfq:0,lfpf=0,lfWidth=0;"/>
+				<matrixitems value="locked=false;matrixactive=false;swimlanesactive=true;kanbanactive=false;width=1;clrLine=0;"/>
+				<extendedProperties/>
+				<elements>
+					<element geometry="Left=50;Top=50;Right=250;Bottom=160;" subject="EAID_F22AFA49_BD05_423d_A758_72E14DA25295" seqno="1" style="DUID=6BAE6C95;"/>
+					<element geometry="Left=320;Top=50;Right=520;Bottom=190;" subject="EAID_3CC4DCB2_B426_4568_8DA6_8139463C119D" seqno="2" style="DUID=16D25F82;"/>
+					<element geometry="Left=320;Top=300;Right=520;Bottom=430;" subject="EAID_C6F01F7F_3371_4e88_9EB3_8B15F5713214" seqno="3" style="DUID=565E4D07;"/>
+					<element geometry="Left=650;Top=50;Right=850;Bottom=180;" subject="EAID_3132FA18_6325_4e80_AD5C_39D7828FF3C7" seqno="4" style="DUID=9E8D09A8;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;Path=;" subject="EAID_6F181224_3F5B_4377_A622_66AA02570245" style=";Hidden=0;"/>
+					<element geometry="SX=0;SY=0;EX=0;EY=0;Path=;" subject="EAID_AB038096_37D6_491e_AA65_0CB79A93E5F4" style=";Hidden=0;"/>
+				</elements>
+			</diagram>
+		</diagrams>
+	</xmi:Extension>
+</xmi:XMI>

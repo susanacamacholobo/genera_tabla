@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_25D098BC_59DB_4c22_B6A8_5051FFF6B610" name="SingleClass" visibility="public">
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_5155BE8C_4E93_4121_82BB_62F129F44301" name="Cliente" visibility="public"/>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_25D098BC_59DB_4c22_B6A8_5051FFF6B610" xmi:type="uml:Package" name="SingleClass" scope="public">
+				<model package2="EAID_25D098BC_59DB_4c22_B6A8_5051FFF6B610" package="EAPK_02BAEABD_6A12_4489_BCA3_8D33C05B81DB" tpos="0" ea_localid="3" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="USUARIO" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Model"/>
+				<packageproperties tpos="0"/>
+				<paths/>
+				<times created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_5155BE8C_4E93_4121_82BB_62F129F44301" xmi:type="uml:Class" name="Cliente" scope="public">
+				<model package="EAPK_25D098BC_59DB_4c22_B6A8_5051FFF6B610" tpos="0" ea_localid="7" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="SingleClass"/>
+			</element>
+		</elements>
+		<connectors/>
+		<primitivetypes>
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPrimitiveTypesPackage" name="EA_PrimitiveTypes_Package" visibility="public"/>
+		</primitivetypes>
+		<profiles/>
+		<diagrams/>
+	</xmi:Extension>
+</xmi:XMI>

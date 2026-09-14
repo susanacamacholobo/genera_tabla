@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_2C041D70_AD32_4c58_9866_0ECF4E2E3FD1" name="Enum" visibility="public">
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_ADD222C0_1499_41e1_8D3C_5B0C0E840FF1" name="Cliente" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_A9C48A2B_EF09_443b_91F0_7ACA8C368D4E" name="estado" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<type xmi:idref="EAID_85F8BAFC_9938_45de_BCDE_E19FAD8FF740"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000001_EF09_443b_91F0_7ACA8C368D4E" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000002_EF09_443b_91F0_7ACA8C368D4E" value="1"/>
+				</ownedAttribute>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Enumeration" xmi:id="EAID_85F8BAFC_9938_45de_BCDE_E19FAD8FF740" name="EstadoCliente" visibility="public">
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_76CA6795_C262_4621_AA69_4EBE0A7F5ED7" name="ACTIVO" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000003_C262_4621_AA69_4EBE0A7F5ED7" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000004_C262_4621_AA69_4EBE0A7F5ED7" value="1"/>
+				</ownedAttribute>
+				<ownedAttribute xmi:type="uml:Property" xmi:id="EAID_00851741_05B4_4d47_A467_A72A74701367" name="INACTIVO" visibility="public" isStatic="false" isReadOnly="false" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false">
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000005_05B4_4d47_A467_A72A74701367" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000006_05B4_4d47_A467_A72A74701367" value="1"/>
+				</ownedAttribute>
+			</packagedElement>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_2C041D70_AD32_4c58_9866_0ECF4E2E3FD1" xmi:type="uml:Package" name="Enum" scope="public">
+				<model package2="EAID_2C041D70_AD32_4c58_9866_0ECF4E2E3FD1" package="EAPK_02BAEABD_6A12_4489_BCA3_8D33C05B81DB" tpos="0" ea_localid="7" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="USUARIO" phase="1.0" created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Model"/>
+				<packageproperties tpos="0"/>
+				<paths/>
+				<times created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_ADD222C0_1499_41e1_8D3C_5B0C0E840FF1" xmi:type="uml:Class" name="Cliente" scope="public">
+				<model package="EAPK_2C041D70_AD32_4c58_9866_0ECF4E2E3FD1" tpos="0" ea_localid="17" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Enum"/>
+				<attributes>
+					<attribute xmi:idref="EAID_A9C48A2B_EF09_443b_91F0_7ACA8C368D4E" name="estado" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="12" ea_guid="{A9C48A2B-EF09-443b-91F0-7ACA8C368D4E}"/>
+						<properties type="EstadoCliente" derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={1079A432-84B1-4825-9E83-FC9054961C42}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={A9C48A2B-EF09-443b-91F0-7ACA8C368D4E}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+			</element>
+			<element xmi:idref="EAID_85F8BAFC_9938_45de_BCDE_E19FAD8FF740" xmi:type="uml:Enumeration" name="EstadoCliente" scope="public">
+				<model package="EAPK_2C041D70_AD32_4c58_9866_0ECF4E2E3FD1" tpos="0" ea_localid="18" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Enumeration" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Enum" ea_attsclassified="{A9C48A2B-EF09-443b-91F0-7ACA8C368D4E}"/>
+				<attributes>
+					<attribute xmi:idref="EAID_76CA6795_C262_4621_AA69_4EBE0A7F5ED7" name="ACTIVO" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="10" ea_guid="{76CA6795-C262-4621-AA69-4EBE0A7F5ED7}"/>
+						<properties derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={D8D8407F-44C8-444e-8C95-AC1E96599BB2}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={76CA6795-C262-4621-AA69-4EBE0A7F5ED7}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+					<attribute xmi:idref="EAID_00851741_05B4_4d47_A467_A72A74701367" name="INACTIVO" scope="Public">
+						<initial/>
+						<documentation/>
+						<model ea_localid="11" ea_guid="{00851741-05B4-4d47-A467-A72A74701367}"/>
+						<properties derived="0" collection="false" static="0" duplicates="0" changeability="changeable"/>
+						<coords ordered="0"/>
+						<containment containment="Not Specified" position="0"/>
+						<stereotype/>
+						<bounds lower="1" upper="1"/>
+						<options/>
+						<style/>
+						<styleex/>
+						<tags/>
+						<xrefs value="$XREFPROP=$XID={471895C7-BD00-4f60-885E-1FC503AC4B86}$XID;$NAM=CustomProperties$NAM;$TYP=attribute property$TYP;$VIS=Public$VIS;$PAR=0$PAR;$DES=@PROP=@NAME=isID@ENDNAME;@TYPE=Boolean@ENDTYPE;@VALU=0@ENDVALU;@PRMT=@ENDPRMT;@ENDPROP;$DES;$CLT={00851741-05B4-4d47-A467-A72A74701367}$CLT;$SUP=&lt;none&gt;$SUP;$ENDXREF;"/>
+					</attribute>
+				</attributes>
+			</element>
+		</elements>
+		<connectors/>
+		<primitivetypes>
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPrimitiveTypesPackage" name="EA_PrimitiveTypes_Package" visibility="public"/>
+		</primitivetypes>
+		<profiles/>
+		<diagrams/>
+	</xmi:Extension>
+</xmi:XMI>

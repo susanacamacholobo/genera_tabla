@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_2798CCFD_8192_4256_89CB_B826C2B474CF" name="OneToMany" visibility="public">
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4" name="Cliente" visibility="public"/>
+			<packagedElement xmi:type="uml:Association" xmi:id="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" name="mascotas" visibility="public">
+				<memberEnd xmi:idref="EAID_dstE5219A_D8DD_47b1_B768_0E18971F328D"/>
+				<ownedEnd xmi:type="uml:Property" xmi:id="EAID_dstE5219A_D8DD_47b1_B768_0E18971F328D" name="mascotas" visibility="public" association="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" isStatic="false" isReadOnly="true" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+					<type xmi:idref="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000001__D8DD_47b1_B768_0E18971F328D" value="0"/>
+					<upperValue xmi:type="uml:LiteralUnlimitedNatural" xmi:id="EAID_LI000002__D8DD_47b1_B768_0E18971F328D" value="-1"/>
+				</ownedEnd>
+				<memberEnd xmi:idref="EAID_srcE5219A_D8DD_47b1_B768_0E18971F328D"/>
+				<ownedEnd xmi:type="uml:Property" xmi:id="EAID_srcE5219A_D8DD_47b1_B768_0E18971F328D" visibility="public" association="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" isStatic="false" isReadOnly="true" isDerived="false" isOrdered="false" isUnique="true" isDerivedUnion="false" aggregation="none">
+					<type xmi:idref="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4"/>
+					<lowerValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000003__D8DD_47b1_B768_0E18971F328D" value="1"/>
+					<upperValue xmi:type="uml:LiteralInteger" xmi:id="EAID_LI000004__D8DD_47b1_B768_0E18971F328D" value="1"/>
+				</ownedEnd>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59" name="Mascota" visibility="public"/>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_2798CCFD_8192_4256_89CB_B826C2B474CF" xmi:type="uml:Package" name="OneToMany" scope="public">
+				<model package2="EAID_2798CCFD_8192_4256_89CB_B826C2B474CF" package="EAPK_02BAEABD_6A12_4489_BCA3_8D33C05B81DB" tpos="0" ea_localid="5" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="USUARIO" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Model"/>
+				<packageproperties tpos="0"/>
+				<paths/>
+				<times created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4" xmi:type="uml:Class" name="Cliente" scope="public">
+				<model package="EAPK_2798CCFD_8192_4256_89CB_B826C2B474CF" tpos="0" ea_localid="11" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="OneToMany"/>
+				<links>
+					<Association xmi:id="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" start="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4" end="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59" xmi:type="uml:Class" name="Mascota" scope="public">
+				<model package="EAPK_2798CCFD_8192_4256_89CB_B826C2B474CF" tpos="0" ea_localid="12" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:16" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="OneToMany"/>
+				<links>
+					<Association xmi:id="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" start="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4" end="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59"/>
+				</links>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_23E5219A_D8DD_47b1_B768_0E18971F328D" name="mascotas">
+				<source xmi:idref="EAID_4F06A9EA_E51E_41e9_BCBD_0437E00949A4">
+					<model ea_localid="11" type="Class" name="Cliente"/>
+					<role visibility="Public"/>
+					<type multiplicity="1" aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Unspecified;Owned=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_E024F6A0_6174_4dd1_BAB8_0A752FD41C59">
+					<model ea_localid="12" type="Class" name="Mascota"/>
+					<role name="mascotas" visibility="Public"/>
+					<type multiplicity="0..*" aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Unspecified;Owned=0;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="3"/>
+				<properties ea_type="Association" direction="Unspecified"/>
+				<modifiers isRoot="false" isLeaf="false"/>
+				<parameterSubstitutions/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels lb="1" mt="mascotas" rb="0..*" rt="+mascotas"/>
+				<extendedProperties/>
+				<style/>
+				<xrefs/>
+				<tags/>
+			</connector>
+		</connectors>
+		<primitivetypes>
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPrimitiveTypesPackage" name="EA_PrimitiveTypes_Package" visibility="public"/>
+		</primitivetypes>
+		<profiles/>
+		<diagrams/>
+	</xmi:Extension>
+</xmi:XMI>

@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="windows-1252"?>
+<xmi:XMI xmi:version="2.1" xmlns:uml="http://schema.omg.org/spec/UML/2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1">
+	<xmi:Documentation exporter="Enterprise Architect" exporterVersion="6.5"/>
+	<uml:Model xmi:type="uml:Model" name="EA_Model" visibility="public">
+		<packagedElement xmi:type="uml:Package" xmi:id="EAPK_8EFB21A1_058B_4ce2_8140_5B857B2BA8DE" name="Inheritance" visibility="public">
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_112B6877_FEEC_4659_822D_CFAC01AC90E3" name="Cliente" visibility="public">
+				<generalization xmi:type="uml:Generalization" xmi:id="EAID_3BFA6262_B620_4cdd_8B9A_E42EAD305004" general="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01"/>
+			</packagedElement>
+			<packagedElement xmi:type="uml:Class" xmi:id="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01" name="Persona" visibility="public"/>
+		</packagedElement>
+	</uml:Model>
+	<xmi:Extension extender="Enterprise Architect" extenderID="6.5">
+		<elements>
+			<element xmi:idref="EAPK_8EFB21A1_058B_4ce2_8140_5B857B2BA8DE" xmi:type="uml:Package" name="Inheritance" scope="public">
+				<model package2="EAID_8EFB21A1_058B_4ce2_8140_5B857B2BA8DE" package="EAPK_02BAEABD_6A12_4489_BCA3_8D33C05B81DB" tpos="0" ea_localid="6" ea_eleType="package"/>
+				<properties isSpecification="false" sType="Package" nType="0" scope="public"/>
+				<project author="USUARIO" phase="1.0" created="2026-09-13 20:41:16" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Model"/>
+				<packageproperties tpos="0"/>
+				<paths/>
+				<times created="2026-09-13 20:41:16" modified="2026-09-13 20:41:17"/>
+				<flags iscontrolled="FALSE" isprotected="FALSE" batchsave="0" batchload="0" usedtd="FALSE" logxml="FALSE"/>
+			</element>
+			<element xmi:idref="EAID_112B6877_FEEC_4659_822D_CFAC01AC90E3" xmi:type="uml:Class" name="Cliente" scope="public">
+				<model package="EAPK_8EFB21A1_058B_4ce2_8140_5B857B2BA8DE" tpos="0" ea_localid="15" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Inheritance"/>
+				<links>
+					<Generalization xmi:id="EAID_3BFA6262_B620_4cdd_8B9A_E42EAD305004" start="EAID_112B6877_FEEC_4659_822D_CFAC01AC90E3" end="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01"/>
+				</links>
+			</element>
+			<element xmi:idref="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01" xmi:type="uml:Class" name="Persona" scope="public">
+				<model package="EAPK_8EFB21A1_058B_4ce2_8140_5B857B2BA8DE" tpos="0" ea_localid="14" ea_eleType="element"/>
+				<properties isSpecification="false" sType="Class" nType="0" scope="public" isRoot="false" isLeaf="false" isAbstract="false" isActive="false"/>
+				<project author="USUARIO" version="1.0" phase="1.0" created="2026-09-13 20:41:17" modified="2026-09-13 20:41:17" complexity="1" status="Proposed"/>
+				<code gentype="Java"/>
+				<style appearance="BackColor=-1;BorderColor=-1;BorderWidth=-1;FontColor=-1;VSwimLanes=1;HSwimLanes=1;BorderStyle=0;"/>
+				<tags/>
+				<xrefs/>
+				<extendedProperties tagged="0" package_name="Inheritance"/>
+				<links>
+					<Generalization xmi:id="EAID_3BFA6262_B620_4cdd_8B9A_E42EAD305004" start="EAID_112B6877_FEEC_4659_822D_CFAC01AC90E3" end="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01"/>
+				</links>
+			</element>
+		</elements>
+		<connectors>
+			<connector xmi:idref="EAID_3BFA6262_B620_4cdd_8B9A_E42EAD305004">
+				<source xmi:idref="EAID_112B6877_FEEC_4659_822D_CFAC01AC90E3">
+					<model ea_localid="15" type="Class" name="Cliente"/>
+					<role visibility="Public"/>
+					<type aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Non-Navigable;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</source>
+				<target xmi:idref="EAID_B87A2543_0D56_4ccd_AD4B_157D0CD03E01">
+					<model ea_localid="14" type="Class" name="Persona"/>
+					<role visibility="Public"/>
+					<type aggregation="none"/>
+					<constraints/>
+					<modifiers isOrdered="false" isNavigable="false"/>
+					<style value="Navigable=Navigable;"/>
+					<documentation/>
+					<xrefs/>
+					<tags/>
+				</target>
+				<model ea_localid="4"/>
+				<properties ea_type="Generalization" direction="Source -&gt; Destination"/>
+				<parameterSubstitutions/>
+				<documentation/>
+				<appearance linemode="3" linecolor="-1" linewidth="0" seqno="0" headStyle="0" lineStyle="0"/>
+				<labels/>
+				<extendedProperties/>
+				<style/>
+				<xrefs/>
+				<tags/>
+			</connector>
+		</connectors>
+		<primitivetypes>
+			<packagedElement xmi:type="uml:Package" xmi:id="EAPrimitiveTypesPackage" name="EA_PrimitiveTypes_Package" visibility="public"/>
+		</primitivetypes>
+		<profiles/>
+		<diagrams/>
+	</xmi:Extension>
+</xmi:XMI>
