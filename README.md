@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 15, además de la preparación 2.5:
+Están implementadas las fases 0 a 16, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -30,9 +30,11 @@ Están implementadas las fases 0 a 15, además de la preparación 2.5:
   round-trip de identidad, tipos, relaciones, herencia, enumeraciones y layout.
 - abstracción asíncrona para interpretar comandos CASE con un LLM local, salida
   JSON restringida, resolución segura de nombres y proveedor intercambiable.
+- base Flutter modular con configuración por entorno, cliente REST, errores
+  tipados, navegación y panel reutilizable para el asistente.
 
-La integración del runtime y modelo dentro de Android continúa separada: se
-realizará en las fases 19 a 22 después de construir la base Flutter.
+La integración del runtime y modelo dentro de Android continúa separada y se
+realizará en las fases 19 a 22.
 
 ## Estructura
 
@@ -82,11 +84,14 @@ el backend generado.
 
 Flutter:
 
-```bash
+```powershell
 cd mobile-client/flutter
 flutter test
 flutter analyze
 flutter build apk --debug
+
+# Emulador Android: la laptop se alcanza mediante 10.0.2.2
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
 
 Los contratos y decisiones están descritos en [docs/](docs/).

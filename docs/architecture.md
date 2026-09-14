@@ -94,6 +94,24 @@ La frontera CASE anterior es independiente del futuro `LocalAIProvider` de
 Flutter. Ese segundo proveedor y su modelo se ejecutarán en Android para que el
 asistente móvil funcione sin Internet.
 
+La base Flutter de la fase 16 también usa puertos inyectables:
+
+```text
+pantalla de dominio / asistente
+              |
+              v
+          ApiClient -> http.Client -> Spring Boot por LAN
+              ^
+              |
+      AppConfiguration(API_BASE_URL)
+```
+
+`AppDependencies` entrega configuración y cliente sin variables globales. El
+router y `AssistantPanel` no conocen entidades concretas; podrán reutilizarse
+con el contrato de dominio que se cargará en la fase 17. Los errores de
+configuración, transporte, estado HTTP y decodificación cruzan una frontera
+tipada antes de convertirse en mensajes para el usuario.
+
 La generación Spring también cruza una frontera explícita:
 
 ```text
@@ -213,6 +231,10 @@ y restricciones de integridad a un único esquema `ApiError`.
   negocio a `CommandValidator` y la ejecución a `CommandHistory`.
 - La salida del LLM CASE es no confiable: sólo se admite JSON estricto, una
   acción permitida y IDs creados o resueltos por la aplicación.
+- Flutter recibe la URL del backend en compilación mediante `API_BASE_URL`; el
+  emulador usa `10.0.2.2` y un teléfono físico usa la IP LAN de la laptop.
+- `ApiClient` recibe su transporte HTTP por constructor para mantener las
+  pruebas locales y permitir cambiar la implementación sin afectar features.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,

@@ -50,6 +50,10 @@
   proveedor local intercambiable, contrato JSON restringido, resolución segura
   a IDs internos, manejo de fallos y soporte de espera en la UI. Verificado con
   proveedor fake, sin red ni runtime concreto.
+- Fase 16: base Flutter modular con `ApiClient` GET/POST/PUT/DELETE,
+  `API_BASE_URL`, errores tipados, dependencias inyectables, navegación y
+  `AssistantPanel` asíncrono. Acceso HTTP LAN habilitado en Android y APK
+  verificado.
 
 ## IN PROGRESS
 
@@ -57,13 +61,13 @@
 
 ## TODO
 
-- Fase 16: base Flutter con cliente API, configuración, navegación, manejo de
-  errores y panel reutilizable del asistente.
+- Fase 17: cargar y validar `metadata/domain-model.json` en Flutter mediante
+  `DomainModelLoader`.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 15.
+- No se conocen defectos en el alcance de las fases 0 a 16.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -82,6 +86,8 @@
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
 - La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
   como predeterminado hasta conectar un runtime local concreto.
+- El tráfico HTTP sin cifrar está permitido en el manifiesto Android para la
+  demostración por LAN; un despliegue fuera de la red local deberá usar HTTPS.
 - Maven no está instalado globalmente en el equipo; la verificación del backend
   generado se realizó con Maven 3.9.16 descargado y verificado temporalmente.
 - La generalización y las asociaciones reflexivas permanecen fuera del alcance
