@@ -46,6 +46,10 @@
 - Fase 14: importador y exportador XMI 2.1, API de carga/descarga, persistencia
   del modelo importado, protección XML, fixtures reales de EA 15 y cuatro flujos
   de round-trip verificados directamente con Enterprise Architect 15 build 1514.
+- Fase 15: interfaz asíncrona de comandos naturales, `LocalLLMCommandParser`,
+  proveedor local intercambiable, contrato JSON restringido, resolución segura
+  a IDs internos, manejo de fallos y soporte de espera en la UI. Verificado con
+  proveedor fake, sin red ni runtime concreto.
 
 ## IN PROGRESS
 
@@ -53,12 +57,13 @@
 
 ## TODO
 
-- Fase 15: abstracción CASE AI y parser de comandos mediante IA local.
+- Fase 16: base Flutter con cliente API, configuración, navegación, manejo de
+  errores y panel reutilizable del asistente.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 14.
+- No se conocen defectos en el alcance de las fases 0 a 15.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -75,6 +80,8 @@
   un incremento posterior. La fase 13 entrega y prueba el servidor colaborativo.
 - Las rooms y la presencia viven en memoria y requieren un único proceso de
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
+- La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
+  como predeterminado hasta conectar un runtime local concreto.
 - Maven no está instalado globalmente en el equipo; la verificación del backend
   generado se realizó con Maven 3.9.16 descargado y verificado temporalmente.
 - La generalización y las asociaciones reflexivas permanecen fuera del alcance

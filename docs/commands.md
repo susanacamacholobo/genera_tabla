@@ -48,8 +48,10 @@ validarlos, y también crea una nueva revisión monotónica.
 ## Entrada escrita
 
 `NaturalLanguageCommandParser` define la frontera para interpretar texto.
-`RuleBasedCommandParser` implementa reglas deterministas y devuelve un
-`CommandParseResult`; nunca aplica cambios por sí mismo. Los comandos aceptados
+Su contrato asíncrono permite tanto reglas inmediatas como un runtime local.
+`RuleBasedCommandParser` implementa las reglas deterministas y
+`LocalLLMCommandParser` valida una respuesta JSON producida por un
+`LocalLLMProvider`; ninguno aplica cambios por sí mismo. Los comandos aceptados
 continúan exactamente por el flujo descrito arriba.
 
 La gramática disponible y sus errores se documentan en

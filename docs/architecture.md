@@ -78,10 +78,21 @@ Los comandos escritos entran por otra frontera de adaptador:
 texto -> NaturalLanguageCommandParser -> Command -> CommandValidator -> modelo
 ```
 
-`RuleBasedCommandParser` es la primera implementación. Sólo reconoce una
-gramática explícita y no modifica el modelo directamente. Una futura
-implementación con LLM deberá satisfacer la misma interfaz y producir los
-mismos comandos tipados.
+`RuleBasedCommandParser` reconoce una gramática explícita y permanece como valor
+predeterminado. `LocalLLMCommandParser` satisface la misma interfaz asíncrona y
+acepta un `LocalLLMProvider` intercambiable. Convierte una única acción JSON de
+una lista permitida, resuelve nombres a IDs internos y nunca modifica el modelo
+directamente.
+
+```text
+runtime local CASE -> LocalLLMProvider -> LocalLLMCommandParser -> Command
+                                                              -> validación
+                                                              -> ejecución
+```
+
+La frontera CASE anterior es independiente del futuro `LocalAIProvider` de
+Flutter. Ese segundo proveedor y su modelo se ejecutarán en Android para que el
+asistente móvil funcione sin Internet.
 
 La generación Spring también cruza una frontera explícita:
 
@@ -200,6 +211,8 @@ y restricciones de integridad a un único esquema `ApiError`.
   mediante claves foráneas con `ON DELETE CASCADE`.
 - El parser de texto resuelve nombres a IDs, pero delega todas las reglas de
   negocio a `CommandValidator` y la ejecución a `CommandHistory`.
+- La salida del LLM CASE es no confiable: sólo se admite JSON estricto, una
+  acción permitida y IDs creados o resueltos por la aplicación.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,
