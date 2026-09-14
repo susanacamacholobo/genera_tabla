@@ -32,7 +32,7 @@ class OpenApiContractTests {
         var result = mvc.perform(get("/v3/api-docs"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.openapi").value("3.1.0"))
-                .andExpect(jsonPath("$.info.title").value("{{ project.artifact_id }} API"));
+                .andExpect(jsonPath("$.info.title").value("{{ project.display_name }} API"));
 {% for entity in project.entities %}
 
         result.andExpect(jsonPath("$.paths['/api/{{ entity.endpoint_name }}'].get.operationId")

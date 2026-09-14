@@ -262,6 +262,7 @@ class JavaRelationship:
 
 @dataclass(frozen=True)
 class SpringProject:
+    display_name: str
     group_id: str
     artifact_id: str
     database_name: str
@@ -328,6 +329,7 @@ class SpringModelMapper:
             for entity_id in entity_order
         )
         return SpringProject(
+            display_name=project_name,
             group_id=self.group_id,
             artifact_id=artifact_id,
             database_name=snake_case(project_name) or "generated_application",

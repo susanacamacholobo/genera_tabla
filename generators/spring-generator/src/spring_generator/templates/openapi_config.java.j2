@@ -11,7 +11,7 @@ public class OpenApiConfig {
     @Bean
     public OpenAPI generatedOpenApi() {
         return new OpenAPI().info(new Info()
-                .title("{{ project.artifact_id }} API")
+                .title("{{ project.display_name }} API")
                 .version("0.0.1")
                 .description("API REST generada de forma determinista por GeneraTabla."));
     }

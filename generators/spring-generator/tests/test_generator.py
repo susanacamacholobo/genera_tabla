@@ -77,7 +77,7 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
         f"{root}/exception/GlobalExceptionHandler.java"
     ]
     assert '@Operation(operationId = "listCliente"' in controller
-    assert 'title("veterinaria API")' in generated.files[f"{root}/config/OpenApiConfig.java"]
+    assert 'title("Veterinaria API")' in generated.files[f"{root}/config/OpenApiConfig.java"]
     assert "private BigDecimal saldo;" in generated.files[f"{root}/model/Cliente.java"]
     assert '@ActiveProfiles("test")' in generated.files[
         "src/test/java/com/example/veterinaria/VeterinariaApplicationTests.java"

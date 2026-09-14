@@ -12,7 +12,7 @@ def test_generates_openapi_from_request_and_response_contracts(
     contract = json.loads(generated.files["openapi/openapi.json"])
 
     assert contract["openapi"] == "3.1.0"
-    assert contract["info"]["title"] == "veterinaria API"
+    assert contract["info"]["title"] == "Veterinaria API"
     assert contract["paths"]["/api/clientes"]["get"]["operationId"] == "listCliente"
     assert contract["paths"]["/api/clientes"]["post"]["responses"]["400"] == {
         "description": "Solicitud inválida",
@@ -42,7 +42,8 @@ def test_generates_domain_metadata_for_flutter(
     metadata = json.loads(generated.files["metadata/domain-model.json"])
 
     assert metadata["schemaVersion"] == "1.0.0"
-    assert metadata["application"] == "veterinaria"
+    assert metadata["application"] == "Veterinaria"
+    assert metadata["artifactId"] == "veterinaria"
     assert metadata["entities"][0]["endpoint"] == "/api/clientes"
     assert metadata["entities"][0]["fields"][0] == {
         "name": "id",

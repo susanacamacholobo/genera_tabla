@@ -23,7 +23,8 @@ def json_document(value: dict[str, Any]) -> str:
 def build_domain_model(project: SpringProject) -> dict[str, Any]:
     return {
         "schemaVersion": "1.0.0",
-        "application": project.artifact_id,
+        "application": project.display_name,
+        "artifactId": project.artifact_id,
         "basePath": "/api",
         "entities": [_domain_entity(entity) for entity in project.entities],
     }
@@ -43,7 +44,7 @@ def build_openapi(project: SpringProject) -> dict[str, Any]:
     return {
         "openapi": "3.1.0",
         "info": {
-            "title": f"{project.artifact_id} API",
+            "title": f"{project.display_name} API",
             "version": "0.0.1",
             "description": "API REST generada de forma determinista por GeneraTabla.",
         },
