@@ -14,6 +14,7 @@ import { useEffect, useMemo } from 'react';
 import {
   randomId,
   type Command,
+  type NaturalLanguageCommandParser,
   type ProjectModel,
 } from '../../../domain';
 import { ReactFlowAdapter } from '../adapters/ReactFlowAdapter';
@@ -45,9 +46,14 @@ function nextClassName(project: ProjectModel): string {
 export interface DiagramEditorProps {
   initialProject: ProjectModel;
   onProjectChange?: (project: ProjectModel) => void;
+  commandParser?: NaturalLanguageCommandParser;
 }
 
-export function DiagramEditor({ initialProject, onProjectChange }: DiagramEditorProps) {
+export function DiagramEditor({
+  initialProject,
+  onProjectChange,
+  commandParser,
+}: DiagramEditorProps) {
   const editor = useDiagramEditor(initialProject);
   const diagram = useMemo(
     () => ReactFlowAdapter.fromProject(editor.project),
@@ -148,7 +154,11 @@ export function DiagramEditor({ initialProject, onProjectChange }: DiagramEditor
       </nav>
 
       <div className="command-area">
-        <TextCommandBar project={editor.project} onExecute={editor.execute} />
+        <TextCommandBar
+          project={editor.project}
+          onExecute={editor.execute}
+          {...(commandParser ? { parser: commandParser } : {})}
+        />
         {editor.error && (
           <div className="error-banner" role="alert">
             <span>{editor.error}</span>

@@ -5,7 +5,10 @@ export type CommandParseErrorCode =
   | 'EMPTY_INPUT'
   | 'UNKNOWN_COMMAND'
   | 'INVALID_NAME'
-  | 'CLASS_NOT_FOUND';
+  | 'CLASS_NOT_FOUND'
+  | 'INVALID_MODEL_RESPONSE'
+  | 'UNSUPPORTED_COMMAND'
+  | 'MODEL_FAILURE';
 
 export interface CommandParseError {
   code: CommandParseErrorCode;
@@ -17,5 +20,5 @@ export type CommandParseResult =
   | { ok: false; error: CommandParseError };
 
 export interface NaturalLanguageCommandParser {
-  parse(input: string, project: ProjectModel): CommandParseResult;
+  parse(input: string, project: ProjectModel): Promise<CommandParseResult>;
 }

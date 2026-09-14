@@ -38,7 +38,7 @@ function nextClassPosition(project: ProjectModel): { x: number; y: number } {
 export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
   constructor(private readonly createId: IdGenerator = randomId) {}
 
-  parse(input: string, project: ProjectModel): CommandParseResult {
+  async parse(input: string, project: ProjectModel): Promise<CommandParseResult> {
     const text = input.trim().replace(/[.!?]+$/u, '').trim();
     if (!text) {
       return {

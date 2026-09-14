@@ -4,7 +4,11 @@ import { cleanup, render, screen, waitFor, within } from '@testing-library/react
 import userEvent from '@testing-library/user-event';
 import type { ReactNode } from 'react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import type { ProjectModel } from '../../../domain';
+import type {
+  CommandParseResult,
+  NaturalLanguageCommandParser,
+  ProjectModel,
+} from '../../../domain';
 import veterinariaFixture from '../../../../../../docs/examples/veterinaria.json';
 import { DiagramEditor } from './DiagramEditor';
 
@@ -174,5 +178,45 @@ describe('DiagramEditor', () => {
 
     expect((await screen.findByRole('alert')).textContent).toContain('No existe la clase «Fantasma»');
     expect(states.at(-1)?.classes).toHaveLength(2);
+  });
+
+  it('waits for an asynchronous command parser before executing its command', async () => {
+    const user = userEvent.setup();
+    let completeParsing: ((result: CommandParseResult) => void) | undefined;
+    const parser: NaturalLanguageCommandParser = {
+      parse: vi.fn(() => new Promise<CommandParseResult>((resolve) => {
+        completeParsing = resolve;
+      })),
+    };
+    const states: ProjectModel[] = [];
+    render(
+      <DiagramEditor
+        initialProject={structuredClone(veterinariaFixture) as ProjectModel}
+        onProjectChange={(project) => states.push(project)}
+        commandParser={parser}
+      />,
+    );
+
+    await user.type(screen.getByLabelText('Comando'), 'crea una factura');
+    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+
+    expect((screen.getByRole('button', { name: 'Interpretando…' }) as HTMLButtonElement).disabled).toBe(true);
+    completeParsing?.({
+      ok: true,
+      command: {
+        id: 'command-from-llm',
+        type: 'ADD_CLASS',
+        payload: {
+          id: 'class-factura',
+          name: 'Factura',
+          position: { x: 500, y: 100 },
+        },
+      },
+    });
+
+    await waitFor(() => expect(
+      states.at(-1)?.classes.some((item) => item.id === 'class-factura'),
+    ).toBe(true));
+    expect((screen.getByRole('button', { name: 'Ejecutar' }) as HTMLButtonElement).disabled).toBe(false);
   });
 });

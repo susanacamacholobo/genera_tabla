@@ -19,10 +19,10 @@ function projectFixture(): ProjectModel {
 }
 
 describe('RuleBasedCommandParser', () => {
-  it('creates a class command with a predictable free position', () => {
+  it('creates a class command with a predictable free position', async () => {
     const parser = new RuleBasedCommandParser(sequentialIds());
 
-    expect(parser.parse('  Crea una clase Factura.  ', projectFixture())).toEqual({
+    await expect(parser.parse('  Crea una clase Factura.  ', projectFixture())).resolves.toEqual({
       ok: true,
       command: {
         id: 'generated-1',
@@ -36,10 +36,10 @@ describe('RuleBasedCommandParser', () => {
     });
   });
 
-  it('adds an attribute resolving class and built-in type without case sensitivity', () => {
+  it('adds an attribute resolving class and built-in type without case sensitivity', async () => {
     const parser = new RuleBasedCommandParser(sequentialIds());
 
-    expect(parser.parse('agrega nombre string a la clase cliente', projectFixture())).toEqual({
+    await expect(parser.parse('agrega nombre string a la clase cliente', projectFixture())).resolves.toEqual({
       ok: true,
       command: {
         id: 'generated-1',
@@ -54,12 +54,12 @@ describe('RuleBasedCommandParser', () => {
     });
   });
 
-  it('supports quoted attribute and class names', () => {
+  it('supports quoted attribute and class names', async () => {
     const project = projectFixture();
     project.classes[0] = { ...project.classes[0]!, name: 'Orden de compra' };
     const parser = new RuleBasedCommandParser(sequentialIds());
 
-    const result = parser.parse(
+    const result = await parser.parse(
       'añade "fecha entrega" Date a "Orden de compra"',
       project,
     );
@@ -71,10 +71,10 @@ describe('RuleBasedCommandParser', () => {
     });
   });
 
-  it('deletes a class by name', () => {
+  it('deletes a class by name', async () => {
     const parser = new RuleBasedCommandParser(sequentialIds());
 
-    expect(parser.parse('elimina la clase Cliente', projectFixture())).toEqual({
+    await expect(parser.parse('elimina la clase Cliente', projectFixture())).resolves.toEqual({
       ok: true,
       command: {
         id: 'generated-1',
@@ -85,26 +85,26 @@ describe('RuleBasedCommandParser', () => {
     });
   });
 
-  it('returns typed errors for empty, unknown and unresolved commands', () => {
+  it('returns typed errors for empty, unknown and unresolved commands', async () => {
     const parser = new RuleBasedCommandParser(sequentialIds());
 
-    expect(parser.parse(' ', projectFixture())).toMatchObject({
+    await expect(parser.parse(' ', projectFixture())).resolves.toMatchObject({
       ok: false,
       error: { code: 'EMPTY_INPUT' },
     });
-    expect(parser.parse('haz magia', projectFixture())).toMatchObject({
+    await expect(parser.parse('haz magia', projectFixture())).resolves.toMatchObject({
       ok: false,
       error: { code: 'UNKNOWN_COMMAND' },
     });
-    expect(parser.parse('elimina Factura', projectFixture())).toMatchObject({
+    await expect(parser.parse('elimina Factura', projectFixture())).resolves.toMatchObject({
       ok: false,
       error: { code: 'CLASS_NOT_FOUND' },
     });
   });
 
-  it('produces commands accepted by the existing domain executor', () => {
+  it('produces commands accepted by the existing domain executor', async () => {
     const parser = new RuleBasedCommandParser(sequentialIds());
-    const result = parser.parse('agrega email String a Cliente', projectFixture());
+    const result = await parser.parse('agrega email String a Cliente', projectFixture());
     if (!result.ok) throw new Error(result.error.message);
 
     const updated = new CommandExecutor(() => 'unused').execute(projectFixture(), result.command);

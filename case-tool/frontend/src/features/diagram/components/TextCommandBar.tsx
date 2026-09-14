@@ -21,10 +21,22 @@ export function TextCommandBar({ project, onExecute, parser }: TextCommandBarPro
   const commandParser = useMemo(() => parser ?? new RuleBasedCommandParser(), [parser]);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<Feedback | null>(null);
+  const [isParsing, setIsParsing] = useState(false);
 
-  const submit = (event: FormEvent<HTMLFormElement>) => {
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const result = commandParser.parse(input, project);
+    if (isParsing) return;
+
+    setIsParsing(true);
+    let result;
+    try {
+      result = await commandParser.parse(input, project);
+    } catch {
+      setFeedback({ kind: 'error', message: 'No se pudo interpretar el comando.' });
+      return;
+    } finally {
+      setIsParsing(false);
+    }
     if (!result.ok) {
       setFeedback({ kind: 'error', message: result.error.message });
       return;
@@ -52,8 +64,11 @@ export function TextCommandBar({ project, onExecute, parser }: TextCommandBarPro
           }}
           placeholder="Ej.: crea clase Factura"
           autoComplete="off"
+          disabled={isParsing}
         />
-        <button type="submit" className="button button--secondary">Ejecutar</button>
+        <button type="submit" className="button button--secondary" disabled={isParsing}>
+          {isParsing ? 'Interpretando…' : 'Ejecutar'}
+        </button>
       </form>
       {feedback && (
         <p
