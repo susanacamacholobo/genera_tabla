@@ -57,6 +57,11 @@
 - Fase 17: modelos de contrato Dart, `DomainModelLoader` desde asset/JSON,
   validación sintáctica y semántica de metadata `1.0.0`, búsquedas inmutables e
   integración visual del contrato generado en la pantalla Flutter inicial.
+- Fase 18: contrato estricto `StructuredIntent`, contexto derivado de la
+  metadata, validación de entidades, campos, relaciones, tipos e IDs,
+  resolución de seis operaciones REST y ejecución probada con
+  `FakeLocalAIProvider`. `SEARCH_ENTITY` consulta la colección y filtra en el
+  teléfono porque el backend generado no publica una ruta de búsqueda.
 
 ## IN PROGRESS
 
@@ -64,13 +69,13 @@
 
 ## TODO
 
-- Fase 18: sistema Flutter de `StructuredIntent`, `IntentValidator` y
-  `ApiOperationResolver`, probado con un proveedor de IA fake.
-- Fases posteriores según el plan maestro.
+- Fase 19: interfaz `SpeechToTextProvider` e integración de reconocimiento de
+  voz local, sin servicios de Internet.
+- Fases 20 a 23 según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 17.
+- No se conocen defectos en el alcance de las fases 0 a 18.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -89,6 +94,8 @@
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
 - La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
   como predeterminado hasta conectar un runtime local concreto.
+- La fase 18 prueba el flujo móvil con un proveedor fake. El runtime real del
+  LLM Android pertenece a la fase 20 y la conexión final con la UI a la 21.
 - El tráfico HTTP sin cifrar está permitido en el manifiesto Android para la
   demostración por LAN; un despliegue fuera de la red local deberá usar HTTPS.
 - Maven no está instalado globalmente en el equipo; la verificación del backend

@@ -54,8 +54,10 @@ Los fallos se convierten en errores tipados:
 vacías, evita envíos repetidos, muestra progreso y presenta errores seguros. El
 botón de micrófono queda deliberadamente desactivado hasta la fase 19.
 
-El panel todavía no interpreta intenciones ni ejecuta CRUD. Esos comportamientos
-se conectarán al sistema de intenciones en la fase 18.
+La fase 18 incorpora el servicio que interpreta una respuesta JSON, la valida y
+ejecuta el CRUD correspondiente. La pantalla todavía no lo instancia porque el
+proveedor real se incorporará en la fase 20; la conexión final de voz, modelo,
+intenciones y panel corresponde a la fase 21.
 
 ## Contrato de dominio
 
@@ -88,3 +90,15 @@ Copy-Item `
 Después se desarrollan manualmente las pantallas específicas y se recompila
 Flutter. El cargador también acepta un `String` u objeto JSON en memoria, para
 pruebas y futuras fuentes de metadata.
+
+## Sistema de intenciones
+
+`IntentService` implementa el flujo seguro entre el futuro modelo local y el
+backend. El modelo sólo podrá proponer un `StructuredIntent`; antes de cualquier
+petición, `IntentValidator` comprueba la entidad, identificador, parámetros,
+tipos, campos obligatorios y permisos de escritura del contrato cargado.
+
+`ApiOperationResolver` convierte las operaciones permitidas a `GET`, `POST`,
+`PUT` o `DELETE`. La búsqueda usa el `GET` de la colección y filtra el resultado
+en el dispositivo, ya que el backend generado no define un endpoint especial de
+búsqueda. El contrato detallado está en [intents.md](intents.md).

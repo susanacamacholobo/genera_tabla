@@ -1,9 +1,10 @@
 # Cliente móvil Flutter
 
 Base Android reutilizable para el frontend que se desarrollará durante la
-presentación. Incluye configuración, cliente REST, navegación, manejo de errores
-y panel del asistente. También carga el contrato de dominio generado; todavía no
-incluye pantallas de un dominio específico ni un modelo de IA.
+presentación. Incluye configuración, cliente REST, navegación, manejo de
+errores, panel del asistente y sistema validado de intenciones. También carga el
+contrato de dominio generado; todavía no incluye pantallas de un dominio
+específico, voz ni un modelo de IA real.
 
 ## Cargar el dominio generado
 
@@ -76,5 +77,21 @@ build/app/outputs/flutter-apk/app-debug.apk
 ```
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
-Internet; las fases 18 a 22 incorporarán intenciones, voz e IA dentro del
-dispositivo Android.
+Internet. La fase 18 ya incorpora el contrato de intenciones y su ejecución
+REST, probado mediante `FakeLocalAIProvider`; las fases 19 a 22 incorporarán voz
+y el runtime real de IA dentro del dispositivo Android.
+
+## Intenciones disponibles
+
+El proveedor local debe devolver únicamente JSON con `operation`, `entity`, un
+`identifier` opcional y `parameters`. Se admiten `CREATE_ENTITY`, `GET_ENTITY`,
+`LIST_ENTITIES`, `UPDATE_ENTITY`, `DELETE_ENTITY` y `SEARCH_ENTITY`.
+
+Para ejecutar solamente sus pruebas:
+
+```powershell
+flutter test test/ai
+```
+
+El flujo aún no está conectado al botón del panel: esa integración se completa
+después de incorporar voz y el modelo Android en las fases 19 a 21.

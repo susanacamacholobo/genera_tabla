@@ -21,10 +21,12 @@ demuestran que el parser:
 
 ## Asistente Flutter Android
 
-El requisito offline principal pertenece al cliente móvil. Las fases 18 a 22
-incorporarán `StructuredIntent`, voz local y un `LocalAIProvider` cuyo runtime y
-modelo se ejecuten dentro del teléfono Android. No dependerá del proveedor CASE
-ni de servicios cloud.
+El requisito offline principal pertenece al cliente móvil. La fase 18 ya define
+`LocalAIProvider`, `StructuredIntent`, su parser estricto, el validador y la
+resolución REST. Las pruebas usan `FakeLocalAIProvider`: todavía no hay un
+modelo real incluido. Las fases 19 a 22 incorporarán voz local y el runtime del
+modelo dentro del teléfono Android. No dependerá del proveedor CASE ni de
+servicios cloud.
 
 ```text
 Android: texto/voz -> modelo local -> StructuredIntent -> REST por LAN

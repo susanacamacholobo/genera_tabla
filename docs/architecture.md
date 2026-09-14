@@ -130,6 +130,25 @@ ya se deriva del mismo modelo intermedio del generador. Sus colecciones son
 inmutables y ofrecen búsquedas de entidades, campos y relaciones sin distinguir
 mayúsculas, preparadas para el validador de intenciones de la fase 18.
 
+La fase 18 mantiene al modelo local fuera de la frontera de confianza:
+
+```text
+instrucción + DomainModel -> LocalAIProvider -> JSON
+                                         |
+                                         v
+                    StructuredIntentParser -> IntentValidator
+                                         |
+                                         v
+                         ApiOperationResolver -> ApiClient -> Spring Boot
+```
+
+El parser acepta sólo un objeto JSON y seis operaciones enumeradas. El
+validador vuelve a resolver nombres contra `DomainModel` y rechaza entidades,
+campos, IDs, tipos o escrituras no autorizadas antes de construir una petición.
+El LLM nunca controla el método ni la URL directamente. `SEARCH_ENTITY` se
+resuelve como lectura de colección y filtrado local para conservar el contrato
+REST existente.
+
 La generación Spring también cruza una frontera explícita:
 
 ```text
@@ -255,6 +274,9 @@ y restricciones de integridad a un único esquema `ApiError`.
   pruebas locales y permitir cambiar la implementación sin afectar features.
 - `DomainModelLoader` sólo acepta la versión `1.0.0` y rechaza referencias,
   cardinalidades o rutas inconsistentes antes de exponer el modelo a la UI o IA.
+- La salida del LLM móvil tampoco es confiable: debe cumplir `StructuredIntent`,
+  pasar `IntentValidator` y resolverse desde endpoints de la metadata; nunca
+  aporta una URL ni ejecuta HTTP directamente.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,
