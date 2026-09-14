@@ -14,6 +14,13 @@ ModelValidator -> SpringModelMapper -> plantillas Jinja2 -> GeneratedProject
                                                           directorio     ZIP
 ```
 
+Además del proyecto Java, `GeneratedProject` contiene dos contratos portables:
+
+```text
+openapi/openapi.json
+metadata/domain-model.json
+```
+
 ## Validación previa
 
 `ModelValidator` rechaza el modelo completo antes de crear archivos cuando:
@@ -80,6 +87,25 @@ servicio rechaza con 404 cualquier ID relacionado inexistente.
 `GlobalExceptionHandler` devuelve `ApiError` con `timestamp`, `status`,
 `error`, `message`, `path` y `fieldErrors`. La validación y el JSON inválido
 producen 400, los recursos ausentes 404 y las restricciones de integridad 409.
+
+## OpenAPI y metadata de dominio
+
+La fase 12 genera OpenAPI 3.1 directamente desde `SpringProject`. El documento
+incluye todos los paths CRUD, parámetros, cuerpos, respuestas, códigos de error
+y esquemas DTO. Los tipos canónicos conservan sus formatos (`int32`, `int64`,
+`date`, `date-time` y `uuid`) y las relaciones se describen mediante IDs.
+
+`domain-model.json` es un contrato más pequeño para Flutter, asistentes y
+testing. Conserva nombre de aplicación, endpoint, campos, tipo canónico,
+obligatoriedad, generación de PK, unicidad y relaciones con su entidad destino,
+cardinalidad y capacidad de escritura. No contiene decisiones visuales ni
+genera pantallas Flutter.
+
+El backend incorpora `springdoc-openapi` 3.x para Spring Boot 4. Expone el
+contrato observado en ejecución en `/v3/api-docs` y la interfaz Swagger en
+`/swagger-ui.html`. Una prueba generada comprueba la presencia de cada path y
+de sus esquemas `Request`/`Response`. Los archivos estáticos siguen siendo la
+salida reproducible consumible sin levantar Java.
 
 ## Relaciones JPA
 

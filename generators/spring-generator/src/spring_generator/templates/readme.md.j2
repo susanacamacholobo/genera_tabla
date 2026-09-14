@@ -56,6 +56,16 @@ Los errores tienen los campos `timestamp`, `status`, `error`, `message`,
 `path` y `fieldErrors`. Una solicitud inválida responde 400, un recurso o ID de
 relación inexistente responde 404 y un conflicto de integridad responde 409.
 
+## OpenAPI y metadata
+
+- OpenAPI en ejecución: `http://localhost:8080/v3/api-docs`
+- Swagger UI: `http://localhost:8080/swagger-ui.html`
+- Contrato estático: `openapi/openapi.json`
+- Metadata para Flutter y tooling: `metadata/domain-model.json`
+
+Los dos archivos estáticos se generan desde el mismo modelo validado que el
+backend y no requieren PostgreSQL ni Java para ser consultados.
+
 {% if project.relationships %}
 Relaciones JPA generadas:
 

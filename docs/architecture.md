@@ -94,6 +94,19 @@ plantillas reciben un modelo intermedio ya validado, sin interpretar el JSON
 canónico. `GeneratedProject` mantiene el resultado en memoria y permite
 materializar exactamente los mismos archivos en un directorio o un ZIP.
 
+La metadata de la fase 12 se deriva del mismo `SpringProject` que alimenta las
+plantillas, por lo que no analiza código Java ya renderizado:
+
+```text
+SpringProject -> plantillas Java
+              -> openapi/openapi.json
+              -> metadata/domain-model.json
+```
+
+Springdoc observa los controladores y DTOs en ejecución para publicar
+`/v3/api-docs`; las pruebas generadas verifican que sus paths y esquemas
+fundamentales coincidan con el contrato estático.
+
 La configuración de datos del resultado separa ejecución y pruebas:
 
 ```text
@@ -164,3 +177,5 @@ y restricciones de integridad a un único esquema `ApiError`.
   servicio, repositorio y mapeo JPA que usa la aplicación.
 - Los controladores generados dependen de DTOs, nunca de entidades; la clave
   primaria y las relaciones se resuelven dentro de la capa de servicio.
+- OpenAPI y metadata se construyen desde el modelo Spring intermedio para
+  preservar determinismo y evitar dependencias del código renderizado.

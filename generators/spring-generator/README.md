@@ -1,7 +1,7 @@
 # Generador Spring Boot
 
 Genera un proyecto CRUD determinista desde el modelo canónico de GeneraTabla.
-Las fases 8 a 11 producen `pom.xml`, aplicación, entidades JPA, repositorios,
+Las fases 8 a 12 producen `pom.xml`, aplicación, entidades JPA, repositorios,
 servicios, controladores REST, DTOs, mapeadores, validación, errores,
 configuración PostgreSQL, relaciones y pruebas.
 
@@ -60,6 +60,14 @@ mvn spring-boot:run
 `mvn test` no necesita PostgreSQL: activa el perfil `test` y usa una base H2
 aislada. Genera pruebas de contexto, CRUD HTTP, metadata JPA, persistencia de
 relaciones, serialización JSON, validación y resolución de relaciones por ID.
+También verifica `/v3/api-docs` y Swagger UI.
+
+La salida incluye contratos utilizables sin arrancar el backend:
+
+```text
+openapi/openapi.json
+metadata/domain-model.json
+```
 
 La API queda disponible en `http://localhost:8080/api/clientes`. En otra
 terminal se puede crear y consultar un registro:
@@ -101,9 +109,12 @@ Detén la aplicación con `Ctrl+C`.
 - Bean Validation derivada de nulabilidad y multiplicidad UML.
 - Error JSON uniforme para solicitudes inválidas, recursos inexistentes y
   conflictos de integridad.
+- OpenAPI 3.1 determinista con paths CRUD y esquemas DTO.
+- Metadata compacta del dominio para Flutter, IA local y testing.
+- OpenAPI dinámico en `/v3/api-docs` y Swagger UI en `/swagger-ui.html`.
 - PostgreSQL local configurado mediante `DB_HOST`, `DB_PORT`, `DB_NAME`,
   `DB_USERNAME` y `DB_PASSWORD`.
 - H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.
 - Sin generalización ni asociaciones reflexivas todavía.
 
-OpenAPI y `domain-model.json` pertenecen a la fase 12.
+La colaboración en tiempo real pertenece a la fase 13.

@@ -36,6 +36,10 @@
   expresadas por IDs y respuestas de error uniformes para 400, 404 y 409. Los
   fixtures simple, uno-a-uno, uno-a-muchos y muchos-a-muchos compilan y pasan
   sus pruebas Maven generadas.
+- Fase 12: `openapi/openapi.json` y `metadata/domain-model.json` deterministas,
+  derivados del contrato DTO. El backend generado expone OpenAPI 3.1 en
+  `/v3/api-docs` y Swagger UI en `/swagger-ui.html`; ambos se verifican con
+  pruebas Maven generadas.
 
 ## IN PROGRESS
 
@@ -43,7 +47,7 @@
 
 ## TODO
 
-- Fase 12: OpenAPI y `domain-model.json`.
+- Fase 13: colaboración con WebSockets, rooms, revisiones, eventos y presencia.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
