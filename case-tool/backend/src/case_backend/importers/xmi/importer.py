@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
 from uuid import uuid4
 from xml.etree.ElementTree import Element, ParseError
@@ -133,6 +134,9 @@ class RawElement:
 
 class XMIImporter:
     """Map Enterprise Architect XMI 2.1 into the UI-independent canonical model."""
+
+    def import_file(self, path: str | Path, *, scope: str | None = None) -> CanonicalProjectModel:
+        return self.import_bytes(Path(path).read_bytes(), scope=scope)
 
     def import_bytes(self, content: bytes, *, scope: str | None = None) -> CanonicalProjectModel:
         try:
