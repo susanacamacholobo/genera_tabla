@@ -1,7 +1,7 @@
 from datetime import datetime
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
+from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, field_validator, model_validator
 
 JsonScalar = str | int | float | bool | None
 CommandType = Literal[
@@ -154,3 +154,26 @@ class ChangeEventResponse(CanonicalBaseModel):
 class ChangeAppliedResponse(CanonicalBaseModel):
     snapshot: ProjectSnapshotResponse
     event: ChangeEventResponse
+
+
+class CollaborationChangeMessage(CanonicalBaseModel):
+    type: Literal["change.submit"]
+    base_revision: int = Field(alias="baseRevision", ge=0)
+    command: CommandPayload
+    model: CanonicalProjectModel
+
+
+class CollaborationPresenceMessage(CanonicalBaseModel):
+    type: Literal["presence.update"]
+    status: Literal["active", "editing", "away"]
+
+
+class CollaborationPingMessage(CanonicalBaseModel):
+    type: Literal["ping"]
+
+
+CollaborationClientMessage = Annotated[
+    CollaborationChangeMessage | CollaborationPresenceMessage | CollaborationPingMessage,
+    Field(discriminator="type"),
+]
+collaboration_client_message_adapter = TypeAdapter(CollaborationClientMessage)

@@ -2,10 +2,12 @@ from collections.abc import AsyncGenerator, Generator
 
 import httpx
 import pytest
+from fastapi.testclient import TestClient
 from sqlalchemy import create_engine, event
 from sqlalchemy.orm import Session, sessionmaker
 from sqlalchemy.pool import StaticPool
 
+from case_backend.collaboration import collaboration_manager
 from case_backend.database import Base, get_session
 from case_backend.main import app
 
@@ -52,3 +54,20 @@ async def client() -> AsyncGenerator[httpx.AsyncClient, None]:
     async with httpx.AsyncClient(transport=transport, base_url="http://test") as test_client:
         yield test_client
     app.dependency_overrides.clear()
+
+
+@pytest.fixture
+def websocket_client() -> Generator[TestClient, None, None]:
+    def override_session() -> Generator[Session, None, None]:
+        session = TestingSession()
+        try:
+            yield session
+        finally:
+            session.close()
+
+    collaboration_manager.clear()
+    app.dependency_overrides[get_session] = override_session
+    with TestClient(app) as test_client:
+        yield test_client
+    app.dependency_overrides.clear()
+    collaboration_manager.clear()

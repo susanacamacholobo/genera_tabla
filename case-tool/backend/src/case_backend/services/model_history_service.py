@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 from case_backend.models import ChangeEventRecord, ProjectSnapshotRecord
 from case_backend.repositories import ModelHistoryRepository, ProjectRepository
 from case_backend.schemas import CanonicalProjectModel, ChangeCreate
+from case_backend.services.conflict_resolution import RevisionConflictResolver
 from case_backend.services.errors import (
     ModelProjectMismatchError,
     ModelRevisionMismatchError,
@@ -56,13 +57,25 @@ class ModelHistoryService:
         return self.history.list_events(project_id, after_revision)
 
     def record_change(
-        self, project_id: str, data: ChangeCreate
+        self,
+        project_id: str,
+        data: ChangeCreate,
+        conflict_resolver: RevisionConflictResolver | None = None,
     ) -> tuple[ProjectSnapshotRecord, ChangeEventRecord]:
         project = self.projects.get_for_update(project_id)
         if project is None:
             raise ProjectNotFoundError(project_id)
         if data.base_revision != project.revision:
-            raise RevisionConflictError(project.revision, data.base_revision)
+            resolved = None
+            if conflict_resolver is not None:
+                current_snapshot = self.history.get_snapshot(project_id, project.revision)
+                if current_snapshot is None:
+                    raise SnapshotNotFoundError(project_id)
+                current_model = CanonicalProjectModel.model_validate(current_snapshot.model_json)
+                resolved = conflict_resolver.resolve(project.revision, current_model, data)
+            if resolved is None:
+                raise RevisionConflictError(project.revision, data.base_revision)
+            data = resolved
 
         next_revision = project.revision + 1
         if data.model.id != project_id:

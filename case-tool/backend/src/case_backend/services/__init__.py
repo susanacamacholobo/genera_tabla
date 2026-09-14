@@ -1,3 +1,7 @@
+from case_backend.services.conflict_resolution import (
+    LastWriteWinsMoveResolver,
+    RevisionConflictResolver,
+)
 from case_backend.services.errors import (
     ModelProjectMismatchError,
     ModelRevisionMismatchError,
@@ -9,11 +13,13 @@ from case_backend.services.model_history_service import ModelHistoryService
 from case_backend.services.project_service import ProjectService
 
 __all__ = [
+    "LastWriteWinsMoveResolver",
     "ModelHistoryService",
     "ModelProjectMismatchError",
     "ModelRevisionMismatchError",
     "ProjectNotFoundError",
     "ProjectService",
     "RevisionConflictError",
+    "RevisionConflictResolver",
     "SnapshotNotFoundError",
 ]
