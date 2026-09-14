@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../core/config/app_configuration.dart';
+import '../domain/loading/domain_model_loader.dart';
 import '../features/assistant/assistant_screen.dart';
 import '../features/home/home_screen.dart';
 
@@ -10,15 +11,22 @@ abstract final class AppRoutes {
 }
 
 class AppRouter {
-  const AppRouter({required this.configuration});
+  const AppRouter({
+    required this.configuration,
+    required this.domainModelLoader,
+  });
 
   final AppConfiguration configuration;
+  final DomainModelLoader domainModelLoader;
 
   Route<void> onGenerateRoute(RouteSettings settings) {
     return switch (settings.name) {
       AppRoutes.home => MaterialPageRoute<void>(
         settings: settings,
-        builder: (_) => HomeScreen(configuration: configuration),
+        builder: (_) => HomeScreen(
+          configuration: configuration,
+          domainModelLoader: domainModelLoader,
+        ),
       ),
       AppRoutes.assistant => MaterialPageRoute<void>(
         settings: settings,

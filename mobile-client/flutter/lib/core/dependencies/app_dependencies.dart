@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../domain/loading/domain_model_loader.dart';
 import '../api/api_client.dart';
 import '../config/app_configuration.dart';
 
@@ -7,12 +8,14 @@ class AppDependencies extends InheritedWidget {
   const AppDependencies({
     required this.configuration,
     required this.apiClient,
+    required this.domainModelLoader,
     required super.child,
     super.key,
   });
 
   final AppConfiguration configuration;
   final ApiClient apiClient;
+  final DomainModelLoader domainModelLoader;
 
   static AppDependencies of(BuildContext context) {
     final dependencies = context
@@ -27,5 +30,6 @@ class AppDependencies extends InheritedWidget {
   @override
   bool updateShouldNotify(AppDependencies oldWidget) =>
       configuration != oldWidget.configuration ||
-      apiClient != oldWidget.apiClient;
+      apiClient != oldWidget.apiClient ||
+      domainModelLoader != oldWidget.domainModelLoader;
 }

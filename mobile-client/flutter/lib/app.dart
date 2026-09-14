@@ -3,13 +3,20 @@ import 'package:flutter/material.dart';
 import 'core/api/api_client.dart';
 import 'core/config/app_configuration.dart';
 import 'core/dependencies/app_dependencies.dart';
+import 'domain/loading/domain_model_loader.dart';
 import 'navigation/app_router.dart';
 
 class Software1App extends StatefulWidget {
-  const Software1App({required this.configuration, this.apiClient, super.key});
+  const Software1App({
+    required this.configuration,
+    this.apiClient,
+    this.domainModelLoader = const DomainModelLoader(),
+    super.key,
+  });
 
   final AppConfiguration configuration;
   final ApiClient? apiClient;
+  final DomainModelLoader domainModelLoader;
 
   @override
   State<Software1App> createState() => _Software1AppState();
@@ -49,10 +56,14 @@ class _Software1AppState extends State<Software1App> {
 
   @override
   Widget build(BuildContext context) {
-    final router = AppRouter(configuration: widget.configuration);
+    final router = AppRouter(
+      configuration: widget.configuration,
+      domainModelLoader: widget.domainModelLoader,
+    );
     return AppDependencies(
       configuration: widget.configuration,
       apiClient: _apiClient,
+      domainModelLoader: widget.domainModelLoader,
       child: MaterialApp(
         title: 'Software 1 Mobile',
         debugShowCheckedModeBanner: false,

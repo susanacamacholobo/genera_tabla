@@ -11,9 +11,12 @@ void main() {
       'http://192.168.1.50:8080',
     );
     await tester.pumpWidget(Software1App(configuration: configuration));
+    await tester.pumpAndSettle();
 
     expect(find.text('Base Flutter lista'), findsOneWidget);
     expect(find.text('http://192.168.1.50:8080/'), findsOneWidget);
+    expect(find.text('Veterinaria'), findsOneWidget);
+    expect(find.text('1 entidad disponible'), findsOneWidget);
 
     await tester.tap(find.text('Abrir asistente'));
     await tester.pumpAndSettle();
