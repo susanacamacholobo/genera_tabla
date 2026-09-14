@@ -30,8 +30,9 @@ La primera migración, `20260912_01`, crea la tabla `projects` y un índice para
 el nombre. La API no crea tablas automáticamente al arrancar: antes de usarla
 debe ejecutarse `python -m alembic upgrade head` desde `case-tool/backend`.
 
-## Evolución posterior
+## Historial y colaboración
 
 La fase 5 añade snapshots, eventos y control de revisión sobre estos proyectos.
-Consulta [model-history.md](model-history.md). WebSockets y edición multiusuario
-se incorporarán después de establecer ese contrato.
+La fase 13 expone esos mismos agregados como rooms WebSocket para edición
+multiusuario. Consulta [model-history.md](model-history.md) y
+[collaboration.md](collaboration.md).

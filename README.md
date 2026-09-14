@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 12, además de la preparación 2.5:
+Están implementadas las fases 0 a 13, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -24,10 +24,11 @@ Están implementadas las fases 0 a 12, además de la preparación 2.5:
 - generación bidireccional de relaciones JPA a partir de multiplicidades UML.
 - API generada con DTOs, mapeadores, Bean Validation y errores JSON uniformes.
 - contratos OpenAPI 3.1 y metadata de dominio generados para Flutter y tooling.
+- colaboración WebSocket por proyecto, con persistencia de eventos, revisión
+  optimista, presencia y movimientos concurrentes *last-write-wins*.
 
-Colaboración en tiempo real, round-trip XMI e IA quedan deliberadamente fuera
-de este incremento. La colaboración por WebSockets corresponde a la fase
-siguiente.
+Round-trip XMI e IA quedan deliberadamente fuera de este incremento. La
+interoperabilidad XMI corresponde a la fase siguiente.
 
 ## Estructura
 

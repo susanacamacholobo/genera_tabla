@@ -40,6 +40,9 @@
   derivados del contrato DTO. El backend generado expone OpenAPI 3.1 en
   `/v3/api-docs` y Swagger UI en `/swagger-ui.html`; ambos se verifican con
   pruebas Maven generadas.
+- Fase 13: colaboración WebSocket con una room por proyecto, snapshot inicial,
+  eventos persistidos antes del broadcast, revisiones ordenadas, presencia,
+  rechazo de conflictos estructurales y rebase *last-write-wins* de movimientos.
 
 ## IN PROGRESS
 
@@ -47,12 +50,12 @@
 
 ## TODO
 
-- Fase 13: colaboración con WebSockets, rooms, revisiones, eventos y presencia.
+- Fase 14: importación y exportación XMI con pruebas contra Enterprise Architect.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 10.
+- No se conocen defectos en el alcance de las fases 0 a 13.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -63,7 +66,10 @@
 - Las enumeraciones se renderizan en modo básico y no se pueden mover ni editar
   porque el modelo y los comandos actuales no definen esas operaciones.
 - El editor visual todavía utiliza un fixture local; el adaptador HTTP que
-  conectará la UI con proyectos y snapshots pertenece a un incremento posterior.
+  conectará la UI con proyectos, snapshots y el protocolo WebSocket pertenece a
+  un incremento posterior. La fase 13 entrega y prueba el servidor colaborativo.
+- Las rooms y la presencia viven en memoria y requieren un único proceso de
+  Uvicorn. Escalar horizontalmente requerirá un bus compartido.
 - Maven no está instalado globalmente en el equipo; la verificación del backend
   generado se realizó con Maven 3.9.16 descargado y verificado temporalmente.
 - La generalización y las asociaciones reflexivas permanecen fuera del alcance

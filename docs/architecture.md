@@ -107,6 +107,21 @@ Springdoc observa los controladores y DTOs en ejecución para publicar
 `/v3/api-docs`; las pruebas generadas verifican que sus paths y esquemas
 fundamentales coincidan con el contrato estático.
 
+La colaboración reutiliza la misma frontera de persistencia del historial. El
+servidor nunca difunde un cambio tentativo:
+
+```text
+WebSocket room -> validar base_revision -> transacción PostgreSQL
+                                      commit -> broadcast change.applied
+```
+
+`CollaborationManager` mantiene únicamente sockets y presencia efímera por
+`project_id`. `ModelHistoryService` sigue siendo responsable de bloquear el
+proyecto, ordenar la revisión y confirmar evento más snapshot. Una interfaz de
+resolución de conflictos permite reemplazar la estrategia MVP: actualmente
+rebasa sólo `MOVE_CLASS` con *last-write-wins* y rechaza cambios estructurales
+atrasados.
+
 La configuración de datos del resultado separa ejecución y pruebas:
 
 ```text
@@ -179,3 +194,7 @@ y restricciones de integridad a un único esquema `ApiError`.
   primaria y las relaciones se resuelven dentro de la capa de servicio.
 - OpenAPI y metadata se construyen desde el modelo Spring intermedio para
   preservar determinismo y evitar dependencias del código renderizado.
+- La presencia se agrega por usuario dentro de cada room y no se persiste; los
+  snapshots y eventos colaborativos sí se conservan en PostgreSQL.
+- Un cambio WebSocket se publica sólo después del commit. Los movimientos
+  atrasados se rebasan sobre el snapshot vigente sin reemplazar su estructura.

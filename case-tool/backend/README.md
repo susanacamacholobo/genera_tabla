@@ -48,6 +48,23 @@ La documentación interactiva queda disponible en
 `http://127.0.0.1:8000/docs` y la comprobación de salud en
 `http://127.0.0.1:8000/health`.
 
+La colaboración usa una room por proyecto:
+
+```text
+ws://127.0.0.1:8000/ws/projects/{project_id}?userId=ana&displayName=Ana
+```
+
+Ejecuta Uvicorn con un solo proceso: las revisiones y eventos se guardan en
+PostgreSQL, pero la presencia y las conexiones activas son estado efímero en
+memoria.
+
+Con el backend activo, la prueba de red crea y elimina su propio proyecto
+temporal:
+
+```powershell
+& "..\..\.venv\Scripts\python.exe" scripts/smoke_collaboration.py
+```
+
 ## Verificación
 
 ```powershell
@@ -61,4 +78,5 @@ PostgreSQL.
 
 El contrato de los endpoints se describe en
 [docs/projects-api.md](../../docs/projects-api.md) y
-[docs/model-history.md](../../docs/model-history.md).
+[docs/model-history.md](../../docs/model-history.md). El protocolo WebSocket se
+documenta en [docs/collaboration.md](../../docs/collaboration.md).

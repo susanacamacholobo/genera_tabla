@@ -59,8 +59,9 @@ Una revisión desactualizada responde `409 Conflict` e informa la revisión
 actual. Un modelo incompatible responde `422`. La actualización del proyecto,
 el evento y el snapshot se confirman en una sola transacción PostgreSQL.
 
-## Alcance
+## Colaboración
 
-Esta fase almacena comandos ya ejecutados por el dominio TypeScript; el backend
-no vuelve a interpretarlos. La difusión por WebSocket, presencia de usuarios y
-resolución avanzada de conflictos pertenecen a fases posteriores.
+El endpoint WebSocket de la fase 13 reutiliza este servicio: cada cambio se
+confirma aquí antes de difundirse a la room del proyecto. La presencia no se
+persiste. Consulta [collaboration.md](collaboration.md) para el protocolo y la
+política de conflictos.

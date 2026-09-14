@@ -117,4 +117,6 @@ Detén la aplicación con `Ctrl+C`.
 - H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.
 - Sin generalización ni asociaciones reflexivas todavía.
 
-La colaboración en tiempo real pertenece a la fase 13.
+La colaboración en tiempo real de la herramienta CASE pertenece al backend
+FastAPI y se documenta en `docs/collaboration.md`; no forma parte del backend
+Spring generado.
