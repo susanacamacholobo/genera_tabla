@@ -69,6 +69,45 @@ void main() {
 
     expect(find.text('Servidor local no disponible.'), findsOneWidget);
   });
+
+  testWidgets('places an offline voice transcript in the text field', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        AssistantPanel(
+          onSubmit: (_) async {},
+          onVoiceInput: () async => '  crea un cliente  ',
+        ),
+      ),
+    );
+
+    await tester.tap(find.byTooltip('Usar micrófono sin conexión'));
+    await tester.pumpAndSettle();
+
+    final field = tester.widget<TextField>(find.byType(TextField));
+    expect(field.controller?.text, 'crea un cliente');
+  });
+
+  testWidgets('shows safe voice recognition failures', (
+    WidgetTester tester,
+  ) async {
+    await tester.pumpWidget(
+      _app(
+        AssistantPanel(
+          onSubmit: (_) async {},
+          onVoiceInput: () async {
+            throw const NetworkException('Fallo local seguro.');
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.byTooltip('Usar micrófono sin conexión'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Fallo local seguro.'), findsOneWidget);
+  });
 }
 
 Widget _app(Widget child) => MaterialApp(home: Scaffold(body: child));

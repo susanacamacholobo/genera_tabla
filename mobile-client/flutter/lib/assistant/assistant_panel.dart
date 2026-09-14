@@ -3,17 +3,18 @@ import 'package:flutter/material.dart';
 import '../core/errors/app_exception.dart';
 
 typedef AssistantSubmit = Future<void> Function(String instruction);
+typedef AssistantVoiceInput = Future<String> Function();
 
 class AssistantPanel extends StatefulWidget {
   const AssistantPanel({
     required this.onSubmit,
-    this.onVoicePressed,
+    this.onVoiceInput,
     this.hintText = 'Escribe una instrucción',
     super.key,
   });
 
   final AssistantSubmit onSubmit;
-  final VoidCallback? onVoicePressed;
+  final AssistantVoiceInput? onVoiceInput;
   final String hintText;
 
   @override
@@ -24,6 +25,7 @@ class _AssistantPanelState extends State<AssistantPanel> {
   final _controller = TextEditingController();
   String? _error;
   bool _isSubmitting = false;
+  bool _isListening = false;
 
   @override
   void dispose() {
@@ -32,7 +34,7 @@ class _AssistantPanelState extends State<AssistantPanel> {
   }
 
   Future<void> _submit() async {
-    if (_isSubmitting) return;
+    if (_isSubmitting || _isListening) return;
     final instruction = _controller.text.trim();
     if (instruction.isEmpty) {
       setState(() => _error = 'Escribe una instrucción.');
@@ -55,6 +57,30 @@ class _AssistantPanelState extends State<AssistantPanel> {
     }
   }
 
+  Future<void> _listen() async {
+    if (_isSubmitting || _isListening || widget.onVoiceInput == null) return;
+    setState(() {
+      _error = null;
+      _isListening = true;
+    });
+    try {
+      final transcript = (await widget.onVoiceInput!()).trim();
+      if (!mounted) return;
+      if (transcript.isEmpty) {
+        setState(() => _error = 'No se detectó ninguna instrucción.');
+        return;
+      }
+      _controller
+        ..text = transcript
+        ..selection = TextSelection.collapsed(offset: transcript.length);
+    } catch (error) {
+      if (!mounted) return;
+      setState(() => _error = userMessageFor(error));
+    } finally {
+      if (mounted) setState(() => _isListening = false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -70,7 +96,7 @@ class _AssistantPanelState extends State<AssistantPanel> {
             const SizedBox(height: 12),
             TextField(
               controller: _controller,
-              enabled: !_isSubmitting,
+              enabled: !_isSubmitting && !_isListening,
               minLines: 1,
               maxLines: 4,
               textInputAction: TextInputAction.send,
@@ -88,15 +114,26 @@ class _AssistantPanelState extends State<AssistantPanel> {
             Row(
               children: [
                 IconButton.filledTonal(
-                  onPressed: _isSubmitting ? null : widget.onVoicePressed,
-                  tooltip: widget.onVoicePressed == null
-                      ? 'La voz local se integrará en la fase 19'
-                      : 'Usar micrófono',
-                  icon: const Icon(Icons.mic_none),
+                  onPressed: _isSubmitting || _isListening
+                      ? null
+                      : widget.onVoiceInput == null
+                      ? null
+                      : _listen,
+                  tooltip: widget.onVoiceInput == null
+                      ? 'Voz local no disponible'
+                      : _isListening
+                      ? 'Escuchando sin conexión'
+                      : 'Usar micrófono sin conexión',
+                  icon: _isListening
+                      ? const SizedBox.square(
+                          dimension: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : const Icon(Icons.mic_none),
                 ),
                 const Spacer(),
                 FilledButton.icon(
-                  onPressed: _isSubmitting ? null : _submit,
+                  onPressed: _isSubmitting || _isListening ? null : _submit,
                   icon: _isSubmitting
                       ? const SizedBox.square(
                           dimension: 16,

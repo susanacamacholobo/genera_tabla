@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../assistant/assistant_panel.dart';
+import '../../core/dependencies/app_dependencies.dart';
 
 class AssistantScreen extends StatefulWidget {
   const AssistantScreen({super.key});
@@ -16,6 +17,13 @@ class _AssistantScreenState extends State<AssistantScreen> {
     setState(() => _lastInstruction = instruction);
   }
 
+  Future<String> _listenOffline() async {
+    final result = await AppDependencies.of(
+      context,
+    ).speechToTextProvider.listen();
+    return result.transcript;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,10 +33,13 @@ class _AssistantScreenState extends State<AssistantScreen> {
           padding: const EdgeInsets.all(20),
           children: [
             const Text(
-              'El panel ya acepta instrucciones. La interpretación de intenciones y la IA dentro de Android se conectarán en las fases siguientes.',
+              'Puedes escribir o dictar una instrucción. La voz se reconoce dentro del dispositivo; la conexión con el modelo local se completará en las fases siguientes.',
             ),
             const SizedBox(height: 16),
-            AssistantPanel(onSubmit: _acceptInstruction),
+            AssistantPanel(
+              onSubmit: _acceptInstruction,
+              onVoiceInput: _listenOffline,
+            ),
             if (_lastInstruction != null) ...[
               const SizedBox(height: 16),
               Semantics(
