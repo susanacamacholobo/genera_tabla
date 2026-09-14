@@ -57,3 +57,8 @@ Esta abstracción es reutilizable y evita acoplar el dominio a Enterprise
 Architect. Los IDs externos se validan como valores opacos no vacíos y nunca se
 convierten en el `id` interno. El contrato completo de round-trip se documenta
 en `docs/enterprise-architect.md`.
+
+Desde la fase 14, `XMIImporter` llena estas referencias con `scope`, GUID,
+`xmi:id` y package observados en EA. `XMIExporter` las reutiliza o genera una
+identidad determinista desde el ID interno cuando el elemento nació en
+GeneraTabla.

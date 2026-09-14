@@ -122,6 +122,20 @@ resolución de conflictos permite reemplazar la estrategia MVP: actualmente
 rebasa sólo `MOVE_CLASS` con *last-write-wins* y rechaza cambios estructurales
 atrasados.
 
+La fase 14 implementa las dos fronteras XMI preparadas en la fase 2.5:
+
+```text
+EA XMI 2.1 -> XMIImporter -> CanonicalProjectModel -> snapshot 0
+snapshot actual -> CanonicalProjectModel -> XMIExporter -> EA XMI 2.1
+```
+
+El importador usa un parser XML endurecido y separa siempre el ID interno del
+`xmi:id` y GUID externos. Interpreta el UML estándar y la extensión real de EA
+15 para recuperar tipos, claves, roles, multiplicidades, packages y geometría.
+El exportador reutiliza esas identidades; para elementos nacidos en GeneraTabla
+deriva GUIDs deterministas de sus IDs internos. Así, exportar otra vez el mismo
+modelo actualiza elementos en EA en vez de duplicarlos.
+
 La configuración de datos del resultado separa ejecución y pruebas:
 
 ```text
@@ -198,3 +212,7 @@ y restricciones de integridad a un único esquema `ApiError`.
   snapshots y eventos colaborativos sí se conservan en PostgreSQL.
 - Un cambio WebSocket se publica sólo después del commit. Los movimientos
   atrasados se rebasan sobre el snapshot vigente sin reemplazar su estructura.
+- XMI es un adaptador externo: ninguna clase propia de Sparx Systems entra al
+  modelo canónico y los IDs de EA nunca sustituyen los IDs internos.
+- El dialecto de salida se prueba importándolo en EA 15; el XML conserva un
+  package raíz, el subconjunto UML soportado y un diagrama de clases.

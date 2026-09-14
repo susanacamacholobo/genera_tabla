@@ -48,6 +48,27 @@ La documentación interactiva queda disponible en
 `http://127.0.0.1:8000/docs` y la comprobación de salud en
 `http://127.0.0.1:8000/health`.
 
+## Intercambio XMI con Enterprise Architect
+
+Importa un XMI 2.1 como proyecto nuevo y snapshot inicial:
+
+```powershell
+curl.exe -X POST `
+  -F "file=@modelo.xmi;type=application/xml" `
+  "http://127.0.0.1:8000/projects/xmi/import?scope=mi-repositorio-ea"
+```
+
+Exporta la revisión actual de un proyecto:
+
+```powershell
+curl.exe -o modelo-exportado.xmi `
+  "http://127.0.0.1:8000/projects/{project_id}/xmi"
+```
+
+La carga máxima es 5 MiB. El parser bloquea DTDs y entidades XML. El alcance y
+las pruebas reales con EA 15 están en
+[docs/enterprise-architect.md](../../docs/enterprise-architect.md).
+
 La colaboración usa una room por proyecto:
 
 ```text

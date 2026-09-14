@@ -17,6 +17,8 @@ contiene:
 | `GET` | `/projects/{id}` | Devuelve un proyecto o `404`. |
 | `PUT` | `/projects/{id}` | Reemplaza el nombre o responde `404`. |
 | `DELETE` | `/projects/{id}` | Elimina el proyecto y responde `204`. |
+| `POST` | `/projects/xmi/import` | Importa XMI 2.1 como proyecto nuevo; responde `201`. |
+| `GET` | `/projects/{id}/xmi` | Descarga la revisión actual como XMI 2.1. |
 
 Ejemplo de creación:
 
@@ -36,3 +38,7 @@ La fase 5 añade snapshots, eventos y control de revisión sobre estos proyectos
 La fase 13 expone esos mismos agregados como rooms WebSocket para edición
 multiusuario. Consulta [model-history.md](model-history.md) y
 [collaboration.md](collaboration.md).
+
+La carga XMI es `multipart/form-data` con un campo `file`, admite un `scope`
+opcional en query y tiene un límite de 5 MiB. Un XMI inválido responde `422` y
+un archivo demasiado grande responde `413`.

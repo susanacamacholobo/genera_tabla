@@ -5,13 +5,13 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 13, además de la preparación 2.5:
+Están implementadas las fases 0 a 14, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
 - validación estructural del modelo;
 - patrón Command con historial undo/redo;
-- contrato de referencias externas para el futuro round-trip XMI 2.1.
+- contrato de referencias externas usado por el round-trip XMI 2.1.
 - editor UML visual con React Flow, atributos, relaciones y multiplicidades.
 - API CRUD de proyectos con FastAPI, SQLAlchemy, PostgreSQL y Alembic.
 - snapshots JSONB del modelo canónico y bitácora de comandos con control de
@@ -26,9 +26,11 @@ Están implementadas las fases 0 a 13, además de la preparación 2.5:
 - contratos OpenAPI 3.1 y metadata de dominio generados para Flutter y tooling.
 - colaboración WebSocket por proyecto, con persistencia de eventos, revisión
   optimista, presencia y movimientos concurrentes *last-write-wins*.
+- importación y exportación XMI 2.1 compatible con Enterprise Architect, con
+  round-trip de identidad, tipos, relaciones, herencia, enumeraciones y layout.
 
-Round-trip XMI e IA quedan deliberadamente fuera de este incremento. La
-interoperabilidad XMI corresponde a la fase siguiente.
+La IA local queda deliberadamente fuera de este incremento y corresponde a la
+fase siguiente.
 
 ## Estructura
 

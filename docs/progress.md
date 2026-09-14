@@ -43,6 +43,9 @@
 - Fase 13: colaboración WebSocket con una room por proyecto, snapshot inicial,
   eventos persistidos antes del broadcast, revisiones ordenadas, presencia,
   rechazo de conflictos estructurales y rebase *last-write-wins* de movimientos.
+- Fase 14: importador y exportador XMI 2.1, API de carga/descarga, persistencia
+  del modelo importado, protección XML, fixtures reales de EA 15 y cuatro flujos
+  de round-trip verificados directamente con Enterprise Architect 15 build 1514.
 
 ## IN PROGRESS
 
@@ -50,19 +53,21 @@
 
 ## TODO
 
-- Fase 14: importación y exportación XMI con pruebas contra Enterprise Architect.
+- Fase 15: abstracción CASE AI y parser de comandos mediante IA local.
 - Fases posteriores según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 13.
+- No se conocen defectos en el alcance de las fases 0 a 14.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
   una carencia del editor, porque debe admitir modelos parciales mientras se
   construyen.
-- La compatibilidad XMI exacta no puede validarse hasta disponer de fixtures
-  reales exportados desde la versión de Enterprise Architect del proyecto.
+- El adaptador XMI cubre el subconjunto UML comprometido y aplana packages
+  anidados porque el modelo canónico todavía no representa un árbol de packages.
+- La geometría toma el primer diagrama que contenga cada clase; no conserva
+  estilos, rutas manuales de conectores ni múltiples vistas del mismo elemento.
 - Las enumeraciones se renderizan en modo básico y no se pueden mover ni editar
   porque el modelo y los comandos actuales no definen esas operaciones.
 - El editor visual todavía utiliza un fixture local; el adaptador HTTP que
