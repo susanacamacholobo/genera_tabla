@@ -24,9 +24,10 @@ demuestran que el parser:
 El requisito offline principal pertenece al cliente móvil. La fase 18 ya define
 `LocalAIProvider`, `StructuredIntent`, su parser estricto, el validador y la
 resolución REST. Las pruebas usan `FakeLocalAIProvider`: todavía no hay un
-modelo real incluido. Las fases 19 a 22 incorporarán voz local y el runtime del
-modelo dentro del teléfono Android. No dependerá del proveedor CASE ni de
-servicios cloud.
+modelo real incluido. La fase 19 incorpora reconocimiento de voz mediante el
+servicio estrictamente on-device de Android, sin fallback remoto. Las fases 20
+a 22 incorporarán el runtime del LLM, unirán el flujo y verificarán el modo
+offline completo. No dependerá del proveedor CASE ni de servicios cloud.
 
 ```text
 Android: texto/voz -> modelo local -> StructuredIntent -> REST por LAN

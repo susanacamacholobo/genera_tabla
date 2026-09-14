@@ -62,6 +62,11 @@
   resolución de seis operaciones REST y ejecución probada con
   `FakeLocalAIProvider`. `SEARCH_ENTITY` consulta la colección y filtra en el
   teléfono porque el backend generado no publica una ruta de búsqueda.
+- Fase 19: interfaz `SpeechToTextProvider`, adaptador Flutter por
+  `MethodChannel`, runtime nativo `SpeechRecognizer` exclusivamente on-device,
+  permiso de micrófono, ciclo de vida, errores seguros e integración del
+  dictado con `AssistantPanel`. Probado con canal y proveedor fake, además de
+  compilar el APK.
 
 ## IN PROGRESS
 
@@ -69,13 +74,13 @@
 
 ## TODO
 
-- Fase 19: interfaz `SpeechToTextProvider` e integración de reconocimiento de
-  voz local, sin servicios de Internet.
-- Fases 20 a 23 según el plan maestro.
+- Fase 20: integrar el modelo LLM y runtime local de Android detrás de
+  `LocalAIProvider`, con salida exclusivamente JSON.
+- Fases 21 a 23 según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 18.
+- No se conocen defectos en el alcance de las fases 0 a 19.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -96,6 +101,10 @@
   como predeterminado hasta conectar un runtime local concreto.
 - La fase 18 prueba el flujo móvil con un proveedor fake. El runtime real del
   LLM Android pertenece a la fase 20 y la conexión final con la UI a la 21.
+- El reconocimiento on-device exige Android 12/API 31 o posterior y que el
+  dispositivo tenga instalado un motor e idioma local compatible. La app
+  rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como
+  fallback, porque éste podría enviar audio a servidores externos.
 - El tráfico HTTP sin cifrar está permitido en el manifiesto Android para la
   demostración por LAN; un despliegue fuera de la red local deberá usar HTTPS.
 - Maven no está instalado globalmente en el equipo; la verificación del backend

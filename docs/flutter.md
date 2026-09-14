@@ -50,9 +50,10 @@ Los fallos se convierten en errores tipados:
 ## Navegación y asistente
 
 `AppRouter` registra la pantalla inicial, el asistente y una ruta de respaldo.
-`AssistantPanel` acepta texto mediante un callback asíncrono, valida entradas
+`AssistantPanel` acepta texto mediante callbacks asíncronos, valida entradas
 vacías, evita envíos repetidos, muestra progreso y presenta errores seguros. El
-botón de micrófono queda deliberadamente desactivado hasta la fase 19.
+botón de micrófono ejecuta el proveedor de voz local y coloca la transcripción
+en el campo para que el usuario pueda revisarla antes de enviarla.
 
 La fase 18 incorpora el servicio que interpreta una respuesta JSON, la valida y
 ejecuta el CRUD correspondiente. La pantalla todavía no lo instancia porque el
@@ -102,3 +103,16 @@ tipos, campos obligatorios y permisos de escritura del contrato cargado.
 `PUT` o `DELETE`. La búsqueda usa el `GET` de la colección y filtra el resultado
 en el dispositivo, ya que el backend generado no define un endpoint especial de
 búsqueda. El contrato detallado está en [intents.md](intents.md).
+
+## Voz local Android
+
+La fase 19 añade `SpeechToTextProvider` y
+`AndroidSpeechToTextProvider`. Flutter cruza un `MethodChannel` propio hacia
+Kotlin; el host comprueba y crea exclusivamente
+`SpeechRecognizer.createOnDeviceSpeechRecognizer`. No existe fallback al
+reconocedor genérico.
+
+Se requiere Android 12/API 31 o posterior, permiso de micrófono y un idioma de
+reconocimiento sin conexión ya instalado en el dispositivo. Si alguno falta,
+la aplicación muestra un error seguro. Consulta [speech.md](speech.md) para la
+preparación y prueba en modo avión.

@@ -2,9 +2,9 @@
 
 Base Android reutilizable para el frontend que se desarrollará durante la
 presentación. Incluye configuración, cliente REST, navegación, manejo de
-errores, panel del asistente y sistema validado de intenciones. También carga el
-contrato de dominio generado; todavía no incluye pantallas de un dominio
-específico, voz ni un modelo de IA real.
+errores, panel del asistente, sistema validado de intenciones y dictado local en
+Android. También carga el contrato de dominio generado; todavía no incluye
+pantallas de un dominio específico ni un modelo LLM real.
 
 ## Cargar el dominio generado
 
@@ -77,9 +77,9 @@ build/app/outputs/flutter-apk/app-debug.apk
 ```
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
-Internet. La fase 18 ya incorpora el contrato de intenciones y su ejecución
-REST, probado mediante `FakeLocalAIProvider`; las fases 19 a 22 incorporarán voz
-y el runtime real de IA dentro del dispositivo Android.
+Internet. La fase 18 incorpora el contrato de intenciones y su ejecución REST;
+la fase 19 añade voz on-device. Las fases 20 a 22 incorporarán el runtime LLM y
+endurecerán el flujo completo dentro del dispositivo Android.
 
 ## Intenciones disponibles
 
@@ -93,5 +93,21 @@ Para ejecutar solamente sus pruebas:
 flutter test test/ai
 ```
 
-El flujo aún no está conectado al botón del panel: esa integración se completa
-después de incorporar voz y el modelo Android en las fases 19 a 21.
+El texto y el dictado todavía se detienen antes de llamar al sistema de
+intenciones. Esa conexión se completa después de incorporar el modelo Android
+en las fases 20 y 21.
+
+## Probar la voz local
+
+Requisitos:
+
+- teléfono con Android 12/API 31 o posterior;
+- motor de reconocimiento on-device e idioma español descargado;
+- permiso de micrófono concedido a la aplicación.
+
+Ejecuta la app en el teléfono, abre **Asistente** y pulsa el micrófono. La
+primera vez Android pedirá permiso. Habla una instrucción breve; la transcripción
+aparecerá en el campo de texto y podrás corregirla antes de enviarla.
+
+La implementación no usa el reconocedor Android genérico. Si el motor local no
+está disponible, informa el problema en vez de recurrir a un servicio remoto.

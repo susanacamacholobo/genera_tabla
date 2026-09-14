@@ -149,6 +149,20 @@ El LLM nunca controla el método ni la URL directamente. `SEARCH_ENTITY` se
 resuelve como lectura de colección y filtrado local para conservar el contrato
 REST existente.
 
+La voz de la fase 19 usa otra frontera inyectable:
+
+```text
+AssistantPanel -> SpeechToTextProvider -> MethodChannel
+                                      -> Android SpeechRecognizer on-device
+```
+
+El host Kotlin exige API 31 y consulta
+`isOnDeviceRecognitionAvailable` antes de crear el reconocedor específico del
+dispositivo. No llama `createSpeechRecognizer` y por tanto no cae en una
+implementación remota. El canal conserva una sola sesión activa, traduce los
+callbacks nativos a un resultado tipado y destruye el reconocedor con la
+actividad.
+
 La generación Spring también cruza una frontera explícita:
 
 ```text
@@ -277,6 +291,9 @@ y restricciones de integridad a un único esquema `ApiError`.
 - La salida del LLM móvil tampoco es confiable: debe cumplir `StructuredIntent`,
   pasar `IntentValidator` y resolverse desde endpoints de la metadata; nunca
   aporta una URL ni ejecuta HTTP directamente.
+- La voz móvil admite sólo el reconocedor Android creado explícitamente como
+  on-device; la ausencia del motor o paquete de idioma produce un error visible,
+  nunca un fallback con red.
 - El generador ordena rutas y entidades, y fija la metadata temporal del ZIP
   para producir artefactos reproducibles a partir de la misma entrada.
 - Cada entidad generada incluye cobertura HTTP CRUD contra el mismo controlador,
