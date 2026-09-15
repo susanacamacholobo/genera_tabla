@@ -56,9 +56,9 @@ botón de micrófono ejecuta el proveedor de voz local y coloca la transcripció
 en el campo para que el usuario pueda revisarla antes de enviarla.
 
 La fase 18 incorpora el servicio que interpreta una respuesta JSON, la valida y
-ejecuta el CRUD correspondiente. La pantalla todavía no lo instancia porque el
-proveedor real se incorporará en la fase 20; la conexión final de voz, modelo,
-intenciones y panel corresponde a la fase 21.
+ejecuta el CRUD correspondiente. La fase 20 registra el proveedor LiteRT-LM en
+`AppDependencies` y muestra la tarjeta para importar y cargar el modelo. La
+conexión final de voz, modelo, intenciones y panel corresponde a la fase 21.
 
 ## Contrato de dominio
 
@@ -116,3 +116,16 @@ Se requiere Android 12/API 31 o posterior, permiso de micrófono y un idioma de
 reconocimiento sin conexión ya instalado en el dispositivo. Si alguno falta,
 la aplicación muestra un error seguro. Consulta [speech.md](speech.md) para la
 preparación y prueba en modo avión.
+
+## LLM local Android
+
+La fase 20 añade `LiteRtLocalAIProvider` y `ManagedLocalAIProvider`. Flutter
+cruza el canal `bo.edu.software1/local_llm`; el host Kotlin importa un archivo
+`.litertlm` al almacenamiento privado, inicializa LiteRT-LM fuera del hilo de UI
+y conserva el motor hasta cerrar la aplicación.
+
+La generación usa muestreo determinista y `ResponseFormat.json` con el esquema
+de `StructuredIntent`. El proveedor Dart exige que la respuesta sea un único
+objeto JSON y nunca expone detalles nativos en sus errores. El backend inicial
+es CPU; GPU/NPU se evaluarán después de medir el teléfono real. La guía de
+instalación del modelo está en [local-llm-android.md](local-llm-android.md).

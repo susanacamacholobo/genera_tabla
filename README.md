@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 19, además de la preparación 2.5:
+Están implementadas las fases 0 a 20, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -38,9 +38,12 @@ Están implementadas las fases 0 a 19, además de la preparación 2.5:
   contrato de dominio y resolución segura de operaciones REST.
 - reconocimiento de voz Android estrictamente local, integrado al panel del
   asistente mediante una frontera Dart reemplazable.
+- runtime LiteRT-LM dentro de Android, importación privada de modelos
+  `.litertlm`, ciclo de vida, errores seguros y salida restringida mediante JSON
+  Schema.
 
-La integración del modelo LLM dentro de Android y el flujo completo del
-asistente se realizará en las fases 20 a 22.
+La conexión del panel con el modelo y la verificación offline completa se
+realizarán en las fases 21 y 22.
 
 ## Estructura
 
@@ -101,3 +104,5 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 ```
 
 Los contratos y decisiones están descritos en [docs/](docs/).
+La preparación del modelo Android está en
+[docs/local-llm-android.md](docs/local-llm-android.md).

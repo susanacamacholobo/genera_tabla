@@ -2,9 +2,9 @@
 
 Base Android reutilizable para el frontend que se desarrollará durante la
 presentación. Incluye configuración, cliente REST, navegación, manejo de
-errores, panel del asistente, sistema validado de intenciones y dictado local en
-Android. También carga el contrato de dominio generado; todavía no incluye
-pantallas de un dominio específico ni un modelo LLM real.
+errores, panel del asistente, sistema validado de intenciones, dictado local y
+runtime LiteRT-LM en Android. También carga el contrato de dominio generado;
+el archivo del modelo se importa en el teléfono y no se versiona en Git.
 
 ## Cargar el dominio generado
 
@@ -77,9 +77,9 @@ build/app/outputs/flutter-apk/app-debug.apk
 ```
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
-Internet. La fase 18 incorpora el contrato de intenciones y su ejecución REST;
-la fase 19 añade voz on-device. Las fases 20 a 22 incorporarán el runtime LLM y
-endurecerán el flujo completo dentro del dispositivo Android.
+Internet. La fase 18 incorpora el contrato de intenciones y su ejecución REST,
+la fase 19 añade voz on-device y la fase 20 integra LiteRT-LM. Las fases 21 y 22
+conectarán y endurecerán el flujo completo dentro del dispositivo Android.
 
 ## Intenciones disponibles
 
@@ -94,8 +94,18 @@ flutter test test/ai
 ```
 
 El texto y el dictado todavía se detienen antes de llamar al sistema de
-intenciones. Esa conexión se completa después de incorporar el modelo Android
-en las fases 20 y 21.
+intenciones. Esa conexión se completa en la fase 21.
+
+## Probar el modelo local
+
+Descarga con tu cuenta y licencia el archivo genérico
+`gemma3-1b-it-int4.litertlm`, cópialo al teléfono y abre **Asistente**. Usa
+**Importar .litertlm** y después **Cargar modelo**. La tarjeta confirmará cuando
+el motor esté listo. El archivo ocupa aproximadamente 584 MB y se copia al
+almacenamiento privado de la aplicación.
+
+La guía completa, enlace del modelo y límites de esta fase están en
+[docs/local-llm-android.md](../../docs/local-llm-android.md).
 
 ## Probar la voz local
 

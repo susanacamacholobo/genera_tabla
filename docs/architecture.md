@@ -163,6 +163,29 @@ implementación remota. El canal conserva una sola sesión activa, traduce los
 callbacks nativos a un resultado tipado y destruye el reconocedor con la
 actividad.
 
+La fase 20 concreta el puerto de IA móvil sin llevar el SDK nativo al dominio
+Dart:
+
+```text
+LiteRtLocalAIProvider -> MethodChannel -> LocalLlmController
+                                         |
+                                         v
+                         LiteRT-LM Engine (CPU, on-device)
+                                         |
+                              ResponseFormat + JSON Schema
+                                         |
+                                         v
+                              objeto StructuredIntent
+```
+
+El selector de documentos entrega un `.litertlm`, que el host copia al
+almacenamiento privado con reemplazo seguro. Inicialización e inferencia se
+serializan en un ejecutor dedicado para no bloquear Flutter. El motor permanece
+cargado, pero cada solicitud usa una conversación de vida corta para impedir
+que instrucciones anteriores contaminen el resultado. El JSON restringido aún
+atraviesa el parser y validador de la fase 18; el runtime nativo nunca recibe
+autoridad para construir URLs o ejecutar HTTP.
+
 La generación Spring también cruza una frontera explícita:
 
 ```text

@@ -67,6 +67,10 @@
   permiso de micrófono, ciclo de vida, errores seguros e integración del
   dictado con `AssistantPanel`. Probado con canal y proveedor fake, además de
   compilar el APK.
+- Fase 20: `LiteRtLocalAIProvider`, puente Flutter/Kotlin por `MethodChannel`,
+  runtime LiteRT-LM 0.17.0 en CPU, importación privada y reemplazo seguro de
+  modelos `.litertlm`, ciclo de vida del motor y salida restringida por JSON
+  Schema. Probado en Dart con canal simulado y compilado contra el SDK Android.
 
 ## IN PROGRESS
 
@@ -74,13 +78,11 @@
 
 ## TODO
 
-- Fase 20: integrar el modelo LLM y runtime local de Android detrás de
-  `LocalAIProvider`, con salida exclusivamente JSON.
 - Fases 21 a 23 según el plan maestro.
 
 ## KNOWN ISSUES
 
-- No se conocen defectos en el alcance de las fases 0 a 19.
+- No se conocen defectos en el alcance de las fases 0 a 20.
 - PostgreSQL local exige autenticación SCRAM; su contraseña permanece únicamente
   en el archivo privado `case-tool/backend/.env`.
 - La validación previa a generar Spring será deliberadamente más estricta; no es
@@ -99,8 +101,10 @@
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
 - La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
   como predeterminado hasta conectar un runtime local concreto.
-- La fase 18 prueba el flujo móvil con un proveedor fake. El runtime real del
-  LLM Android pertenece a la fase 20 y la conexión final con la UI a la 21.
+- La fase 20 compila el runtime real de LiteRT-LM y prueba su frontera con un
+  canal simulado. La inferencia física requiere que el usuario acepte la
+  licencia de Gemma, importe el modelo al teléfono y se valide el rendimiento
+  del dispositivo. La conexión final con la UI pertenece a la fase 21.
 - El reconocimiento on-device exige Android 12/API 31 o posterior y que el
   dispositivo tenga instalado un motor e idioma local compatible. La app
   rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como

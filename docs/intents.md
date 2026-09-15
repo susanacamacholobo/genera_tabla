@@ -56,9 +56,9 @@ validación y runtime local son tipados y muestran mensajes seguros.
 ## Alcance actual
 
 `FakeLocalAIProvider` verifica el flujo completo en pruebas sin red de IA. La
-fase 19 ya añade reconocimiento de voz local; la fase 20 incorporará un runtime
-LLM real en Android y la fase 21 lo conectará al flujo completo de
-`AssistantPanel`. Para probar este incremento:
+fase 19 añade reconocimiento de voz local y la fase 20 incorpora LiteRT-LM en
+Android con decodificación restringida por el mismo contrato JSON. La fase 21
+lo conectará al flujo completo de `AssistantPanel`. Para probar este incremento:
 
 ```powershell
 cd mobile-client/flutter
