@@ -1,5 +1,7 @@
 import '../../core/errors/app_exception.dart';
 
+export '../llm/local_ai_exception.dart';
+
 class IntentIssue {
   const IntentIssue({
     required this.code,
@@ -29,8 +31,4 @@ class IntentValidationException extends AppException {
     final suffix = issues.length == 1 ? '' : ' (${issues.length} problemas)';
     return 'Intención inválida en ${first.path}: ${first.message}$suffix';
   }
-}
-
-class LocalAIException extends AppException {
-  const LocalAIException(super.userMessage);
 }

@@ -21,6 +21,7 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     }
 
     private var channel: MethodChannel? = null
+    private var localLlmController: LocalLlmController? = null
     private var recognizer: SpeechRecognizer? = null
     private var pendingRecognition: MethodChannel.Result? = null
     private var pendingLocale = DEFAULT_LOCALE
@@ -30,6 +31,7 @@ class MainActivity : FlutterActivity(), RecognitionListener {
         channel = MethodChannel(flutterEngine.dartExecutor.binaryMessenger, CHANNEL).also {
             it.setMethodCallHandler(::handleSpeechCall)
         }
+        localLlmController = LocalLlmController(this, flutterEngine.dartExecutor.binaryMessenger)
     }
 
     private fun handleSpeechCall(call: MethodCall, result: MethodChannel.Result) {
@@ -172,10 +174,18 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     }
 
     override fun onDestroy() {
+        localLlmController?.close()
+        localLlmController = null
         channel?.setMethodCallHandler(null)
         channel = null
         releaseRecognizer()
         super.onDestroy()
+    }
+
+    @Deprecated("Deprecated in Android, retained for the document picker bridge.")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (localLlmController?.handleActivityResult(requestCode, resultCode, data) == true) return
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
     override fun onReadyForSpeech(params: Bundle?) = Unit

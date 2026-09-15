@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
+import 'ai/llm/lite_rt_local_ai_provider.dart';
+import 'ai/llm/local_ai_provider.dart';
 import 'core/api/api_client.dart';
 import 'core/config/app_configuration.dart';
 import 'core/dependencies/app_dependencies.dart';
@@ -16,6 +18,7 @@ class Software1App extends StatefulWidget {
     this.apiClient,
     this.domainModelLoader = const DomainModelLoader(),
     this.speechToTextProvider,
+    this.localAIProvider,
     super.key,
   });
 
@@ -23,6 +26,7 @@ class Software1App extends StatefulWidget {
   final ApiClient? apiClient;
   final DomainModelLoader domainModelLoader;
   final SpeechToTextProvider? speechToTextProvider;
+  final LocalAIProvider? localAIProvider;
 
   @override
   State<Software1App> createState() => _Software1AppState();
@@ -33,12 +37,15 @@ class _Software1AppState extends State<Software1App> {
   late bool _ownsApiClient;
   late SpeechToTextProvider _speechToTextProvider;
   late bool _ownsSpeechToTextProvider;
+  late LocalAIProvider _localAIProvider;
+  late bool _ownsLocalAIProvider;
 
   @override
   void initState() {
     super.initState();
     _setApiClient();
     _setSpeechToTextProvider();
+    _setLocalAIProvider();
   }
 
   @override
@@ -55,12 +62,23 @@ class _Software1AppState extends State<Software1App> {
       }
       _setSpeechToTextProvider();
     }
+    if (oldWidget.localAIProvider != widget.localAIProvider) {
+      if (_ownsLocalAIProvider) {
+        unawaited(_localAIProvider.dispose());
+      }
+      _setLocalAIProvider();
+    }
   }
 
   void _setSpeechToTextProvider() {
     _ownsSpeechToTextProvider = widget.speechToTextProvider == null;
     _speechToTextProvider =
         widget.speechToTextProvider ?? AndroidSpeechToTextProvider();
+  }
+
+  void _setLocalAIProvider() {
+    _ownsLocalAIProvider = widget.localAIProvider == null;
+    _localAIProvider = widget.localAIProvider ?? LiteRtLocalAIProvider();
   }
 
   void _setApiClient() {
@@ -75,6 +93,7 @@ class _Software1AppState extends State<Software1App> {
     if (_ownsSpeechToTextProvider) {
       unawaited(_speechToTextProvider.dispose());
     }
+    if (_ownsLocalAIProvider) unawaited(_localAIProvider.dispose());
     super.dispose();
   }
 
@@ -89,6 +108,7 @@ class _Software1AppState extends State<Software1App> {
       apiClient: _apiClient,
       domainModelLoader: widget.domainModelLoader,
       speechToTextProvider: _speechToTextProvider,
+      localAIProvider: _localAIProvider,
       child: MaterialApp(
         title: 'Software 1 Mobile',
         debugShowCheckedModeBanner: false,

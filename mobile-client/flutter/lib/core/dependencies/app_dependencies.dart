@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 
+import '../../ai/llm/local_ai_provider.dart';
 import '../../domain/loading/domain_model_loader.dart';
 import '../../speech/speech_to_text_provider.dart';
 import '../api/api_client.dart';
@@ -11,6 +12,7 @@ class AppDependencies extends InheritedWidget {
     required this.apiClient,
     required this.domainModelLoader,
     required this.speechToTextProvider,
+    required this.localAIProvider,
     required super.child,
     super.key,
   });
@@ -19,6 +21,7 @@ class AppDependencies extends InheritedWidget {
   final ApiClient apiClient;
   final DomainModelLoader domainModelLoader;
   final SpeechToTextProvider speechToTextProvider;
+  final LocalAIProvider localAIProvider;
 
   static AppDependencies of(BuildContext context) {
     final dependencies = context
@@ -35,5 +38,6 @@ class AppDependencies extends InheritedWidget {
       configuration != oldWidget.configuration ||
       apiClient != oldWidget.apiClient ||
       domainModelLoader != oldWidget.domainModelLoader ||
-      speechToTextProvider != oldWidget.speechToTextProvider;
+      speechToTextProvider != oldWidget.speechToTextProvider ||
+      localAIProvider != oldWidget.localAIProvider;
 }
