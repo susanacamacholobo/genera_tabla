@@ -12,6 +12,21 @@ import type {
 import veterinariaFixture from '../../../../../../docs/examples/veterinaria.json';
 import { DiagramEditor } from './DiagramEditor';
 import type { SpeechProvider } from '../voice/BrowserSpeechProvider';
+import { ProjectSession } from '../collaboration/ProjectSession';
+
+class FakeWebSocket {
+  static OPEN = 1;
+  static instances: FakeWebSocket[] = [];
+  readyState = 1;
+  onmessage: ((event: MessageEvent<string>) => void) | null = null;
+  onclose: (() => void) | null = null;
+  onerror: (() => void) | null = null;
+  sent: Array<{ command: { id: string; type: string }; model: ProjectModel; baseRevision: number }> = [];
+  constructor() { FakeWebSocket.instances.push(this); }
+  send(value: string) { this.sent.push(JSON.parse(value)); }
+  close() { this.readyState = 3; this.onclose?.(); }
+  emit(value: unknown) { this.onmessage?.({ data: JSON.stringify(value) } as MessageEvent<string>); }
+}
 
 vi.mock('@xyflow/react', async () => {
   const actual = await vi.importActual<typeof import('@xyflow/react')>('@xyflow/react');
@@ -66,7 +81,7 @@ vi.mock('@xyflow/react', async () => {
   };
 });
 
-afterEach(cleanup);
+afterEach(() => { cleanup(); vi.unstubAllGlobals(); });
 
 describe('DiagramEditor', () => {
   it('routes create, move, rename, relationship, undo and redo through canonical state', async () => {
@@ -285,5 +300,40 @@ describe('DiagramEditor', () => {
     expect(states.at(-1)?.classes[0]?.name).toBe('Cliente');
     await user.click(screen.getByRole('button', { name: 'Confirmar cambio' }));
     await waitFor(() => expect(states.at(-1)?.classes[0]?.name).toBe('Persona'));
+  });
+
+  it('syncs confirmed commands, undo and remote changes through the project session', async () => {
+    FakeWebSocket.instances = [];
+    vi.stubGlobal('WebSocket', FakeWebSocket);
+    const user = userEvent.setup();
+    const initial = structuredClone(veterinariaFixture) as ProjectModel;
+    const states: ProjectModel[] = [];
+    render(<DiagramEditor initialProject={initial} session={new ProjectSession(initial.id)} onProjectChange={(model) => states.push(model)} />);
+    const socket = FakeWebSocket.instances[0]!;
+    expect((screen.getByRole('button', { name: '+ Clase' }) as HTMLButtonElement).disabled).toBe(true);
+    socket.emit({ type: 'session.ready', model: initial });
+    await screen.findByText('Sincronizado');
+
+    await user.type(screen.getByLabelText('Comando'), 'crea clase Factura');
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    await user.click(await screen.findByRole('button', { name: 'Confirmar cambio' }));
+    expect(socket.sent).toHaveLength(1);
+    expect(socket.sent[0]).toMatchObject({ baseRevision: 0, command: { type: 'ADD_CLASS' } });
+    expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(true);
+    expect((screen.getByRole('button', { name: 'Deshacer' }) as HTMLButtonElement).disabled).toBe(true);
+    socket.emit({ type: 'change.applied', model: socket.sent[0]!.model, command: socket.sent[0]!.command });
+    await screen.findByText('Sincronizado');
+
+    await user.click(screen.getByRole('button', { name: 'Deshacer' }));
+    expect(socket.sent[1]).toMatchObject({ baseRevision: 1, command: { type: 'UNDO' } });
+    socket.emit({ type: 'change.applied', model: socket.sent[1]!.model, command: socket.sent[1]!.command });
+    await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(false));
+
+    const remote = structuredClone(socket.sent[1]!.model);
+    remote.revision += 1;
+    remote.classes.push({ id: 'remote-class', name: 'Pedido', position: { x: 1, y: 2 }, attributes: [] });
+    socket.emit({ type: 'change.applied', model: remote, command: { id: 'remote-command' } });
+    await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Pedido')).toBe(true));
+    expect((screen.getByRole('button', { name: 'Deshacer' }) as HTMLButtonElement).disabled).toBe(true);
   });
 });

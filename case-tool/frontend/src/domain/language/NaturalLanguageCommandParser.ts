@@ -17,7 +17,7 @@ export interface CommandParseError {
 }
 
 export type CommandParseResult =
-  | { ok: true; command: Command }
+  | { ok: true; command: Command; explanation?: string; assumptions?: string[] }
   | { ok: false; error: CommandParseError };
 
 export interface NaturalLanguageCommandParser {

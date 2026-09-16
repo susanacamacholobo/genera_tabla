@@ -19,6 +19,7 @@ import {
   type ProjectModel,
 } from '../../../domain';
 import { ReactFlowAdapter } from '../adapters/ReactFlowAdapter';
+import { ProjectSession } from '../collaboration/ProjectSession';
 import { useDiagramEditor } from '../hooks/useDiagramEditor';
 import type { DiagramFlowNode } from '../types/reactFlowTypes';
 import { PropertiesPanel } from './PropertiesPanel';
@@ -52,6 +53,7 @@ export interface DiagramEditorProps {
   speechProvider?: SpeechProvider;
   aiProvider?: LocalLLMProvider;
   aiRemote?: boolean;
+  session?: ProjectSession;
 }
 
 export function DiagramEditor({
@@ -61,8 +63,9 @@ export function DiagramEditor({
   speechProvider,
   aiProvider,
   aiRemote,
+  session,
 }: DiagramEditorProps) {
-  const editor = useDiagramEditor(initialProject);
+  const editor = useDiagramEditor(initialProject, session);
   const diagram = useMemo(
     () => ReactFlowAdapter.fromProject(editor.project),
     [editor.project],
@@ -149,15 +152,16 @@ export function DiagramEditor({
         <div className="project-stats" aria-label="Estado del proyecto">
           <span>{editor.project.classes.length} clases</span>
           <span>revisión {editor.project.revision}</span>
+          {session && <span>{editor.connectionStatus === 'connected' ? (editor.pending ? 'Guardando…' : 'Sincronizado') : editor.connectionStatus === 'connecting' ? 'Conectando…' : 'Sin conexión'}</span>}
         </div>
       </header>
 
       <nav className="diagram-toolbar" aria-label="Herramientas del diagrama">
-        <button className="button button--primary" onClick={addClass}>+ Clase</button>
+        <button className="button button--primary" disabled={!editor.canEdit} onClick={addClass}>+ Clase</button>
         <span className="toolbar-divider" />
         <button className="button" disabled={!editor.canUndo} onClick={editor.undo}>Deshacer</button>
         <button className="button" disabled={!editor.canRedo} onClick={editor.redo}>Rehacer</button>
-        <button className="button button--danger" disabled={!editor.selection} onClick={deleteSelection}>Eliminar selección</button>
+        <button className="button button--danger" disabled={!editor.selection || !editor.canEdit} onClick={deleteSelection}>Eliminar selección</button>
         <p className="toolbar-hint">Arrastra entre los conectores para crear una relación.</p>
       </nav>
 
@@ -190,6 +194,8 @@ export function DiagramEditor({
             onNodeDragStop={nodeDragStopped}
             onEdgeClick={(_event, edge) => editor.select({ kind: 'relationship', id: edge.id })}
             onConnect={connect}
+            nodesDraggable={editor.canEdit}
+            nodesConnectable={editor.canEdit}
             onPaneClick={() => editor.select(null)}
             deleteKeyCode={null}
             fitView

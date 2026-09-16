@@ -135,6 +135,44 @@ def test_change_is_persisted_then_broadcast(websocket_client: TestClient) -> Non
     assert response.json()["model"] == class_model(project_id, 1)
 
 
+def test_undo_and_redo_snapshots_are_persisted_and_broadcast(websocket_client: TestClient) -> None:
+    project_id = create_project(websocket_client)
+    with websocket_client.websocket_connect(websocket_path(project_id)) as websocket:
+        consume_ready(websocket)
+        websocket.send_json(add_class_message(project_id))
+        assert websocket.receive_json()["revision"] == 1
+
+        empty_model = {
+            "id": project_id,
+            "name": "Veterinaria",
+            "revision": 2,
+            "classes": [],
+            "relationships": [],
+            "enumerations": [],
+        }
+        websocket.send_json({
+            "type": "change.submit",
+            "baseRevision": 1,
+            "command": {"id": "undo-1", "type": "UNDO", "payload": {}},
+            "model": empty_model,
+        })
+        assert websocket.receive_json()["command"]["type"] == "UNDO"
+
+        websocket.send_json({
+            "type": "change.submit",
+            "baseRevision": 2,
+            "command": {"id": "redo-1", "type": "REDO", "payload": {}},
+            "model": class_model(project_id, 3),
+        })
+        assert websocket.receive_json()["command"]["type"] == "REDO"
+
+    response = websocket_client.get(f"/projects/{project_id}/model")
+    assert response.status_code == 200
+    assert response.json()["model"] == class_model(project_id, 3)
+    events = websocket_client.get(f"/projects/{project_id}/changes").json()
+    assert [event["command"]["type"] for event in events] == ["ADD_CLASS", "UNDO", "REDO"]
+
+
 def test_stale_move_uses_lww_but_structural_change_is_rejected(
     websocket_client: TestClient,
 ) -> None:

@@ -29,6 +29,8 @@ interface Proposal {
   command: Command;
   description: string;
   baseRevision: number;
+  explanation?: string;
+  assumptions?: string[];
 }
 
 function describe(command: Command, project: ProjectModel): string {
@@ -79,7 +81,9 @@ export function TextCommandBar({ project, onExecute, parser, speechProvider, aiP
         return;
       }
       new CommandExecutor().execute(project, result.command);
-      setProposal({ command: result.command, description: describe(result.command, project), baseRevision: project.revision });
+      setProposal({ command: result.command, description: describe(result.command, project), baseRevision: project.revision,
+        ...(result.explanation ? { explanation: result.explanation } : {}),
+        ...(result.assumptions ? { assumptions: result.assumptions } : {}) });
       setFeedback(null);
     } catch (error) {
       setFeedback({
@@ -150,6 +154,8 @@ export function TextCommandBar({ project, onExecute, parser, speechProvider, aiP
       {proposal && (
         <div className="command-proposal" role="region" aria-label="Propuesta de cambio">
           <p><strong>Propuesta:</strong> {proposal.description}</p>
+          {proposal.explanation && <p><strong>Motivo:</strong> {proposal.explanation}</p>}
+          {proposal.assumptions?.length ? <p><strong>Suposiciones:</strong> {proposal.assumptions.join('; ')}</p> : null}
           <div className="inline-actions">
             <button type="button" className="button button--primary" onClick={confirm}>Confirmar cambio</button>
             <button type="button" className="button" onClick={() => setProposal(null)}>Cancelar</button>

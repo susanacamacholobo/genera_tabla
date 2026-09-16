@@ -15,6 +15,8 @@ CommandType = Literal[
     "ADD_RELATIONSHIP",
     "UPDATE_RELATIONSHIP",
     "DELETE_RELATIONSHIP",
+    "UNDO",
+    "REDO",
 ]
 
 

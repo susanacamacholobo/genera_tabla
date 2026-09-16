@@ -208,4 +208,26 @@ describe('LocalLLMCommandParser', () => {
       ok: false, error: { code: 'INVALID_MODEL_RESPONSE' },
     });
   });
+
+  it('returns one explained suggestion and a safe clarification for ambiguous requests', async () => {
+    const suggestion = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [{ type: 'RENAME_CLASS', targetName: 'Cliente', payload: { name: 'Persona' } }],
+      explanation: 'Un nombre más general para reutilizar la clase.',
+      assumptions: ['Cliente también representa proveedores.'],
+    })));
+    await expect(suggestion.parse('Sugiere un mejor nombre para Cliente', projectFixture())).resolves.toMatchObject({
+      ok: true,
+      explanation: 'Un nombre más general para reutilizar la clase.',
+      assumptions: ['Cliente también representa proveedores.'],
+      command: { type: 'RENAME_CLASS', targetId: 'class-cliente' },
+    });
+
+    const ambiguous = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [], clarification: '¿A qué clase agrego el atributo?',
+    })));
+    await expect(ambiguous.parse('Agrega el atributo', projectFixture())).resolves.toMatchObject({
+      ok: false,
+      error: { message: '¿A qué clase agrego el atributo?' },
+    });
+  });
 });

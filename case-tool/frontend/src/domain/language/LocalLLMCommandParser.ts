@@ -130,6 +130,8 @@ export class LocalLLMCommandParser implements NaturalLanguageCommandParser {
       'Convierte una instrucción de edición UML en JSON.',
       'Responde exclusivamente con un objeto JSON válido, sin Markdown ni explicaciones.',
       'Devuelve exactamente una acción dentro de "actions".',
+      'Si el usuario pide una sugerencia, propone sólo una mejora concreta en actions y explica el motivo en "explanation" y tus suposiciones en "assumptions".',
+      'Si la solicitud es ambigua, devuelve {"actions":[],"clarification":"Pregunta concreta para el usuario"}.',
       'Acciones permitidas:',
       '{"actions":[{"type":"ADD_CLASS","payload":{"name":"Nombre"}}]}',
       '{"actions":[{"type":"ADD_ATTRIBUTE","targetName":"Clase","payload":{"name":"atributo","dataType":"String","nullable":true,"unique":false,"primaryKey":false}}]}',
@@ -156,34 +158,41 @@ export class LocalLLMCommandParser implements NaturalLanguageCommandParser {
       return parseFailure('La IA devolvió una respuesta que no es JSON válido.');
     }
 
-    if (!isObject(root) || !Array.isArray(root.actions) || root.actions.length !== 1) {
+    if (!isObject(root) || !Array.isArray(root.actions)) {
       return parseFailure('La IA debe devolver exactamente una acción.');
     }
+    if (root.actions.length === 0) {
+      const clarification = stringProperty(root, 'clarification');
+      return parseFailure(clarification && clarification.length <= 300
+        ? clarification : 'La instrucción necesita más detalles. Especifica la clase, atributo o relación y el cambio deseado.');
+    }
+    if (root.actions.length !== 1) return parseFailure('La IA debe devolver exactamente una acción.');
 
     const action = root.actions[0];
     if (!isObject(action) || typeof action.type !== 'string' || !isObject(action.payload)) {
       return parseFailure('La acción generada no cumple el contrato esperado.');
     }
 
+    let result: CommandParseResult;
     switch (action.type) {
       case 'ADD_CLASS':
-        return this.addClass(action.payload, project);
+        result = this.addClass(action.payload, project); break;
       case 'ADD_ATTRIBUTE':
-        return this.addAttribute(action, action.payload, project);
+        result = this.addAttribute(action, action.payload, project); break;
       case 'DELETE_CLASS':
-        return this.deleteClass(action, project);
+        result = this.deleteClass(action, project); break;
       case 'RENAME_CLASS':
-        return this.renameClass(action, action.payload, project);
+        result = this.renameClass(action, action.payload, project); break;
       case 'UPDATE_ATTRIBUTE':
-        return this.updateAttribute(action, action.payload, project);
+        result = this.updateAttribute(action, action.payload, project); break;
       case 'DELETE_ATTRIBUTE':
-        return this.deleteAttribute(action, project);
+        result = this.deleteAttribute(action, project); break;
       case 'ADD_RELATIONSHIP':
-        return this.addRelationship(action, action.payload, project);
+        result = this.addRelationship(action, action.payload, project); break;
       case 'UPDATE_RELATIONSHIP':
-        return this.updateRelationship(action, action.payload, project);
+        result = this.updateRelationship(action, action.payload, project); break;
       case 'DELETE_RELATIONSHIP':
-        return this.deleteRelationship(action, project);
+        result = this.deleteRelationship(action, project); break;
       default:
         return {
           ok: false,
@@ -193,6 +202,16 @@ export class LocalLLMCommandParser implements NaturalLanguageCommandParser {
           },
         };
     }
+    if (!result.ok) return result;
+    const explanation = stringProperty(root, 'explanation');
+    const assumptions = Array.isArray(root.assumptions) && root.assumptions.length <= 5
+      && root.assumptions.every((item) => typeof item === 'string' && item.trim().length <= 200)
+      ? root.assumptions.map((item: string) => item.trim()) : undefined;
+    return {
+      ...result,
+      ...(explanation && explanation.length <= 500 ? { explanation } : {}),
+      ...(assumptions ? { assumptions } : {}),
+    };
   }
 
   private addClass(payload: JsonObject, project: ProjectModel): CommandParseResult {
