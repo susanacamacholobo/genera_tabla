@@ -9,6 +9,21 @@ import type {
 const CREATE_CLASS = /^(?:crea|crear)\s+(?:(?:la|una)\s+)?clase\s+(.+)$/iu;
 const ADD_ATTRIBUTE = /^(?:agrega|agregar|añade|añadir)\s+(?:(?:el|un)\s+)?(?:atributo\s+)?(.+?)\s+(\S+)\s+(?:a|en)\s+(?:(?:la)\s+)?(?:clase\s+)?(.+)$/iu;
 const DELETE_CLASS = /^(?:elimina|eliminar|borra|borrar)\s+(?:(?:la)\s+)?(?:clase\s+)?(.+)$/iu;
+const RENAME_CLASS = /^(?:renombra|renombrar)\s+(?:la\s+)?clase\s+(.+?)\s+(?:a|por)\s+(.+)$/iu;
+const RENAME_ATTRIBUTE = /^(?:renombra|renombrar)\s+(?:el\s+)?atributo\s+(.+?)\s+(?:de|en)\s+(?:la\s+)?(?:clase\s+)?(.+?)\s+(?:a|por)\s+(.+)$/iu;
+const CHANGE_ATTRIBUTE_TYPE = /^(?:cambia|cambiar|modifica|modificar)\s+(?:el\s+)?tipo\s+(?:del?\s+)?atributo\s+(.+?)\s+(?:de|en)\s+(?:la\s+)?(?:clase\s+)?(.+?)\s+(?:a|por)\s+(\S+)$/iu;
+const DELETE_ATTRIBUTE = /^(?:elimina|eliminar|borra|borrar)\s+(?:el\s+)?atributo\s+(.+?)\s+(?:de|en)\s+(?:la\s+)?(?:clase\s+)?(.+)$/iu;
+const CARDINALITY = '(uno a uno|uno a muchos|muchos a uno|muchos a muchos)';
+const ADD_RELATIONSHIP = new RegExp(`^(?:relaciona|relacionar|conecta|conectar)\\s+(.+?)\\s+con\\s+(.+?)\\s+${CARDINALITY}$`, 'iu');
+const CHANGE_RELATIONSHIP = new RegExp(`^(?:cambia|cambiar|modifica|modificar)\\s+(?:la\\s+)?multiplicidad\\s+de\\s+(.+?)\\s+con\\s+(.+?)\\s+a\\s+${CARDINALITY}$`, 'iu');
+const DELETE_RELATIONSHIP = /^(?:elimina|eliminar|borra|borrar)\s+(?:la\s+)?relaci[oó]n\s+(?:de|entre)\s+(.+?)\s+con\s+(.+)$/iu;
+
+const multiplicities = {
+  'uno a uno': ['1', '1'],
+  'uno a muchos': ['1', '0..*'],
+  'muchos a uno': ['0..*', '1'],
+  'muchos a muchos': ['0..*', '0..*'],
+} as const;
 
 function normalized(value: string): string {
   return value.trim().replace(/\s+/gu, ' ').toLocaleLowerCase('es');
@@ -50,6 +65,27 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
     const createMatch = text.match(CREATE_CLASS);
     if (createMatch) return this.createClass(createMatch[1] ?? '', project);
 
+    const renameClassMatch = text.match(RENAME_CLASS);
+    if (renameClassMatch) return this.renameClass(renameClassMatch[1] ?? '', renameClassMatch[2] ?? '', project);
+
+    const renameAttributeMatch = text.match(RENAME_ATTRIBUTE);
+    if (renameAttributeMatch) return this.updateAttribute(renameAttributeMatch[1] ?? '', renameAttributeMatch[2] ?? '', { name: cleanName(renameAttributeMatch[3] ?? '') }, project);
+
+    const changeAttributeTypeMatch = text.match(CHANGE_ATTRIBUTE_TYPE);
+    if (changeAttributeTypeMatch) return this.updateAttribute(changeAttributeTypeMatch[1] ?? '', changeAttributeTypeMatch[2] ?? '', { dataType: this.canonicalDataType(changeAttributeTypeMatch[3] ?? '', project) }, project);
+
+    const deleteAttributeMatch = text.match(DELETE_ATTRIBUTE);
+    if (deleteAttributeMatch) return this.deleteAttribute(deleteAttributeMatch[1] ?? '', deleteAttributeMatch[2] ?? '', project);
+
+    const addRelationshipMatch = text.match(ADD_RELATIONSHIP);
+    if (addRelationshipMatch) return this.addRelationship(addRelationshipMatch[1] ?? '', addRelationshipMatch[2] ?? '', addRelationshipMatch[3] ?? '', project);
+
+    const changeRelationshipMatch = text.match(CHANGE_RELATIONSHIP);
+    if (changeRelationshipMatch) return this.changeRelationship(changeRelationshipMatch[1] ?? '', changeRelationshipMatch[2] ?? '', changeRelationshipMatch[3] ?? '', project);
+
+    const deleteRelationshipMatch = text.match(DELETE_RELATIONSHIP);
+    if (deleteRelationshipMatch) return this.deleteRelationship(deleteRelationshipMatch[1] ?? '', deleteRelationshipMatch[2] ?? '', project);
+
     const attributeMatch = text.match(ADD_ATTRIBUTE);
     if (attributeMatch) {
       return this.addAttribute(
@@ -88,6 +124,79 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
     return { ok: true, command };
   }
 
+  private renameClass(rawName: string, rawNewName: string, project: ProjectModel): CommandParseResult {
+    const name = cleanName(rawNewName);
+    if (!name) return invalidName();
+    const target = this.findClass(rawName, project);
+    if (!target) return this.classNotFound(cleanName(rawName));
+    return { ok: true, command: { id: this.createId(), type: 'RENAME_CLASS', targetId: target.id, payload: { name } } };
+  }
+
+  private updateAttribute(rawName: string, rawClass: string, payload: { name?: string; dataType?: DataType }, project: ProjectModel): CommandParseResult {
+    const owner = this.findClass(rawClass, project);
+    if (!owner) return this.classNotFound(cleanName(rawClass));
+    const attribute = owner.attributes.find((item) => normalized(item.name) === normalized(cleanName(rawName)));
+    if (!attribute) return this.attributeNotFound(cleanName(rawName), owner.name);
+    if ((payload.name !== undefined && !payload.name) || (payload.dataType !== undefined && !payload.dataType)) return invalidName();
+    return { ok: true, command: { id: this.createId(), type: 'UPDATE_ATTRIBUTE', targetId: attribute.id, payload } };
+  }
+
+  private deleteAttribute(rawName: string, rawClass: string, project: ProjectModel): CommandParseResult {
+    const owner = this.findClass(rawClass, project);
+    if (!owner) return this.classNotFound(cleanName(rawClass));
+    const attribute = owner.attributes.find((item) => normalized(item.name) === normalized(cleanName(rawName)));
+    if (!attribute) return this.attributeNotFound(cleanName(rawName), owner.name);
+    return { ok: true, command: { id: this.createId(), type: 'DELETE_ATTRIBUTE', targetId: attribute.id, payload: {} } };
+  }
+
+  private addRelationship(rawSource: string, rawTarget: string, rawCardinality: string, project: ProjectModel): CommandParseResult {
+    const source = this.findClass(rawSource, project);
+    const target = this.findClass(rawTarget, project);
+    if (!source) return this.classNotFound(cleanName(rawSource));
+    if (!target) return this.classNotFound(cleanName(rawTarget));
+    const [sourceMultiplicity, targetMultiplicity] = multiplicities[normalized(rawCardinality) as keyof typeof multiplicities];
+    return { ok: true, command: {
+      id: this.createId(), type: 'ADD_RELATIONSHIP', payload: {
+        id: this.createId(), type: 'ASSOCIATION', sourceClassId: source.id,
+        targetClassId: target.id, sourceMultiplicity, targetMultiplicity,
+      },
+    } };
+  }
+
+  private changeRelationship(rawSource: string, rawTarget: string, rawCardinality: string, project: ProjectModel): CommandParseResult {
+    const match = this.findRelationship(rawSource, rawTarget, project);
+    if (!match.ok) return match;
+    const [sourceMultiplicity, targetMultiplicity] = multiplicities[normalized(rawCardinality) as keyof typeof multiplicities];
+    return { ok: true, command: {
+      id: this.createId(), type: 'UPDATE_RELATIONSHIP', targetId: match.id,
+      payload: { sourceMultiplicity, targetMultiplicity },
+    } };
+  }
+
+  private deleteRelationship(rawSource: string, rawTarget: string, project: ProjectModel): CommandParseResult {
+    const match = this.findRelationship(rawSource, rawTarget, project);
+    if (!match.ok) return match;
+    return { ok: true, command: { id: this.createId(), type: 'DELETE_RELATIONSHIP', targetId: match.id, payload: {} } };
+  }
+
+  private findRelationship(rawSource: string, rawTarget: string, project: ProjectModel): { ok: true; id: string } | { ok: false; error: { code: 'CLASS_NOT_FOUND' | 'AMBIGUOUS_TARGET'; message: string } } {
+    const source = this.findClass(rawSource, project);
+    const target = this.findClass(rawTarget, project);
+    if (!source) return { ok: false, error: { code: 'CLASS_NOT_FOUND', message: `No existe la clase «${cleanName(rawSource)}».` } };
+    if (!target) return { ok: false, error: { code: 'CLASS_NOT_FOUND', message: `No existe la clase «${cleanName(rawTarget)}».` } };
+    const matches = project.relationships.filter((item) => item.sourceClassId === source.id && item.targetClassId === target.id);
+    if (matches.length !== 1) return { ok: false, error: { code: 'AMBIGUOUS_TARGET', message: matches.length === 0 ? 'No existe esa relación.' : 'Hay varias relaciones entre esas clases; selecciona una en el diagrama.' } };
+    return { ok: true, id: matches[0]!.id };
+  }
+
+  private findClass(name: string, project: ProjectModel) {
+    return project.classes.find((item) => normalized(item.name) === normalized(cleanName(name)));
+  }
+
+  private attributeNotFound(name: string, owner: string): CommandParseResult {
+    return { ok: false, error: { code: 'CLASS_NOT_FOUND', message: `No existe el atributo «${name}» en «${owner}».` } };
+  }
+
   private addAttribute(
     rawAttributeName: string,
     rawDataType: string,
@@ -98,7 +207,7 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
     const className = cleanName(rawClassName);
     if (!attributeName || !className) return invalidName();
 
-    const owner = project.classes.find((item) => normalized(item.name) === normalized(className));
+    const owner = this.findClass(className, project);
     if (!owner) return this.classNotFound(className);
 
     const command: Command = {
@@ -118,7 +227,7 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
     const className = cleanName(rawClassName);
     if (!className) return invalidName();
 
-    const target = project.classes.find((item) => normalized(item.name) === normalized(className));
+    const target = this.findClass(className, project);
     if (!target) return this.classNotFound(className);
 
     return {

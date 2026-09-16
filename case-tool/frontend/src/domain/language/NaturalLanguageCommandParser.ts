@@ -8,6 +8,7 @@ export type CommandParseErrorCode =
   | 'CLASS_NOT_FOUND'
   | 'INVALID_MODEL_RESPONSE'
   | 'UNSUPPORTED_COMMAND'
+  | 'AMBIGUOUS_TARGET'
   | 'MODEL_FAILURE';
 
 export interface CommandParseError {

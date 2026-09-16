@@ -116,4 +116,53 @@ describe('RuleBasedCommandParser', () => {
       dataType: 'String',
     });
   });
+
+  it('renames classes and edits attributes through canonical commands', async () => {
+    const project = projectFixture();
+    project.classes[0]!.attributes.push({
+      id: 'attribute-nombre', name: 'nombre', dataType: 'String',
+      nullable: true, unique: false, primaryKey: false,
+    });
+    const parser = new RuleBasedCommandParser(sequentialIds());
+
+    await expect(parser.parse('renombra clase Cliente a Persona', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'RENAME_CLASS', targetId: 'class-cliente', payload: { name: 'Persona' } },
+    });
+    await expect(parser.parse('renombra atributo nombre de Cliente a nombreCompleto', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_ATTRIBUTE', targetId: 'attribute-nombre', payload: { name: 'nombreCompleto' } },
+    });
+    await expect(parser.parse('cambia tipo de atributo nombre de Cliente a UUID', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_ATTRIBUTE', targetId: 'attribute-nombre', payload: { dataType: 'UUID' } },
+    });
+    await expect(parser.parse('elimina atributo nombre de Cliente', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'DELETE_ATTRIBUTE', targetId: 'attribute-nombre' },
+    });
+  });
+
+  it('creates, edits and removes a relationship only when its target is unambiguous', async () => {
+    const project = projectFixture();
+    project.classes.push({ id: 'class-pedido', name: 'Pedido', position: { x: 300, y: 40 }, attributes: [] });
+    const parser = new RuleBasedCommandParser(sequentialIds());
+
+    const created = await parser.parse('relaciona Cliente con Pedido uno a muchos', project);
+    expect(created).toMatchObject({
+      ok: true, command: { type: 'ADD_RELATIONSHIP', payload: {
+        sourceClassId: 'class-cliente', targetClassId: 'class-pedido',
+        sourceMultiplicity: '1', targetMultiplicity: '0..*',
+      } },
+    });
+    if (!created.ok) throw new Error(created.error.message);
+    const withRelationship = new CommandExecutor(() => 'unused').execute(project, created.command);
+    await expect(parser.parse('cambia multiplicidad de Cliente con Pedido a muchos a muchos', withRelationship)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_RELATIONSHIP', targetId: created.command.type === 'ADD_RELATIONSHIP' ? created.command.payload.id : undefined,
+        payload: { sourceMultiplicity: '0..*', targetMultiplicity: '0..*' } },
+    });
+    await expect(parser.parse('elimina relación de Cliente con Pedido', withRelationship)).resolves.toMatchObject({
+      ok: true, command: { type: 'DELETE_RELATIONSHIP' },
+    });
+    withRelationship.relationships.push({ ...withRelationship.relationships[0]!, id: 'duplicate' });
+    await expect(parser.parse('elimina relación de Cliente con Pedido', withRelationship)).resolves.toMatchObject({
+      ok: false, error: { code: 'AMBIGUOUS_TARGET' },
+    });
+  });
 });

@@ -23,6 +23,7 @@ import type { DiagramFlowNode } from '../types/reactFlowTypes';
 import { PropertiesPanel } from './PropertiesPanel';
 import { RelationshipEdge } from './RelationshipEdge';
 import { TextCommandBar } from './TextCommandBar';
+import type { SpeechProvider } from '../voice/BrowserSpeechProvider';
 import { UMLClassNode } from './UMLClassNode';
 import { UMLEnumNode } from './UMLEnumNode';
 
@@ -47,12 +48,14 @@ export interface DiagramEditorProps {
   initialProject: ProjectModel;
   onProjectChange?: (project: ProjectModel) => void;
   commandParser?: NaturalLanguageCommandParser;
+  speechProvider?: SpeechProvider;
 }
 
 export function DiagramEditor({
   initialProject,
   onProjectChange,
   commandParser,
+  speechProvider,
 }: DiagramEditorProps) {
   const editor = useDiagramEditor(initialProject);
   const diagram = useMemo(
@@ -158,6 +161,7 @@ export function DiagramEditor({
           project={editor.project}
           onExecute={editor.execute}
           {...(commandParser ? { parser: commandParser } : {})}
+          {...(speechProvider ? { speechProvider } : {})}
         />
         {editor.error && (
           <div className="error-banner" role="alert">

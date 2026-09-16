@@ -91,8 +91,8 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .command-area { position: relative; z-index: 2; }
 .text-command-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0.25rem 1rem;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.5rem;
   align-items: center;
   padding: 0.7rem 1rem;
   background: #f8fafc;
@@ -101,7 +101,7 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 
 .text-command-form {
   display: grid;
-  grid-template-columns: auto minmax(14rem, 38rem) auto;
+  grid-template-columns: auto minmax(14rem, 1fr) auto auto;
   gap: 0.55rem;
   align-items: center;
 }
@@ -127,10 +127,23 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   font-size: 0.75rem;
 }
 
-.text-command-help { grid-column: 1; color: #64748b; }
-.text-command-feedback { grid-column: 2; grid-row: 1 / span 2; font-weight: 750; }
+.text-command-help { color: #64748b; }
+.text-command-feedback { font-weight: 750; }
 .text-command-feedback--success { color: #15803d; }
 .text-command-feedback--error { color: #b42318; }
+
+.command-proposal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  padding: 0.7rem 0.85rem;
+  background: #eff6ff;
+  border: 1px solid #93c5fd;
+  border-radius: 0.55rem;
+}
+.command-proposal p { margin: 0; font-size: 0.84rem; }
 
 .error-banner {
   display: flex;
@@ -274,5 +287,6 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
   .text-command-panel { grid-template-columns: 1fr; }
   .text-command-form { grid-template-columns: 1fr auto; }
   .text-command-form label { grid-column: 1 / -1; }
+  .text-command-form button[type="submit"] { grid-column: 1 / -1; }
   .text-command-help, .text-command-feedback { grid-column: 1 / -1; grid-row: auto; }
 }

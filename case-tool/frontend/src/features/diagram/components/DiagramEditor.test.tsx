@@ -11,6 +11,7 @@ import type {
 } from '../../../domain';
 import veterinariaFixture from '../../../../../../docs/examples/veterinaria.json';
 import { DiagramEditor } from './DiagramEditor';
+import type { SpeechProvider } from '../voice/BrowserSpeechProvider';
 
 vi.mock('@xyflow/react', async () => {
   const actual = await vi.importActual<typeof import('@xyflow/react')>('@xyflow/react');
@@ -147,12 +148,15 @@ describe('DiagramEditor', () => {
 
     const input = screen.getByLabelText('Comando');
     await user.type(input, 'crea clase Factura');
-    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(false);
+    await user.click(await screen.findByRole('button', { name: 'Confirmar cambio' }));
     await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(true));
     expect(screen.getByRole('status').textContent).toContain('Comando aplicado');
 
     await user.type(input, 'agrega total decimal a Factura');
-    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    await user.click(await screen.findByRole('button', { name: 'Confirmar cambio' }));
     await waitFor(() => expect(
       states.at(-1)?.classes.find((item) => item.name === 'Factura')?.attributes[0],
     ).toMatchObject({ name: 'total', dataType: 'Decimal' }));
@@ -174,7 +178,7 @@ describe('DiagramEditor', () => {
     );
 
     await user.type(screen.getByLabelText('Comando'), 'elimina Fantasma');
-    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
 
     expect((await screen.findByRole('alert')).textContent).toContain('No existe la clase «Fantasma»');
     expect(states.at(-1)?.classes).toHaveLength(2);
@@ -198,7 +202,7 @@ describe('DiagramEditor', () => {
     );
 
     await user.type(screen.getByLabelText('Comando'), 'crea una factura');
-    await user.click(screen.getByRole('button', { name: 'Ejecutar' }));
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
 
     expect((screen.getByRole('button', { name: 'Interpretando…' }) as HTMLButtonElement).disabled).toBe(true);
     completeParsing?.({
@@ -214,9 +218,45 @@ describe('DiagramEditor', () => {
       },
     });
 
+    await screen.findByRole('region', { name: 'Propuesta de cambio' });
+    expect(states.at(-1)?.classes.some((item) => item.id === 'class-factura')).toBe(false);
+    await user.click(screen.getByRole('button', { name: 'Confirmar cambio' }));
     await waitFor(() => expect(
       states.at(-1)?.classes.some((item) => item.id === 'class-factura'),
     ).toBe(true));
-    expect((screen.getByRole('button', { name: 'Ejecutar' }) as HTMLButtonElement).disabled).toBe(false);
+    expect((screen.getByRole('button', { name: 'Revisar propuesta' }) as HTMLButtonElement).disabled).toBe(false);
+  });
+
+  it('dictates, previews, cancels and confirms a class change without applying it early', async () => {
+    const user = userEvent.setup();
+    const speechProvider: SpeechProvider = {
+      isSupported: () => true,
+      listen: vi.fn().mockResolvedValue('crea clase Factura'),
+      cancel: vi.fn(),
+    };
+    const states: ProjectModel[] = [];
+    render(
+      <DiagramEditor
+        initialProject={structuredClone(veterinariaFixture) as ProjectModel}
+        onProjectChange={(project) => states.push(project)}
+        speechProvider={speechProvider}
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: '🎤 Dictar' }));
+    await waitFor(() => expect((screen.getByLabelText('Comando') as HTMLInputElement).value).toBe('crea clase Factura'));
+    expect(states.at(-1)?.classes).toHaveLength(2);
+
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    expect((await screen.findByRole('region', { name: 'Propuesta de cambio' })).textContent).toContain('Factura');
+    expect(states.at(-1)?.classes).toHaveLength(2);
+    await user.click(screen.getByRole('button', { name: 'Cancelar' }));
+    expect(states.at(-1)?.classes).toHaveLength(2);
+
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    await user.click(await screen.findByRole('button', { name: 'Confirmar cambio' }));
+    await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(true));
+    await user.click(screen.getByRole('button', { name: 'Deshacer' }));
+    await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(false));
   });
 });
