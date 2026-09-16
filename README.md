@@ -42,7 +42,9 @@ Están implementadas las fases 0 a 20, además de la preparación 2.5:
   `.litertlm`, ciclo de vida, errores seguros y salida restringida mediante JSON
   Schema.
 
-La conexión del panel con el modelo y la verificación offline completa se
+Antes de continuar con el móvil, la fase 20.5 completará la
+[edición UML asistida por voz en CASE](docs/roadmap-case-voice.md). La conexión
+del panel Flutter con el modelo y la verificación offline completa se
 realizarán en las fases 21 y 22.
 
 ## Estructura

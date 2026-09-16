@@ -7,7 +7,12 @@ El proyecto contiene dos fronteras de IA relacionadas pero independientes.
 La fase 15 implementa `LocalLLMCommandParser` en TypeScript. Su único trabajo es
 convertir instrucciones de edición UML en comandos canónicos. Depende de la
 interfaz `LocalLLMProvider`, por lo que un runtime local de escritorio puede
-conectarse después sin cambiar el dominio ni la interfaz visual.
+conectarse después sin cambiar el dominio ni la interfaz visual. La fase 20.5
+añadida al plan completará esta integración en la herramienta web, junto con
+reconocimiento de voz estrictamente local, propuesta y confirmación de cambios
+en clases, atributos y relaciones. La IA asistirá sólo en peticiones concretas;
+no generará por sí sola un diagrama completo. Consulta
+[roadmap-case-voice.md](roadmap-case-voice.md).
 
 No se incluye todavía un modelo concreto. Las pruebas usan un proveedor fake y
 demuestran que el parser:
@@ -32,7 +37,7 @@ verificarán el modo offline completo.
 
 ```text
 Android: texto/voz -> modelo local -> StructuredIntent -> REST por LAN
-CASE:    texto     -> LLM local    -> Command          -> modelo UML
+CASE:    texto/voz -> LLM local    -> propuesta confirmada -> Command -> UML
 ```
 
 El puente Android arranca inicialmente con backend CPU para maximizar

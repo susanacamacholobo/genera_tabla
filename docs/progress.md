@@ -78,6 +78,10 @@
 
 ## TODO
 
+- Fase 20.5: edición UML asistida por voz y texto en CASE, con transcripción e
+  IA locales, propuestas confirmadas, clases/atributos/relaciones, integración
+  con el historial y persistencia colaborativa. Véase
+  [roadmap-case-voice.md](roadmap-case-voice.md).
 - Fases 21 a 23 según el plan maestro.
 
 ## KNOWN ISSUES
@@ -100,7 +104,7 @@
 - Las rooms y la presencia viven en memoria y requieren un único proceso de
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
 - La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
-  como predeterminado hasta conectar un runtime local concreto.
+  como predeterminado hasta conectar un runtime local concreto en la fase 20.5.
 - La fase 20 compila el runtime real de LiteRT-LM y prueba su frontera con un
   canal simulado. La inferencia física requiere que el usuario acepte la
   licencia de Gemma, importe el modelo al teléfono y se valide el rendimiento
