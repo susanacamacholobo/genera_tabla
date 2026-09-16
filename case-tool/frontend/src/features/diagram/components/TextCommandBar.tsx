@@ -2,8 +2,10 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import {
   CommandExecutor,
   CommandValidationError,
+  LocalLLMCommandParser,
   RuleBasedCommandParser,
   type Command,
+  type LocalLLMProvider,
   type NaturalLanguageCommandParser,
   type ProjectModel,
 } from '../../../domain';
@@ -14,6 +16,8 @@ export interface TextCommandBarProps {
   onExecute: (command: Command) => boolean;
   parser?: NaturalLanguageCommandParser;
   speechProvider?: SpeechProvider;
+  aiProvider?: LocalLLMProvider;
+  aiRemote?: boolean;
 }
 
 interface Feedback {
@@ -46,8 +50,13 @@ function describe(command: Command, project: ProjectModel): string {
   }
 }
 
-export function TextCommandBar({ project, onExecute, parser, speechProvider }: TextCommandBarProps) {
-  const commandParser = useMemo(() => parser ?? new RuleBasedCommandParser(), [parser]);
+export function TextCommandBar({ project, onExecute, parser, speechProvider, aiProvider, aiRemote = false }: TextCommandBarProps) {
+  const [mode, setMode] = useState<'rules' | 'ai'>('rules');
+  const commandParser = useMemo(
+    () => parser ?? (mode === 'ai' && aiProvider
+      ? new LocalLLMCommandParser(aiProvider) : new RuleBasedCommandParser()),
+    [parser, mode, aiProvider],
+  );
   const voice = useMemo(() => speechProvider ?? new BrowserSpeechProvider(), [speechProvider]);
   const [input, setInput] = useState('');
   const [feedback, setFeedback] = useState<Feedback | null>(null);
@@ -130,6 +139,13 @@ export function TextCommandBar({ project, onExecute, parser, speechProvider }: T
           {isParsing ? 'Interpretando…' : 'Revisar propuesta'}
         </button>
       </form>
+      {aiProvider && !parser && (
+        <div className="command-mode" role="group" aria-label="Modo de interpretación">
+          <button type="button" className="button button--small" aria-pressed={mode === 'rules'} onClick={() => { setMode('rules'); setProposal(null); }}>Reglas</button>
+          <button type="button" className="button button--small" aria-pressed={mode === 'ai'} onClick={() => { setMode('ai'); setProposal(null); }}>IA asistida</button>
+          {mode === 'ai' && <span>El contexto UML se enviará al proveedor {aiRemote ? 'remoto' : 'configurado'} al revisar la propuesta.</span>}
+        </div>
+      )}
       <p className="text-command-help">La voz puede ser procesada por un servicio del navegador. Revisa la transcripción antes de aplicar cambios. {!voice.isSupported() && 'Tu navegador no admite dictado; puedes escribir el comando.'}</p>
       {proposal && (
         <div className="command-proposal" role="region" aria-label="Propuesta de cambio">

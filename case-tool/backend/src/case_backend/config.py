@@ -22,6 +22,9 @@ class Settings(BaseSettings):
     db_username: str = "postgres"
     db_password: SecretStr = SecretStr("")
     database_url: str | None = None
+    case_ai_chat_url: str | None = None
+    case_ai_model: str | None = None
+    case_ai_api_key: SecretStr = SecretStr("")
 
     def sqlalchemy_url(self) -> str:
         if self.database_url:
@@ -40,4 +43,3 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
-

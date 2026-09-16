@@ -259,4 +259,31 @@ describe('DiagramEditor', () => {
     await user.click(screen.getByRole('button', { name: 'Deshacer' }));
     await waitFor(() => expect(states.at(-1)?.classes.some((item) => item.name === 'Factura')).toBe(false));
   });
+
+  it('uses AI only after the user selects it and still requires confirmation', async () => {
+    const user = userEvent.setup();
+    const aiProvider = { generate: vi.fn().mockResolvedValue(JSON.stringify({
+      actions: [{ type: 'RENAME_CLASS', targetName: 'Cliente', payload: { name: 'Persona' } }],
+    })) };
+    const states: ProjectModel[] = [];
+    render(
+      <DiagramEditor
+        initialProject={structuredClone(veterinariaFixture) as ProjectModel}
+        onProjectChange={(project) => states.push(project)}
+        aiProvider={aiProvider}
+        aiRemote
+      />,
+    );
+
+    await user.click(screen.getByRole('button', { name: 'IA asistida' }));
+    expect(screen.getByText(/contexto UML se enviará al proveedor remoto/)).toBeTruthy();
+    await user.type(screen.getByLabelText('Comando'), 'Cambia Cliente a Persona');
+    await user.click(screen.getByRole('button', { name: 'Revisar propuesta' }));
+    await screen.findByRole('region', { name: 'Propuesta de cambio' });
+
+    expect(aiProvider.generate).toHaveBeenCalledOnce();
+    expect(states.at(-1)?.classes[0]?.name).toBe('Cliente');
+    await user.click(screen.getByRole('button', { name: 'Confirmar cambio' }));
+    await waitFor(() => expect(states.at(-1)?.classes[0]?.name).toBe('Persona'));
+  });
 });

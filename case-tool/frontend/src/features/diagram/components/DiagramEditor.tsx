@@ -15,6 +15,7 @@ import {
   randomId,
   type Command,
   type NaturalLanguageCommandParser,
+  type LocalLLMProvider,
   type ProjectModel,
 } from '../../../domain';
 import { ReactFlowAdapter } from '../adapters/ReactFlowAdapter';
@@ -49,6 +50,8 @@ export interface DiagramEditorProps {
   onProjectChange?: (project: ProjectModel) => void;
   commandParser?: NaturalLanguageCommandParser;
   speechProvider?: SpeechProvider;
+  aiProvider?: LocalLLMProvider;
+  aiRemote?: boolean;
 }
 
 export function DiagramEditor({
@@ -56,6 +59,8 @@ export function DiagramEditor({
   onProjectChange,
   commandParser,
   speechProvider,
+  aiProvider,
+  aiRemote,
 }: DiagramEditorProps) {
   const editor = useDiagramEditor(initialProject);
   const diagram = useMemo(
@@ -162,6 +167,8 @@ export function DiagramEditor({
           onExecute={editor.execute}
           {...(commandParser ? { parser: commandParser } : {})}
           {...(speechProvider ? { speechProvider } : {})}
+          {...(aiProvider ? { aiProvider } : {})}
+          aiRemote={aiRemote ?? false}
         />
         {editor.error && (
           <div className="error-banner" role="alert">

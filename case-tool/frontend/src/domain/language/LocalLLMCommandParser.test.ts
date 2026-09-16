@@ -141,7 +141,7 @@ describe('LocalLLMCommandParser', () => {
       ok: false,
       error: {
         code: 'MODEL_FAILURE',
-        message: 'La IA local no pudo interpretar el comando.',
+        message: 'La IA no pudo interpretar el comando.',
       },
     });
   });
@@ -165,6 +165,47 @@ describe('LocalLLMCommandParser', () => {
     await expect(malformed.parse('agrega activo', projectFixture())).resolves.toMatchObject({
       ok: false,
       error: { code: 'INVALID_MODEL_RESPONSE' },
+    });
+  });
+
+  it('resolves relation endpoints and multiplicities without accepting model IDs', async () => {
+    const project = projectFixture();
+    project.classes.push({ id: 'class-pedido', name: 'Pedido', position: { x: 300, y: 40 }, attributes: [] });
+    const parser = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [{
+        type: 'ADD_RELATIONSHIP', sourceName: 'cliente', targetName: 'Pedido',
+        payload: { id: 'malicious-id', type: 'ASSOCIATION', sourceMultiplicity: '1', targetMultiplicity: '0..*' },
+      }],
+    })), sequentialIds());
+
+    await expect(parser.parse('Relaciona Cliente con Pedido', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'ADD_RELATIONSHIP', payload: {
+        id: 'local-2', sourceClassId: 'class-cliente', targetClassId: 'class-pedido',
+        sourceMultiplicity: '1', targetMultiplicity: '0..*',
+      } },
+    });
+  });
+
+  it('updates a named attribute and rejects ambiguous relationships', async () => {
+    const project = projectFixture();
+    project.classes[0]!.attributes.push({ id: 'attr-saldo', name: 'saldo', dataType: 'Integer', nullable: true, unique: false, primaryKey: false });
+    const parser = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [{ type: 'UPDATE_ATTRIBUTE', targetName: 'Cliente', attributeName: 'saldo', payload: { dataType: 'Decimal' } }],
+    })), sequentialIds());
+    await expect(parser.parse('Cambia saldo a Decimal', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_ATTRIBUTE', targetId: 'attr-saldo', payload: { dataType: 'Decimal' } },
+    });
+
+    project.classes.push({ id: 'class-pedido', name: 'Pedido', position: { x: 300, y: 40 }, attributes: [] });
+    project.relationships.push(
+      { id: 'rel-1', type: 'ASSOCIATION', sourceClassId: 'class-cliente', targetClassId: 'class-pedido', sourceMultiplicity: '1', targetMultiplicity: '0..*' },
+      { id: 'rel-2', type: 'ASSOCIATION', sourceClassId: 'class-cliente', targetClassId: 'class-pedido', sourceMultiplicity: '1', targetMultiplicity: '0..1' },
+    );
+    const ambiguous = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [{ type: 'DELETE_RELATIONSHIP', sourceName: 'Cliente', targetName: 'Pedido', payload: {} }],
+    })));
+    await expect(ambiguous.parse('Quita la relación', project)).resolves.toMatchObject({
+      ok: false, error: { code: 'INVALID_MODEL_RESPONSE' },
     });
   });
 });

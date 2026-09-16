@@ -132,6 +132,9 @@ button:disabled { cursor: not-allowed; opacity: 0.48; }
 .text-command-feedback--success { color: #15803d; }
 .text-command-feedback--error { color: #b42318; }
 
+.command-mode { display: flex; align-items: center; gap: 0.45rem; color: #475569; font-size: 0.75rem; }
+.command-mode button[aria-pressed="true"] { color: #fff; background: #334155; border-color: #334155; }
+
 .command-proposal {
   display: flex;
   flex-wrap: wrap;
