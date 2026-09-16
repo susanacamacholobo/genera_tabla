@@ -16,6 +16,8 @@ const DELETE_ATTRIBUTE = /^(?:elimina|eliminar|borra|borrar)\s+(?:el\s+)?atribut
 const CARDINALITY = '(uno a uno|uno a muchos|muchos a uno|muchos a muchos)';
 const ADD_RELATIONSHIP = new RegExp(`^(?:relaciona|relacionar|conecta|conectar)\\s+(.+?)\\s+con\\s+(.+?)\\s+${CARDINALITY}$`, 'iu');
 const CHANGE_RELATIONSHIP = new RegExp(`^(?:cambia|cambiar|modifica|modificar)\\s+(?:la\\s+)?multiplicidad\\s+de\\s+(.+?)\\s+con\\s+(.+?)\\s+a\\s+${CARDINALITY}$`, 'iu');
+const CHANGE_RELATIONSHIP_END = /^(?:cambia|cambiar|modifica|modificar)\s+(?:el\s+)?(origen|destino)\s+de\s+(?:la\s+)?relaci[oó]n\s+(.+?)\s+con\s+(.+?)\s+a\s+(.+)$/iu;
+const CHANGE_RELATIONSHIP_TYPE = /^(?:cambia|cambiar|modifica|modificar)\s+(?:el\s+)?tipo\s+de\s+(?:la\s+)?relaci[oó]n\s+(.+?)\s+con\s+(.+?)\s+a\s+(asociaci[oó]n|generalizaci[oó]n)$/iu;
 const DELETE_RELATIONSHIP = /^(?:elimina|eliminar|borra|borrar)\s+(?:la\s+)?relaci[oó]n\s+(?:de|entre)\s+(.+?)\s+con\s+(.+)$/iu;
 
 const multiplicities = {
@@ -82,6 +84,12 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
 
     const changeRelationshipMatch = text.match(CHANGE_RELATIONSHIP);
     if (changeRelationshipMatch) return this.changeRelationship(changeRelationshipMatch[1] ?? '', changeRelationshipMatch[2] ?? '', changeRelationshipMatch[3] ?? '', project);
+
+    const changeRelationshipEndMatch = text.match(CHANGE_RELATIONSHIP_END);
+    if (changeRelationshipEndMatch) return this.changeRelationshipEnd(changeRelationshipEndMatch[1] ?? '', changeRelationshipEndMatch[2] ?? '', changeRelationshipEndMatch[3] ?? '', changeRelationshipEndMatch[4] ?? '', project);
+
+    const changeRelationshipTypeMatch = text.match(CHANGE_RELATIONSHIP_TYPE);
+    if (changeRelationshipTypeMatch) return this.changeRelationshipType(changeRelationshipTypeMatch[1] ?? '', changeRelationshipTypeMatch[2] ?? '', changeRelationshipTypeMatch[3] ?? '', project);
 
     const deleteRelationshipMatch = text.match(DELETE_RELATIONSHIP);
     if (deleteRelationshipMatch) return this.deleteRelationship(deleteRelationshipMatch[1] ?? '', deleteRelationshipMatch[2] ?? '', project);
@@ -171,6 +179,23 @@ export class RuleBasedCommandParser implements NaturalLanguageCommandParser {
       id: this.createId(), type: 'UPDATE_RELATIONSHIP', targetId: match.id,
       payload: { sourceMultiplicity, targetMultiplicity },
     } };
+  }
+
+  private changeRelationshipEnd(rawEnd: string, rawSource: string, rawTarget: string, rawNewClass: string, project: ProjectModel): CommandParseResult {
+    const match = this.findRelationship(rawSource, rawTarget, project);
+    if (!match.ok) return match;
+    const nextClass = this.findClass(rawNewClass, project);
+    if (!nextClass) return this.classNotFound(cleanName(rawNewClass));
+    const payload = normalized(rawEnd) === 'origen'
+      ? { sourceClassId: nextClass.id } : { targetClassId: nextClass.id };
+    return { ok: true, command: { id: this.createId(), type: 'UPDATE_RELATIONSHIP', targetId: match.id, payload } };
+  }
+
+  private changeRelationshipType(rawSource: string, rawTarget: string, rawType: string, project: ProjectModel): CommandParseResult {
+    const match = this.findRelationship(rawSource, rawTarget, project);
+    if (!match.ok) return match;
+    const type = /^generalizaci[oó]n$/iu.test(rawType) ? 'GENERALIZATION' : 'ASSOCIATION';
+    return { ok: true, command: { id: this.createId(), type: 'UPDATE_RELATIONSHIP', targetId: match.id, payload: { type } } };
   }
 
   private deleteRelationship(rawSource: string, rawTarget: string, project: ProjectModel): CommandParseResult {

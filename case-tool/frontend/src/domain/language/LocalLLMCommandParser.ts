@@ -141,6 +141,7 @@ export class LocalLLMCommandParser implements NaturalLanguageCommandParser {
       '{"actions":[{"type":"DELETE_ATTRIBUTE","targetName":"Clase","attributeName":"atributo","payload":{}}]}',
       '{"actions":[{"type":"ADD_RELATIONSHIP","sourceName":"Clase A","targetName":"Clase B","payload":{"type":"ASSOCIATION","sourceMultiplicity":"1","targetMultiplicity":"0..*"}}]}',
       '{"actions":[{"type":"UPDATE_RELATIONSHIP","sourceName":"Clase A","targetName":"Clase B","payload":{"sourceMultiplicity":"1","targetMultiplicity":"1..*"}}]}',
+      '{"actions":[{"type":"UPDATE_RELATIONSHIP","sourceName":"Clase A","targetName":"Clase B","payload":{"newSourceName":"Clase C","newTargetName":"Clase D","type":"ASSOCIATION"}}]}',
       '{"actions":[{"type":"DELETE_RELATIONSHIP","sourceName":"Clase A","targetName":"Clase B","payload":{}}]}',
       'Si faltan clases, extremos, tipos o multiplicidades, no inventes datos: devuelve {"actions":[]} para pedir aclaración.',
       'No generes todo el diagrama ni acciones no solicitadas. Usa una sola acción concreta.',
@@ -357,15 +358,25 @@ export class LocalLLMCommandParser implements NaturalLanguageCommandParser {
     const type = payload.type === undefined ? undefined : stringProperty(payload, 'type');
     const sourceMultiplicity = payload.sourceMultiplicity === undefined ? undefined : stringProperty(payload, 'sourceMultiplicity');
     const targetMultiplicity = payload.targetMultiplicity === undefined ? undefined : stringProperty(payload, 'targetMultiplicity');
+    const newSourceName = payload.newSourceName === undefined ? undefined : stringProperty(payload, 'newSourceName');
+    const newTargetName = payload.newTargetName === undefined ? undefined : stringProperty(payload, 'newTargetName');
     if ((payload.type !== undefined && (!type || !RELATIONSHIP_TYPES.includes(type as RelationshipType)))
       || (payload.sourceMultiplicity !== undefined && (!sourceMultiplicity || !MULTIPLICITIES.includes(sourceMultiplicity as Multiplicity)))
-      || (payload.targetMultiplicity !== undefined && (!targetMultiplicity || !MULTIPLICITIES.includes(targetMultiplicity as Multiplicity)))) {
+      || (payload.targetMultiplicity !== undefined && (!targetMultiplicity || !MULTIPLICITIES.includes(targetMultiplicity as Multiplicity)))
+      || (payload.newSourceName !== undefined && !newSourceName)
+      || (payload.newTargetName !== undefined && !newTargetName)) {
       return parseFailure('Los cambios de la relación son inválidos.');
     }
+    const nextSource = newSourceName ? this.findClass(newSourceName, project) : undefined;
+    const nextTarget = newTargetName ? this.findClass(newTargetName, project) : undefined;
+    if (newSourceName && !nextSource) return this.classNotFound(newSourceName);
+    if (newTargetName && !nextTarget) return this.classNotFound(newTargetName);
     const changes = {
       ...(type !== undefined ? { type: type as RelationshipType } : {}),
       ...(sourceMultiplicity !== undefined ? { sourceMultiplicity: sourceMultiplicity as Multiplicity } : {}),
       ...(targetMultiplicity !== undefined ? { targetMultiplicity: targetMultiplicity as Multiplicity } : {}),
+      ...(nextSource ? { sourceClassId: nextSource.id } : {}),
+      ...(nextTarget ? { targetClassId: nextTarget.id } : {}),
     };
     if (Object.keys(changes).length === 0) return parseFailure('UPDATE_RELATIONSHIP no contiene cambios.');
     return { ok: true, command: { id: this.createId(), type: 'UPDATE_RELATIONSHIP', targetId: target.id, payload: changes } };

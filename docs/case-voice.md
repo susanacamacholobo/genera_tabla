@@ -51,7 +51,9 @@ ofrece el ejemplo Veterinaria como demo, pero sus cambios no se guardan.
    en otra pestaña: la revisión confirmada debe conservarse y aparecer allí.
 
 El parser por reglas reconoce además renombrar clases o atributos, cambiar el
-tipo de un atributo, eliminar atributos y cambiar o eliminar una relación. Si
+tipo de un atributo, eliminar atributos y cambiar los extremos, tipo o
+multiplicidad de una relación, además de eliminarla. Por ejemplo: «cambia
+destino de relación Cliente con Pedido a Factura». Si
 hay dos relaciones entre las mismas clases, pedirá seleccionar una en el
 diagrama en lugar de adivinar.
 

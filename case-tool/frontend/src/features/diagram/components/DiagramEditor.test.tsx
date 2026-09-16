@@ -121,11 +121,15 @@ describe('DiagramEditor', () => {
 
     await user.click(screen.getByRole('button', { name: 'Conectar primeras clases' }));
     await waitFor(() => expect(states.at(-1)?.relationships).toHaveLength(2));
+    const newClassId = states.at(-1)?.classes[2]?.id;
+    if (!newClassId) throw new Error('Missing new class');
+    await user.selectOptions(screen.getByLabelText('Clase destino'), newClassId);
     await user.selectOptions(screen.getByLabelText('Tipo'), 'GENERALIZATION');
     await user.selectOptions(screen.getByLabelText('Multiplicidad en Mascota'), '1..*');
     await user.click(screen.getByRole('button', { name: 'Guardar relación' }));
     await waitFor(() => expect(states.at(-1)?.relationships[1]).toMatchObject({
       type: 'GENERALIZATION',
+      targetClassId: newClassId,
       sourceMultiplicity: '1',
       targetMultiplicity: '1..*',
     }));

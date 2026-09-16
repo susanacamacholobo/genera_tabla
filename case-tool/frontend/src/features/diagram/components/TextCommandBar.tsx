@@ -45,9 +45,20 @@ function describe(command: Command, project: ProjectModel): string {
     case 'ADD_ATTRIBUTE': return `Agregar el atributo «${command.payload.name}: ${command.payload.dataType}» a «${project.classes.find((item) => item.id === command.targetId)?.name ?? 'clase'}».`;
     case 'UPDATE_ATTRIBUTE': return `Actualizar el atributo «${project.classes.flatMap((item) => item.attributes).find((item) => item.id === command.targetId)?.name ?? 'atributo'}» con ${JSON.stringify(command.payload)}.`;
     case 'DELETE_ATTRIBUTE': return `Eliminar el atributo «${project.classes.flatMap((item) => item.attributes).find((item) => item.id === command.targetId)?.name ?? 'atributo'}».`;
-    case 'ADD_RELATIONSHIP': return `Crear relación entre «${project.classes.find((item) => item.id === command.payload.sourceClassId)?.name}» y «${project.classes.find((item) => item.id === command.payload.targetClassId)?.name}» (${command.payload.sourceMultiplicity} → ${command.payload.targetMultiplicity}).`;
-    case 'UPDATE_RELATIONSHIP': return `Actualizar la relación indicada con ${JSON.stringify(command.payload)}.`;
-    case 'DELETE_RELATIONSHIP': return 'Eliminar la relación indicada.';
+    case 'ADD_RELATIONSHIP': return `Crear ${command.payload.type === 'GENERALIZATION' ? 'generalización' : 'asociación'} entre «${project.classes.find((item) => item.id === command.payload.sourceClassId)?.name}» y «${project.classes.find((item) => item.id === command.payload.targetClassId)?.name}» (${command.payload.sourceMultiplicity} → ${command.payload.targetMultiplicity}).`;
+    case 'UPDATE_RELATIONSHIP': {
+      const current = project.relationships.find((item) => item.id === command.targetId);
+      if (!current) return 'Actualizar la relación indicada.';
+      const next = { ...current, ...command.payload };
+      const className = (id: string) => project.classes.find((item) => item.id === id)?.name ?? 'clase';
+      return `Cambiar relación «${className(current.sourceClassId)} → ${className(current.targetClassId)}» a «${className(next.sourceClassId)} → ${className(next.targetClassId)}» (${next.type}, ${next.sourceMultiplicity} → ${next.targetMultiplicity}).`;
+    }
+    case 'DELETE_RELATIONSHIP': {
+      const current = project.relationships.find((item) => item.id === command.targetId);
+      const source = project.classes.find((item) => item.id === current?.sourceClassId)?.name;
+      const target = project.classes.find((item) => item.id === current?.targetClassId)?.name;
+      return `Eliminar la relación «${source ?? 'clase'} → ${target ?? 'clase'}».`;
+    }
     case 'MOVE_CLASS': return 'Mover la clase indicada.';
   }
 }

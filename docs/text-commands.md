@@ -18,6 +18,8 @@ producen el mismo tipo de comando o el mismo error.
 | Eliminar atributo | `elimina atributo nombre de Cliente` | `DELETE_ATTRIBUTE` |
 | Crear relación | `relaciona Cliente con Pedido uno a muchos` | `ADD_RELATIONSHIP` |
 | Cambiar multiplicidad | `cambia multiplicidad de Cliente con Pedido a uno a uno` | `UPDATE_RELATIONSHIP` |
+| Cambiar extremo | `cambia destino de relación Cliente con Pedido a Factura` | `UPDATE_RELATIONSHIP` |
+| Cambiar tipo de relación | `cambia tipo de relación Cliente con Pedido a generalización` | `UPDATE_RELATIONSHIP` |
 | Eliminar relación | `elimina relación entre Cliente con Pedido` | `DELETE_RELATIONSHIP` |
 
 También se aceptan `añade`/`añadir`, la preposición `en`, diferencias de

@@ -230,4 +230,21 @@ describe('LocalLLMCommandParser', () => {
       error: { message: '¿A qué clase agrego el atributo?' },
     });
   });
+
+  it('resolves changed relationship endpoints against known class names', async () => {
+    const project = projectFixture();
+    project.classes.push(
+      { id: 'class-pedido', name: 'Pedido', position: { x: 300, y: 40 }, attributes: [] },
+      { id: 'class-factura', name: 'Factura', position: { x: 600, y: 40 }, attributes: [] },
+    );
+    project.relationships.push({ id: 'rel-1', type: 'ASSOCIATION', sourceClassId: 'class-cliente',
+      targetClassId: 'class-pedido', sourceMultiplicity: '1', targetMultiplicity: '0..*' });
+    const parser = new LocalLLMCommandParser(providerReturning(JSON.stringify({
+      actions: [{ type: 'UPDATE_RELATIONSHIP', sourceName: 'Cliente', targetName: 'Pedido',
+        payload: { newTargetName: 'Factura' } }],
+    })));
+    await expect(parser.parse('Cambia destino a Factura', project)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_RELATIONSHIP', targetId: 'rel-1', payload: { targetClassId: 'class-factura' } },
+    });
+  });
 });

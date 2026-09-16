@@ -200,11 +200,15 @@ function RelationshipProperties({
   onExecute,
 }: EditorProps & { relationship: RelationshipModel; project: ProjectModel }) {
   const [type, setType] = useState<RelationshipType>(relationship.type);
+  const [sourceClassId, setSourceClassId] = useState(relationship.sourceClassId);
+  const [targetClassId, setTargetClassId] = useState(relationship.targetClassId);
   const [sourceMultiplicity, setSourceMultiplicity] = useState<Multiplicity>(relationship.sourceMultiplicity);
   const [targetMultiplicity, setTargetMultiplicity] = useState<Multiplicity>(relationship.targetMultiplicity);
 
   useEffect(() => {
     setType(relationship.type);
+    setSourceClassId(relationship.sourceClassId);
+    setTargetClassId(relationship.targetClassId);
     setSourceMultiplicity(relationship.sourceMultiplicity);
     setTargetMultiplicity(relationship.targetMultiplicity);
   }, [relationship]);
@@ -225,10 +229,22 @@ function RelationshipProperties({
             id: randomId(),
             type: 'UPDATE_RELATIONSHIP',
             targetId: relationship.id,
-            payload: { type, sourceMultiplicity, targetMultiplicity },
+            payload: { type, sourceClassId, targetClassId, sourceMultiplicity, targetMultiplicity },
           });
         }}
       >
+        <label>
+          Clase origen
+          <select value={sourceClassId} onChange={(event) => setSourceClassId(event.target.value)}>
+            {project.classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
+        <label>
+          Clase destino
+          <select value={targetClassId} onChange={(event) => setTargetClassId(event.target.value)}>
+            {project.classes.map((item) => <option key={item.id} value={item.id}>{item.name}</option>)}
+          </select>
+        </label>
         <label>
           Tipo
           <select value={type} onChange={(event) => setType(event.target.value as RelationshipType)}>

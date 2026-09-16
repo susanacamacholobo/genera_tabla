@@ -157,6 +157,13 @@ describe('RuleBasedCommandParser', () => {
       ok: true, command: { type: 'UPDATE_RELATIONSHIP', targetId: created.command.type === 'ADD_RELATIONSHIP' ? created.command.payload.id : undefined,
         payload: { sourceMultiplicity: '0..*', targetMultiplicity: '0..*' } },
     });
+    withRelationship.classes.push({ id: 'class-factura', name: 'Factura', position: { x: 600, y: 40 }, attributes: [] });
+    await expect(parser.parse('cambia destino de relación Cliente con Pedido a Factura', withRelationship)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_RELATIONSHIP', payload: { targetClassId: 'class-factura' } },
+    });
+    await expect(parser.parse('cambia tipo de relación Cliente con Pedido a generalización', withRelationship)).resolves.toMatchObject({
+      ok: true, command: { type: 'UPDATE_RELATIONSHIP', payload: { type: 'GENERALIZATION' } },
+    });
     await expect(parser.parse('elimina relación de Cliente con Pedido', withRelationship)).resolves.toMatchObject({
       ok: true, command: { type: 'DELETE_RELATIONSHIP' },
     });
