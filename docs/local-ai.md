@@ -8,12 +8,12 @@ La fase 15 implementa `LocalLLMCommandParser` en TypeScript. Su único trabajo e
 convertir instrucciones de edición UML en comandos canónicos. Depende de la
 interfaz `LocalLLMProvider`, que permite inyectar un proveedor. Pese al nombre
 actual de la interfaz, CASE no necesita un modelo local ni funcionamiento
-offline: la fase 20.5 podrá conectar IA y reconocimiento de voz remotos o
-locales, de forma configurable. Mostrará si el audio o el contexto UML se
-envían fuera del equipo y ofrecerá una ruta escrita por reglas cuando no haya
-proveedor. La IA propondrá cambios concretos en clases, atributos y relaciones
-para que el usuario los confirme; no generará un diagrama completo. Consulta
-[roadmap-case-voice.md](roadmap-case-voice.md).
+offline: la fase 20.5 permite IA CASE remota o local configurable y dictado
+mediante el navegador. La interfaz advierte si el audio o el contexto UML
+pueden enviarse fuera del equipo y mantiene una ruta escrita por reglas. La IA
+propone cambios concretos en clases, atributos y relaciones para que el usuario
+los confirme; no genera un diagrama completo. Consulta
+[case-voice.md](case-voice.md).
 
 No se incluye todavía un modelo concreto. Las pruebas usan un proveedor fake y
 demuestran que el parser:

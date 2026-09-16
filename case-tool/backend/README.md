@@ -101,3 +101,8 @@ El contrato de los endpoints se describe en
 [docs/projects-api.md](../../docs/projects-api.md) y
 [docs/model-history.md](../../docs/model-history.md). El protocolo WebSocket se
 documenta en [docs/collaboration.md](../../docs/collaboration.md).
+
+La edición web por voz y texto, la configuración opcional de IA CASE y los
+pasos para probar la interfaz están en
+[docs/case-voice.md](../../docs/case-voice.md). La clave del proveedor de IA,
+si se usa, se guarda sólo en `.env`; nunca en React ni en Git.

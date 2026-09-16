@@ -71,6 +71,10 @@
   runtime LiteRT-LM 0.17.0 en CPU, importación privada y reemplazo seguro de
   modelos `.litertlm`, ciclo de vida del motor y salida restringida por JSON
   Schema. Probado en Dart con canal simulado y compilado contra el SDK Android.
+- Fase 20.5: dictado web revisable, comandos de clases, atributos y relaciones,
+  propuesta confirmable, IA CASE opcional con clave en backend, proyectos web
+  persistidos y sincronizados, undo/redo como eventos. Pruebas frontend/backend
+  y smoke colaborativo contra PostgreSQL local.
 
 ## IN PROGRESS
 
@@ -78,10 +82,6 @@
 
 ## TODO
 
-- Fase 20.5: edición UML asistida por voz y texto en CASE, con proveedor de voz
-  e IA configurable, propuestas confirmadas, clases/atributos/relaciones, integración
-  con el historial y persistencia colaborativa. Véase
-  [roadmap-case-voice.md](roadmap-case-voice.md).
 - Fases 21 a 23 según el plan maestro.
 
 ## KNOWN ISSUES
@@ -98,14 +98,15 @@
   estilos, rutas manuales de conectores ni múltiples vistas del mismo elemento.
 - Las enumeraciones se renderizan en modo básico y no se pueden mover ni editar
   porque el modelo y los comandos actuales no definen esas operaciones.
-- El editor visual todavía utiliza un fixture local; el adaptador HTTP que
-  conectará la UI con proyectos, snapshots y el protocolo WebSocket pertenece a
-  un incremento posterior. La fase 13 entrega y prueba el servidor colaborativo.
+- Sin backend disponible, la web muestra el ejemplo Veterinaria en modo demo:
+  permite editar, pero esos cambios no se guardan. Con el backend activo, los
+  proyectos creados en PostgreSQL sí se guardan y sincronizan.
 - Las rooms y la presencia viven en memoria y requieren un único proceso de
   Uvicorn. Escalar horizontalmente requerirá un bus compartido.
-- La fase 15 define la frontera del LLM CASE, pero conserva el parser por reglas
-  como predeterminado hasta conectar un proveedor de IA en la fase 20.5. CASE
-  puede usar uno remoto; el requisito de IA offline corresponde sólo a Android.
+- El parser por reglas sigue siendo predeterminado. La IA CASE requiere un
+  endpoint compatible configurado en el backend; la voz web depende del soporte
+  del navegador y puede usar un servicio remoto. La IA offline exigida al
+  asistente Flutter sigue siendo una frontera distinta.
 - La fase 20 compila el runtime real de LiteRT-LM y prueba su frontera con un
   canal simulado. La inferencia física requiere que el usuario acepte la
   licencia de Gemma, importe el modelo al teléfono y se valide el rendimiento

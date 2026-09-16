@@ -12,6 +12,13 @@ producen el mismo tipo de comando o el mismo error.
 | Crear clase | `crea clase Cliente`, `crear una clase Cliente` | `ADD_CLASS` |
 | Agregar atributo | `agrega nombre String a Cliente` | `ADD_ATTRIBUTE` |
 | Eliminar clase | `elimina Cliente`, `borra la clase Cliente` | `DELETE_CLASS` |
+| Renombrar clase | `renombra clase Cliente a Persona` | `RENAME_CLASS` |
+| Renombrar atributo | `renombra atributo nombre de Cliente a nombreCompleto` | `UPDATE_ATTRIBUTE` |
+| Cambiar tipo | `cambia tipo del atributo edad de Cliente a Integer` | `UPDATE_ATTRIBUTE` |
+| Eliminar atributo | `elimina atributo nombre de Cliente` | `DELETE_ATTRIBUTE` |
+| Crear relación | `relaciona Cliente con Pedido uno a muchos` | `ADD_RELATIONSHIP` |
+| Cambiar multiplicidad | `cambia multiplicidad de Cliente con Pedido a uno a uno` | `UPDATE_RELATIONSHIP` |
+| Eliminar relación | `elimina relación entre Cliente con Pedido` | `DELETE_RELATIONSHIP` |
 
 También se aceptan `añade`/`añadir`, la preposición `en`, diferencias de
 mayúsculas y espacios adicionales. Los nombres con espacios pueden escribirse
@@ -56,18 +63,23 @@ muestra el `CommandValidationError` existente.
 La fase 15 añade `LocalLLMCommandParser`. Recibe un `LocalLLMProvider`
 intercambiable y convierte su texto de salida en el mismo `CommandParseResult`
 asíncrono que usa el parser por reglas. Pese a los nombres actuales, CASE no
-requiere un runtime local: la fase 20.5 podrá conectar un proveedor remoto o
-local. Las pruebas de esta fase utilizan un proveedor fake y no hacen llamadas
-de red.
+requiere un runtime local: la fase 20.5 conectó un proveedor remoto o local
+compatible con Chat Completions desde el backend. Las pruebas usan un proveedor
+fake y no hacen llamadas externas.
 
 El prompt incluye sólo el contexto UML necesario y exige exactamente una acción
-JSON. Por ahora se permiten las mismas tres acciones que ofrece la barra de
-texto:
+JSON. Se permite una sola acción acotada entre:
 
 ```text
 ADD_CLASS
 ADD_ATTRIBUTE
 DELETE_CLASS
+RENAME_CLASS
+UPDATE_ATTRIBUTE
+DELETE_ATTRIBUTE
+ADD_RELATIONSHIP
+UPDATE_RELATIONSHIP
+DELETE_RELATIONSHIP
 ```
 
 La respuesta se considera entrada no confiable. El adaptador rechaza JSON

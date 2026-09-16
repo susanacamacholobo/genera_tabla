@@ -1,7 +1,9 @@
 # Fase 20.5 — Edición UML asistida por voz en CASE
 
-Esta fase se ejecutará antes de la fase 21 del asistente Flutter. Pertenece a
+Esta fase se completó antes de la fase 21 del asistente Flutter. Pertenece a
 la herramienta CASE web, no al cliente móvil ni al backend Spring generado.
+
+Implementación y pasos de prueba: [case-voice.md](case-voice.md).
 
 ## Objetivo
 
