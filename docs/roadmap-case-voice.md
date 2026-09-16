@@ -10,7 +10,7 @@ diagrama actual. La IA interpreta, propone y explica; el usuario decide. No
 genera un diagrama entero ni realiza cambios autónomos.
 
 ```text
-voz/texto → transcripción local revisable → parser/IA local
+voz/texto → transcripción revisable → parser/IA configurable
           → propuesta acotada → validación y vista previa
           → confirmación → comando canónico → persistencia/colaboración
 ```
@@ -32,12 +32,18 @@ voz/texto → transcripción local revisable → parser/IA local
 
 ## Restricciones
 
-La voz y la IA tendrán una ruta completamente local, sin envío de audio ni
-prompts a servicios cloud. La entrada de texto seguirá disponible cuando no
-haya un motor de voz local. La IA sólo devuelve JSON estructurado con una
-acción permitida; no controla IDs internos, método HTTP, rutas ni ejecución.
-Los nombres y referencias se resuelven contra el modelo canónico actual y una
-respuesta inválida nunca modifica el diagrama.
+La voz y la IA de CASE podrán usar un proveedor remoto o local; CASE no necesita
+funcionar sin Internet. La UI debe indicar si el audio o el contexto UML se
+enviarán fuera del equipo. Las credenciales de un proveedor remoto quedan en
+el backend o una configuración privada, nunca en el frontend ni en Git. La
+entrada de texto y el parser por reglas seguirán disponibles cuando el
+proveedor de IA o de voz no lo esté.
+
+La IA sólo devuelve JSON estructurado con una acción permitida; no controla IDs
+internos, método HTTP, rutas ni ejecución. Los nombres y referencias se
+resuelven contra el modelo canónico actual y una respuesta inválida nunca
+modifica el diagrama. La IA de Flutter Android sí requiere funcionamiento local
+y offline; es una frontera distinta.
 
 ## Criterios de aceptación
 
@@ -46,11 +52,11 @@ respuesta inválida nunca modifica el diagrama.
    Pedido uno a muchos» y «elimina Cliente».
 2. Voz y texto producen el mismo comando canónico para una misma instrucción.
 3. El cambio confirmado se conserva tras recargar y aparece en otra sesión.
-4. Ambigüedad, referencias inexistentes, JSON inválido o un motor local no
+4. Ambigüedad, referencias inexistentes, JSON inválido o un proveedor no
    disponible producen una explicación sin crear revisiones ni eventos.
 5. Pruebas automatizadas cubren transcripción, interpretación, vista previa,
    confirmación, validación, undo/redo, persistencia y colaboración. La ruta
-   local se prueba sin servicios externos.
+   escrita por reglas se prueba sin depender de servicios externos.
 
 La fase 21 retomará después el flujo de voz → intención REST en Flutter. Son
 funciones independientes: los comandos CASE editan UML; el asistente móvil

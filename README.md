@@ -28,8 +28,9 @@ Están implementadas las fases 0 a 20, además de la preparación 2.5:
   optimista, presencia y movimientos concurrentes *last-write-wins*.
 - importación y exportación XMI 2.1 compatible con Enterprise Architect, con
   round-trip de identidad, tipos, relaciones, herencia, enumeraciones y layout.
-- abstracción asíncrona para interpretar comandos CASE con un LLM local, salida
-  JSON restringida, resolución segura de nombres y proveedor intercambiable.
+- abstracción asíncrona para interpretar comandos CASE con IA intercambiable,
+  salida JSON restringida y resolución segura de nombres. Su implementación
+  actual se llama `LocalLLMCommandParser`, pero CASE no exige IA local.
 - base Flutter modular con configuración por entorno, cliente REST, errores
   tipados, navegación y panel reutilizable para el asistente.
 - contrato de dominio Flutter y cargador validado para consumir

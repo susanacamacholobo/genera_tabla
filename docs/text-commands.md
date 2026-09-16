@@ -55,9 +55,10 @@ muestra el `CommandValidationError` existente.
 
 La fase 15 añade `LocalLLMCommandParser`. Recibe un `LocalLLMProvider`
 intercambiable y convierte su texto de salida en el mismo `CommandParseResult`
-asíncrono que usa el parser por reglas. La integración concreta con un runtime
-local de escritorio queda fuera de esta fase; las pruebas utilizan un proveedor
-fake y no hacen llamadas de red.
+asíncrono que usa el parser por reglas. Pese a los nombres actuales, CASE no
+requiere un runtime local: la fase 20.5 podrá conectar un proveedor remoto o
+local. Las pruebas de esta fase utilizan un proveedor fake y no hacen llamadas
+de red.
 
 El prompt incluye sólo el contexto UML necesario y exige exactamente una acción
 JSON. Por ahora se permiten las mismas tres acciones que ofrece la barra de
@@ -89,6 +90,7 @@ espera una respuesta asíncrona, la barra desactiva la entrada y evita envíos
 duplicados. El parser por reglas sigue siendo el valor predeterminado, de modo
 que ejecutar el editor no requiere tener un modelo instalado.
 
-Esta IA pertenece a la herramienta CASE web/de escritorio. Es distinta del
-asistente Flutter: el modelo que debe ejecutarse en el teléfono Android se
-integra posteriormente mediante `LocalAIProvider` en la fase 20.
+Esta IA pertenece a la herramienta CASE web/de escritorio y puede requerir
+Internet. Es distinta del asistente Flutter: el modelo que debe ejecutarse
+localmente en el teléfono Android se integra mediante `LocalAIProvider` en la
+fase 20.

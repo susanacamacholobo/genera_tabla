@@ -1,4 +1,4 @@
-# IA local
+# IA en CASE y Android
 
 El proyecto contiene dos fronteras de IA relacionadas pero independientes.
 
@@ -6,12 +6,13 @@ El proyecto contiene dos fronteras de IA relacionadas pero independientes.
 
 La fase 15 implementa `LocalLLMCommandParser` en TypeScript. Su único trabajo es
 convertir instrucciones de edición UML en comandos canónicos. Depende de la
-interfaz `LocalLLMProvider`, por lo que un runtime local de escritorio puede
-conectarse después sin cambiar el dominio ni la interfaz visual. La fase 20.5
-añadida al plan completará esta integración en la herramienta web, junto con
-reconocimiento de voz estrictamente local, propuesta y confirmación de cambios
-en clases, atributos y relaciones. La IA asistirá sólo en peticiones concretas;
-no generará por sí sola un diagrama completo. Consulta
+interfaz `LocalLLMProvider`, que permite inyectar un proveedor. Pese al nombre
+actual de la interfaz, CASE no necesita un modelo local ni funcionamiento
+offline: la fase 20.5 podrá conectar IA y reconocimiento de voz remotos o
+locales, de forma configurable. Mostrará si el audio o el contexto UML se
+envían fuera del equipo y ofrecerá una ruta escrita por reglas cuando no haya
+proveedor. La IA propondrá cambios concretos en clases, atributos y relaciones
+para que el usuario los confirme; no generará un diagrama completo. Consulta
 [roadmap-case-voice.md](roadmap-case-voice.md).
 
 No se incluye todavía un modelo concreto. Las pruebas usan un proveedor fake y
@@ -37,7 +38,7 @@ verificarán el modo offline completo.
 
 ```text
 Android: texto/voz -> modelo local -> StructuredIntent -> REST por LAN
-CASE:    texto/voz -> LLM local    -> propuesta confirmada -> Command -> UML
+CASE:    texto/voz -> IA configurable -> propuesta confirmada -> Command -> UML
 ```
 
 El puente Android arranca inicialmente con backend CPU para maximizar

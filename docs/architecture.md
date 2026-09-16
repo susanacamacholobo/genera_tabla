@@ -85,14 +85,15 @@ una lista permitida, resuelve nombres a IDs internos y nunca modifica el modelo
 directamente.
 
 ```text
-runtime local CASE -> LocalLLMProvider -> LocalLLMCommandParser -> Command
-                                                              -> validación
-                                                              -> ejecución
+proveedor CASE -> LocalLLMProvider -> LocalLLMCommandParser -> Command
+                                                          -> validación
+                                                          -> ejecución
 ```
 
-La frontera CASE anterior es independiente del futuro `LocalAIProvider` de
-Flutter. Ese segundo proveedor y su modelo se ejecutarán en Android para que el
-asistente móvil funcione sin Internet.
+La frontera CASE anterior es independiente de `LocalAIProvider` en Flutter.
+El nombre `LocalLLMProvider` refleja la abstracción inicial, no una exigencia
+offline para CASE: la fase 20.5 permitirá un proveedor remoto o local. La voz y
+el modelo de Flutter sí deben ejecutarse en Android sin Internet.
 
 La base Flutter de la fase 16 también usa puertos inyectables:
 
