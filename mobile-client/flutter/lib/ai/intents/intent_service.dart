@@ -55,6 +55,8 @@ class IntentService {
       );
     } on IntentFormatException {
       rethrow;
+    } on LocalAIException {
+      rethrow;
     } catch (_) {
       throw const LocalAIException(
         'La IA local no pudo interpretar la instrucción.',

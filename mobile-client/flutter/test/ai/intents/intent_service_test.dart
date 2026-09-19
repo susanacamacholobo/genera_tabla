@@ -145,6 +145,29 @@ void main() {
     );
   });
 
+  test('preserves actionable typed local model errors', () async {
+    final client = _client(MockClient((_) async => http.Response('{}', 200)));
+    addTearDown(client.close);
+    final provider = FakeLocalAIProvider(
+      response: '',
+      loadFailure: const LocalModelException('Importa un modelo local.'),
+    );
+
+    await expectLater(
+      IntentService(
+        provider: provider,
+        apiClient: client,
+      ).execute('lista clientes', domain),
+      throwsA(
+        isA<LocalModelException>().having(
+          (error) => error.userMessage,
+          'user message',
+          'Importa un modelo local.',
+        ),
+      ),
+    );
+  });
+
   test(
     'implements SEARCH_ENTITY through collection GET and local filtering',
     () async {
