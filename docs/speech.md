@@ -37,8 +37,8 @@ tap en micrófono
 ```
 
 El dictado no se envía automáticamente. El usuario puede revisar o corregir el
-texto antes de pulsar **Enviar**. La fase 21 conectará ese envío con el LLM local
-y el sistema de intenciones.
+texto antes de pulsar **Enviar**. La fase 21 conecta ese envío con el LLM local,
+el sistema de intenciones y la API REST.
 
 ## Prueba manual offline
 

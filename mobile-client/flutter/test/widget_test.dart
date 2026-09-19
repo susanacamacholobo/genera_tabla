@@ -10,7 +10,7 @@ import 'support/fake_local_ai_provider.dart';
 import 'support/fake_speech_to_text_provider.dart';
 
 void main() {
-  testWidgets('navigates from the reusable home to the assistant', (
+  testWidgets('connects voice, local AI, validated intent and REST', (
     WidgetTester tester,
   ) async {
     final configuration = AppConfiguration.fromValue(
@@ -34,10 +34,12 @@ void main() {
           '{"operation":"LIST_ENTITIES","entity":"Cliente",'
           '"parameters":{}}',
     );
+    final speech = FakeSpeechToTextProvider();
     await tester.pumpWidget(
       Software1App(
         configuration: configuration,
         apiClient: apiClient,
+        speechToTextProvider: speech,
         localAIProvider: localAI,
       ),
     );
@@ -52,38 +54,24 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Asistente'), findsOneWidget);
-    await tester.enterText(find.byType(EditableText), 'Muéstrame los clientes');
-    await tester.tap(find.text('Enviar'));
-    await tester.pumpAndSettle();
-
-    expect(find.text('Consulta completada'), findsOneWidget);
-    expect(find.text('Instrucción: Muéstrame los clientes'), findsOneWidget);
-    expect(find.textContaining('"nombre": "Ana"'), findsOneWidget);
-    expect(localAI.instructions, ['Muéstrame los clientes']);
-    expect(localAI.contexts.single, contains('Cliente (/api/clientes)'));
-  });
-
-  testWidgets('connects the assistant microphone to the speech provider', (
-    WidgetTester tester,
-  ) async {
-    final speech = FakeSpeechToTextProvider();
-    await tester.pumpWidget(
-      Software1App(
-        configuration: AppConfiguration.fromValue('http://10.0.2.2:8080'),
-        speechToTextProvider: speech,
-      ),
-    );
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
-    await tester.tap(find.text('Abrir asistente'));
-    await tester.pumpAndSettle();
-
     await tester.tap(find.byTooltip('Usar micrófono sin conexión'));
     await tester.pumpAndSettle();
 
     final field = tester.widget<TextField>(find.byType(TextField));
     expect(field.controller?.text, 'lista los clientes');
+    await tester.tap(find.text('Enviar'));
+    await tester.pump();
+    for (var attempt = 0; attempt < 20; attempt++) {
+      await tester.pump(const Duration(milliseconds: 50));
+      if (find.text('Consulta completada').evaluate().isNotEmpty) break;
+    }
+
+    expect(find.text('Consulta completada'), findsOneWidget);
+    expect(find.text('Instrucción: lista los clientes'), findsOneWidget);
+    expect(find.textContaining('"nombre": "Ana"'), findsOneWidget);
     expect(speech.listenCalls, 1);
     expect(speech.locales, ['es-BO']);
+    expect(localAI.instructions, ['lista los clientes']);
+    expect(localAI.contexts.single, contains('Cliente (/api/clientes)'));
   });
 }

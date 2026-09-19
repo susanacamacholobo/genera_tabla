@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 20 y 20.5, además de la preparación 2.5:
+Están implementadas las fases 0 a 21, incluida la fase 20.5, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -44,11 +44,13 @@ Están implementadas las fases 0 a 20 y 20.5, además de la preparación 2.5:
   Schema.
 - edición UML web por voz o texto con propuesta confirmable, IA CASE opcional y
   proyectos persistidos y sincronizados con PostgreSQL local.
+- asistente Flutter conectado de extremo a extremo: voz local, LiteRT-LM,
+  intención validada, operación REST y resultado visible.
 
 La [edición UML asistida por voz en CASE](docs/roadmap-case-voice.md) ya está
 implementada. Para ponerla en marcha, véase [la guía de prueba](docs/case-voice.md).
-La conexión del panel Flutter con el modelo y la verificación offline completa
-se realizarán en las fases 21 y 22.
+La conexión del panel Flutter ya está completa; la verificación física sin
+Internet corresponde a la fase 22.
 
 ## Estructura
 

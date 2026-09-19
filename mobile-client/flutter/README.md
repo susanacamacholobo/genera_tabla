@@ -60,6 +60,21 @@ Spring Boot debe estar escuchando en el puerto indicado y el firewall de Windows
 debe permitir el acceso desde la red privada. No uses `localhost`, porque desde
 la aplicación se refiere al propio teléfono.
 
+Con el teléfono conectado por USB puede evitarse la configuración Wi-Fi usando
+un túnel ADB. En este caso sí se compila con `127.0.0.1` porque ADB reenvía el
+puerto al equipo:
+
+```powershell
+$adbPath = Join-Path $env:LOCALAPPDATA 'Android\Sdk\platform-tools\adb.exe'
+& $adbPath reverse tcp:8080 tcp:8080
+flutter build apk --debug `
+  --dart-define=API_BASE_URL=http://127.0.0.1:8080
+flutter install --debug
+```
+
+Algunos teléfonos requieren habilitar **Instalar mediante USB** en las opciones
+de desarrollador y aceptar la confirmación en pantalla.
+
 ## Compilar el APK
 
 La URL forma parte de la compilación, por lo que también debe proporcionarse al
@@ -78,8 +93,8 @@ build/app/outputs/flutter-apk/app-debug.apk
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
 Internet. La fase 18 incorpora el contrato de intenciones y su ejecución REST,
-la fase 19 añade voz on-device y la fase 20 integra LiteRT-LM. Las fases 21 y 22
-conectarán y endurecerán el flujo completo dentro del dispositivo Android.
+la fase 19 añade voz on-device, la fase 20 integra LiteRT-LM y la fase 21
+conecta el flujo completo. La fase 22 comprobará su operación física sin Internet.
 
 ## Intenciones disponibles
 
@@ -93,8 +108,8 @@ Para ejecutar solamente sus pruebas:
 flutter test test/ai
 ```
 
-El texto y el dictado todavía se detienen antes de llamar al sistema de
-intenciones. Esa conexión se completa en la fase 21.
+El texto o dictado revisado se envía al modelo local. La intención resultante se
+valida, ejecuta por REST y muestra su estado HTTP y respuesta en el asistente.
 
 ## Probar el modelo local
 

@@ -75,6 +75,10 @@
   propuesta confirmable, IA CASE opcional con clave en backend, proyectos web
   persistidos y sincronizados, undo/redo como eventos. Pruebas frontend/backend
   y smoke colaborativo contra PostgreSQL local.
+- Fase 21: `AssistantPanel` conectado con `LiteRtLocalAIProvider`, contrato de
+  dominio, `IntentService`, API Spring y presentación de resultados. Flujo
+  completo voz → IA local → intención validada → REST cubierto por pruebas; APK
+  debug compilado para Android arm64.
 
 ## IN PROGRESS
 
@@ -82,7 +86,7 @@
 
 ## TODO
 
-- Fases 21 a 23 según el plan maestro.
+- Fases 22 y 23 según el plan maestro.
 
 ## KNOWN ISSUES
 
@@ -110,7 +114,8 @@
 - La fase 20 compila el runtime real de LiteRT-LM y prueba su frontera con un
   canal simulado. La inferencia física requiere que el usuario acepte la
   licencia de Gemma, importe el modelo al teléfono y se valide el rendimiento
-  del dispositivo. La conexión final con la UI pertenece a la fase 21.
+  del dispositivo. La conexión con la UI ya está completa; esa validación física
+  corresponde a la fase 22.
 - El reconocimiento on-device exige Android 12/API 31 o posterior y que el
   dispositivo tenga instalado un motor e idioma local compatible. La app
   rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como

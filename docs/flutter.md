@@ -58,7 +58,8 @@ en el campo para que el usuario pueda revisarla antes de enviarla.
 La fase 18 incorpora el servicio que interpreta una respuesta JSON, la valida y
 ejecuta el CRUD correspondiente. La fase 20 registra el proveedor LiteRT-LM en
 `AppDependencies` y muestra la tarjeta para importar y cargar el modelo. La
-conexión final de voz, modelo, intenciones y panel corresponde a la fase 21.
+fase 21 conecta el envío de `AssistantPanel` con `IntentService` y muestra la
+operación ejecutada, el estado HTTP y la respuesta de la API.
 
 ## Contrato de dominio
 

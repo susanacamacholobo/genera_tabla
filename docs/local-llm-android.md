@@ -31,9 +31,9 @@ el nombre `assistant.litertlm`. Se conservan al menos 100 MB libres adicionales
 y el modelo anterior no se reemplaza si la activación del archivo nuevo falla.
 Desinstalar la aplicación elimina también esa copia privada.
 
-La fase 20 permite importar y cargar el runtime. La fase 21 conectará el botón
-**Enviar** con `IntentService` para que una instrucción atraviese el modelo, la
-validación y la API Spring Boot.
+La fase 20 permite importar y cargar el runtime. La fase 21 conecta el botón
+**Enviar** con `IntentService`: la instrucción atraviesa el modelo, la
+validación y la API Spring Boot, y la respuesta se muestra en la pantalla.
 
 ## Contrato de salida
 
@@ -60,8 +60,9 @@ flutter build apk --debug `
 ```
 
 El APK queda en `build/app/outputs/flutter-apk/app-debug.apk`. Para probar sólo
-la importación y carga del modelo no es necesario iniciar Spring Boot. La prueba
-de una instrucción completa estará disponible en la fase 21.
+la importación y carga del modelo no es necesario iniciar Spring Boot. Para una
+instrucción completa, el backend Spring debe estar accesible mediante la URL
+usada al compilar.
 
 La guía oficial de la API Kotlin está en
 [LiteRT-LM](https://github.com/google-ai-edge/LiteRT-LM/blob/main/docs/api/kotlin/getting_started.md).
