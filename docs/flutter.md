@@ -61,6 +61,20 @@ ejecuta el CRUD correspondiente. La fase 20 registra el proveedor LiteRT-LM en
 fase 21 conecta el envío de `AssistantPanel` con `IntentService` y muestra la
 operación ejecutada, el estado HTTP y la respuesta de la API.
 
+## Datos y sincronización offline
+
+La fase 22 añade `OfflineDataCoordinator` y `SqliteOfflineStore`. Toda respuesta
+REST válida actualiza una copia SQLite genérica por entidad. Ante un fallo de
+conexión, las lecturas utilizan esa copia y las escrituras se aplican localmente
+con estado `202`, quedando en una cola persistente.
+
+La cola se reproduce en orden al recuperar el servidor. Una creación offline
+usa temporalmente un identificador negativo para claves numéricas; al recibir
+el ID real se actualizan el registro y cualquier operación posterior pendiente.
+El asistente muestra si el resultado proviene del servidor o del teléfono, el
+estado de conexión y el número de cambios pendientes. Consulta
+[offline.md](offline.md) para la prueba física.
+
 ## Contrato de dominio
 
 La fase 17 incorpora `DomainModelLoader` y modelos Dart inmutables para el

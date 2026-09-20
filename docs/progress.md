@@ -79,6 +79,11 @@
   dominio, `IntentService`, API Spring y presentación de resultados. Flujo
   completo voz → IA local → intención validada → REST cubierto por pruebas; APK
   debug compilado para Android arm64.
+- Fase 22: almacenamiento SQLite genérico guiado por el contrato de dominio,
+  caché de consultas, CRUD local cuando Spring Boot no responde, cola
+  persistente FIFO, remapeo de IDs temporales, sincronización automática/manual
+  y estado de conexión visible. Cubierto con pruebas unitarias y de interfaz
+  para el ciclo desconectado → reconectado.
 
 ## IN PROGRESS
 
@@ -86,7 +91,7 @@
 
 ## TODO
 
-- Fases 22 y 23 según el plan maestro.
+- Fase 23 según el plan maestro.
 
 ## KNOWN ISSUES
 
@@ -111,11 +116,12 @@
   endpoint compatible configurado en el backend; la voz web depende del soporte
   del navegador y puede usar un servicio remoto. La IA offline exigida al
   asistente Flutter sigue siendo una frontera distinta.
-- La fase 20 compila el runtime real de LiteRT-LM y prueba su frontera con un
-  canal simulado. La inferencia física requiere que el usuario acepte la
-  licencia de Gemma, importe el modelo al teléfono y se valide el rendimiento
-  del dispositivo. La conexión con la UI ya está completa; esa validación física
-  corresponde a la fase 22.
+- El runtime LiteRT-LM y el dictado se validaron físicamente en el Xiaomi
+  conectado. La primera inferencia después de cargar Gemma puede tardar más que
+  las siguientes por el calentamiento del modelo.
+- La sincronización conserva operaciones rechazadas por la API para evitar
+  pérdida de datos. La resolución asistida de conflictos 409 y la combinación
+  automática de ediciones concurrentes quedan fuera de esta fase.
 - El reconocimiento on-device exige Android 12/API 31 o posterior y que el
   dispositivo tenga instalado un motor e idioma local compatible. La app
   rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como

@@ -93,8 +93,18 @@ build/app/outputs/flutter-apk/app-debug.apk
 
 La comunicación con Spring Boot ocurre por la red local. No necesita acceso a
 Internet. La fase 18 incorpora el contrato de intenciones y su ejecución REST,
-la fase 19 añade voz on-device, la fase 20 integra LiteRT-LM y la fase 21
-conecta el flujo completo. La fase 22 comprobará su operación física sin Internet.
+la fase 19 añade voz on-device, la fase 20 integra LiteRT-LM, la fase 21 conecta
+el flujo completo y la fase 22 agrega SQLite y sincronización para continuar
+trabajando cuando Spring Boot no está disponible.
+
+## Probar datos sin conexión
+
+Primero ejecuta una consulta con el servidor activo para poblar la copia local.
+Después detén Spring Boot y repite la consulta o crea un registro. La pantalla
+mostrará `Modo sin conexión`; las escrituras quedarán pendientes con estado
+local `202`. Al iniciar nuevamente el backend, pulsa el icono de sincronización
+o envía otro comando. Los cambios se enviarán en orden y el contador volverá a
+cero. Véase [docs/offline.md](../../docs/offline.md) para el recorrido completo.
 
 ## Intenciones disponibles
 
