@@ -70,7 +70,7 @@ void main() {
     expect(find.text('Instrucción: lista los clientes'), findsOneWidget);
     expect(find.textContaining('"nombre": "Ana"'), findsOneWidget);
     expect(speech.listenCalls, 1);
-    expect(speech.locales, ['es-ES']);
+    expect(speech.locales, ['es-US']);
     expect(localAI.instructions, ['lista los clientes']);
     expect(localAI.contexts.single, contains('Cliente (/api/clientes)'));
   });

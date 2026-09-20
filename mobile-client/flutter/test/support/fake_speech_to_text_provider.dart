@@ -5,7 +5,7 @@ class FakeSpeechToTextProvider implements SpeechToTextProvider {
     this.available = true,
     this.result = const SpeechRecognitionResult(
       transcript: 'lista los clientes',
-      locale: 'es-ES',
+      locale: 'es-US',
       confidence: 0.9,
     ),
     this.failure,
@@ -34,7 +34,7 @@ class FakeSpeechToTextProvider implements SpeechToTextProvider {
   }
 
   @override
-  Future<SpeechRecognitionResult> listen({String locale = 'es-ES'}) async {
+  Future<SpeechRecognitionResult> listen({String locale = 'es-US'}) async {
     listenCalls++;
     locales.add(locale);
     _isListening = true;

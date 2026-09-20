@@ -29,10 +29,10 @@ void main() {
   test('returns a typed local transcript and forwards the locale', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       expect(call.method, 'listen');
-      expect(call.arguments, {'locale': 'es-ES'});
+      expect(call.arguments, {'locale': 'es-US'});
       return {
         'transcript': '  crea un cliente  ',
-        'locale': 'es-ES',
+        'locale': 'es-US',
         'confidence': 0.87,
       };
     });
@@ -41,7 +41,7 @@ void main() {
     final result = await provider.listen();
 
     expect(result.transcript, 'crea un cliente');
-    expect(result.locale, 'es-ES');
+    expect(result.locale, 'es-US');
     expect(result.confidence, 0.87);
     expect(provider.isListening, isFalse);
   });
@@ -58,7 +58,7 @@ void main() {
       provider.listen(),
       throwsA(isA<SpeechRecognitionException>()),
     );
-    pending.complete({'transcript': 'lista clientes', 'locale': 'es-ES'});
+    pending.complete({'transcript': 'lista clientes', 'locale': 'es-US'});
     await first;
   });
 
@@ -100,7 +100,7 @@ void main() {
   test('rejects malformed native results', () async {
     messenger.setMockMethodCallHandler(
       channel,
-      (_) async => {'transcript': '', 'locale': 'es-ES'},
+      (_) async => {'transcript': '', 'locale': 'es-US'},
     );
     final provider = AndroidSpeechToTextProvider(channel: channel);
 

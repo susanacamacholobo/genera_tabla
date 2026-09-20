@@ -2,10 +2,12 @@ package bo.edu.software1.software1_mobile
 
 import android.app.Activity
 import android.content.Intent
+import android.content.pm.ApplicationInfo
 import android.database.Cursor
 import android.net.Uri
 import android.os.Build
 import android.provider.OpenableColumns
+import android.util.Log
 import com.google.ai.edge.litertlm.Backend
 import com.google.ai.edge.litertlm.Content
 import com.google.ai.edge.litertlm.Contents
@@ -14,6 +16,7 @@ import com.google.ai.edge.litertlm.Engine
 import com.google.ai.edge.litertlm.EngineConfig
 import com.google.ai.edge.litertlm.ResponseFormat
 import com.google.ai.edge.litertlm.SamplerConfig
+import com.google.ai.edge.litertlm.ThinkingConfig
 import io.flutter.plugin.common.BinaryMessenger
 import io.flutter.plugin.common.MethodCall
 import io.flutter.plugin.common.MethodChannel
@@ -32,6 +35,7 @@ class LocalLlmController(
         private const val CHANNEL = "bo.edu.software1/local_llm"
         private const val MODEL_REQUEST = 7201
         private const val MODEL_FILE_NAME = "assistant.litertlm"
+        private const val TAG = "Software1LocalAI"
         private const val MIN_FREE_SPACE_BYTES = 100L * 1024L * 1024L
 
         private val INTENT_SCHEMA =
@@ -85,6 +89,9 @@ class LocalLlmController(
             For CREATE_ENTITY and UPDATE_ENTITY include every required writable field.
             For GET_ENTITY, UPDATE_ENTITY and DELETE_ENTITY include identifier.
             For SEARCH_ENTITY include one or more field filters in parameters.
+            The first output character must be { and the last must be }.
+            Example for "lista los clientes":
+            {"operation":"LIST_ENTITIES","entity":"Cliente","parameters":{}}
             """.trimIndent()
     }
 
@@ -252,6 +259,10 @@ class LocalLlmController(
                         seed = 1,
                     ),
                     maxOutputToken = 256,
+                    thinkingConfig = ThinkingConfig(
+                        enableThinking = false,
+                        thinkingTokenBudget = 0,
+                    ),
                     enableResponseFormat = true,
                 )
                 currentEngine.createConversation(config).use { conversation ->
@@ -273,6 +284,11 @@ class LocalLlmController(
                         .trim()
                     if (output.isEmpty()) {
                         throw ModelOperationException("INFERENCE_FAILED", "The model returned no text.")
+                    }
+                    if (
+                        activity.applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+                    ) {
+                        Log.d(TAG, "Generated structured output: ${output.take(2048)}")
                     }
                     output
                 }

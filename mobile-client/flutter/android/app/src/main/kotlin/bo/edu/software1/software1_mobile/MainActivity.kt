@@ -19,7 +19,7 @@ class MainActivity : FlutterActivity(), RecognitionListener {
         private const val CHANNEL = "bo.edu.software1/speech_to_text"
         private const val TAG = "Software1Speech"
         private const val RECORD_AUDIO_REQUEST = 7101
-        private const val DEFAULT_LOCALE = "es-ES"
+        private const val DEFAULT_LOCALE = "es-US"
     }
 
     private var channel: MethodChannel? = null

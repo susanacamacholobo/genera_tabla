@@ -31,7 +31,7 @@ class AndroidSpeechToTextProvider implements SpeechToTextProvider {
   }
 
   @override
-  Future<SpeechRecognitionResult> listen({String locale = 'es-ES'}) async {
+  Future<SpeechRecognitionResult> listen({String locale = 'es-US'}) async {
     _assertNotDisposed();
     if (_isListening) {
       throw const SpeechRecognitionException(
