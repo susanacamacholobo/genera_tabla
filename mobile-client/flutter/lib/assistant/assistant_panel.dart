@@ -104,6 +104,7 @@ class _AssistantPanelState extends State<AssistantPanel> {
                 border: const OutlineInputBorder(),
                 hintText: widget.hintText,
                 errorText: _error,
+                errorMaxLines: 3,
               ),
               onChanged: (_) {
                 if (_error != null) setState(() => _error = null);

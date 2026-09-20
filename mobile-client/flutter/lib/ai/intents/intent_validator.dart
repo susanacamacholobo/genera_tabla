@@ -18,11 +18,16 @@ class IntentValidator {
     final issues = <IntentIssue>[];
     final entity = domain.entityNamed(intent.entity);
     if (entity == null) {
+      final availableEntities = domain.entities
+          .map((entity) => entity.name)
+          .join(', ');
       issues.add(
         IntentIssue(
           code: 'ENTITY_NOT_FOUND',
           path: r'$.entity',
-          message: 'La entidad «${intent.entity}» no existe.',
+          message:
+              'La entidad «${intent.entity}» no existe. '
+              'Entidades disponibles: $availableEntities.',
         ),
       );
       return IntentValidationResult(issues);

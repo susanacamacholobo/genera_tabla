@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.util.Log
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodCall
@@ -16,8 +17,9 @@ import io.flutter.plugin.common.MethodChannel
 class MainActivity : FlutterActivity(), RecognitionListener {
     companion object {
         private const val CHANNEL = "bo.edu.software1/speech_to_text"
+        private const val TAG = "Software1Speech"
         private const val RECORD_AUDIO_REQUEST = 7101
-        private const val DEFAULT_LOCALE = "es-BO"
+        private const val DEFAULT_LOCALE = "es-ES"
     }
 
     private var channel: MethodChannel? = null
@@ -146,11 +148,20 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     }
 
     override fun onError(error: Int) {
+        Log.w(TAG, "On-device speech recognition failed with code $error")
         val code = when (error) {
+            SpeechRecognizer.ERROR_NETWORK_TIMEOUT,
+            SpeechRecognizer.ERROR_NETWORK,
+            SpeechRecognizer.ERROR_SERVER -> "OFFLINE_UNAVAILABLE"
+            SpeechRecognizer.ERROR_AUDIO -> "AUDIO_ERROR"
             SpeechRecognizer.ERROR_NO_MATCH -> "NO_MATCH"
             SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "NO_SPEECH"
-            SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "BUSY"
+            SpeechRecognizer.ERROR_RECOGNIZER_BUSY,
+            SpeechRecognizer.ERROR_TOO_MANY_REQUESTS -> "BUSY"
             SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "PERMISSION_DENIED"
+            SpeechRecognizer.ERROR_SERVER_DISCONNECTED -> "SERVICE_DISCONNECTED"
+            SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED,
+            SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE -> "LANGUAGE_UNAVAILABLE"
             else -> "RECOGNITION_FAILED"
         }
         completeError(code, "On-device speech recognition failed with code $error.")

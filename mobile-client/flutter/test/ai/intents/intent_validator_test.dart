@@ -198,4 +198,14 @@ void main() {
       ),
     );
   });
+
+  test('unknown entity error lists the available entities', () {
+    final result = validator.validate(
+      intent(IntentOperation.createEntity, entity: 'Cita'),
+      domain,
+    );
+
+    expect(result.issues.single.message, contains('Entidades disponibles:'));
+    expect(result.issues.single.message, contains('Cliente'));
+  });
 }

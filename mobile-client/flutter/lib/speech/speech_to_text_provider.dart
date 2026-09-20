@@ -15,7 +15,7 @@ abstract interface class SpeechToTextProvider {
 
   Future<bool> isAvailable();
 
-  Future<SpeechRecognitionResult> listen({String locale = 'es-BO'});
+  Future<SpeechRecognitionResult> listen({String locale = 'es-ES'});
 
   Future<void> stop();
 

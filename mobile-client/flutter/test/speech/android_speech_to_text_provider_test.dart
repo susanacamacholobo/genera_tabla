@@ -29,10 +29,10 @@ void main() {
   test('returns a typed local transcript and forwards the locale', () async {
     messenger.setMockMethodCallHandler(channel, (call) async {
       expect(call.method, 'listen');
-      expect(call.arguments, {'locale': 'es-BO'});
+      expect(call.arguments, {'locale': 'es-ES'});
       return {
         'transcript': '  crea un cliente  ',
-        'locale': 'es-BO',
+        'locale': 'es-ES',
         'confidence': 0.87,
       };
     });
@@ -41,7 +41,7 @@ void main() {
     final result = await provider.listen();
 
     expect(result.transcript, 'crea un cliente');
-    expect(result.locale, 'es-BO');
+    expect(result.locale, 'es-ES');
     expect(result.confidence, 0.87);
     expect(provider.isListening, isFalse);
   });
@@ -58,13 +58,14 @@ void main() {
       provider.listen(),
       throwsA(isA<SpeechRecognitionException>()),
     );
-    pending.complete({'transcript': 'lista clientes', 'locale': 'es-BO'});
+    pending.complete({'transcript': 'lista clientes', 'locale': 'es-ES'});
     await first;
   });
 
   test('maps native availability and permission failures safely', () async {
     final errors = {
       'OFFLINE_UNAVAILABLE': SpeechUnavailableException,
+      'LANGUAGE_UNAVAILABLE': SpeechUnavailableException,
       'PERMISSION_DENIED': SpeechPermissionException,
     };
     for (final entry in errors.entries) {
@@ -99,7 +100,7 @@ void main() {
   test('rejects malformed native results', () async {
     messenger.setMockMethodCallHandler(
       channel,
-      (_) async => {'transcript': '', 'locale': 'es-BO'},
+      (_) async => {'transcript': '', 'locale': 'es-ES'},
     );
     final provider = AndroidSpeechToTextProvider(channel: channel);
 

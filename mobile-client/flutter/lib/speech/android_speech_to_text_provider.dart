@@ -31,7 +31,7 @@ class AndroidSpeechToTextProvider implements SpeechToTextProvider {
   }
 
   @override
-  Future<SpeechRecognitionResult> listen({String locale = 'es-BO'}) async {
+  Future<SpeechRecognitionResult> listen({String locale = 'es-ES'}) async {
     _assertNotDisposed();
     if (_isListening) {
       throw const SpeechRecognitionException(
@@ -131,8 +131,16 @@ class AndroidSpeechToTextProvider implements SpeechToTextProvider {
         'Este dispositivo no tiene reconocimiento de voz local disponible. '
         'Instala el idioma sin conexión en Android.',
       ),
+      'LANGUAGE_UNAVAILABLE' => const SpeechUnavailableException(
+        'Android no tiene disponible el reconocimiento sin conexión en '
+        'español. Descarga el idioma español en los ajustes de voz.',
+      ),
       'PERMISSION_DENIED' => const SpeechPermissionException(
         'Se necesita permiso de micrófono para reconocer voz.',
+      ),
+      'AUDIO_ERROR' => const SpeechRecognitionException(
+        'Android no pudo usar el micrófono. Comprueba que otra aplicación '
+        'no lo esté utilizando.',
       ),
       'NO_MATCH' => const SpeechRecognitionException(
         'No se pudo reconocer lo que dijiste. Inténtalo de nuevo.',
@@ -142,6 +150,9 @@ class AndroidSpeechToTextProvider implements SpeechToTextProvider {
       ),
       'BUSY' => const SpeechRecognitionException(
         'El reconocimiento de voz ya está ocupado.',
+      ),
+      'SERVICE_DISCONNECTED' => const SpeechUnavailableException(
+        'El servicio de voz de Android se desconectó. Inténtalo nuevamente.',
       ),
       'CANCELLED' => const SpeechRecognitionException(
         'El reconocimiento de voz fue cancelado.',
