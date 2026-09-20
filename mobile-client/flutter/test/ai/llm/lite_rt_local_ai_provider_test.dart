@@ -112,6 +112,38 @@ void main() {
     );
   });
 
+  test('extracts one JSON object from decorated model output', () async {
+    _handle(channel, calls, (call) async {
+      if (call.method == 'status') {
+        return <String, Object?>{
+          'installed': true,
+          'loaded': true,
+          'fileName': 'assistant.litertlm',
+          'sizeBytes': 100,
+        };
+      }
+      if (call.method == 'generate') {
+        return 'Resultado:\n```json\n'
+            '{"operation":"LIST_ENTITIES","entity":"Cliente",'
+            '"parameters":{}}\n```';
+      }
+      return null;
+    });
+    final provider = LiteRtLocalAIProvider(channel: channel);
+    await provider.getModelStatus();
+
+    final response = await provider.generateStructuredIntent(
+      instruction: 'lista los clientes',
+      domainContext: 'Cliente',
+    );
+
+    expect(jsonDecode(response), {
+      'operation': 'LIST_ENTITIES',
+      'entity': 'Cliente',
+      'parameters': <String, Object?>{},
+    });
+  });
+
   test('prevents overlapping generations', () async {
     final pending = Completer<String>();
     _handle(channel, calls, (call) async {

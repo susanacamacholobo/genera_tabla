@@ -104,19 +104,7 @@ class LiteRtLocalAIProvider implements ManagedLocalAIProvider {
       if (response == null || response.trim().isEmpty) {
         throw const LocalAIException('La IA local no devolvió una intención.');
       }
-      final Object? decoded;
-      try {
-        decoded = jsonDecode(response);
-      } on FormatException {
-        throw const LocalAIException(
-          'La IA local devolvió una intención que no es JSON válido.',
-        );
-      }
-      if (decoded is! Map<String, Object?>) {
-        throw const LocalAIException(
-          'La IA local debe devolver un único objeto JSON.',
-        );
-      }
+      final decoded = _decodeJsonObject(response);
       return jsonEncode(decoded);
     } on PlatformException catch (error) {
       throw _mapPlatformError(error);
@@ -127,6 +115,64 @@ class LiteRtLocalAIProvider implements ManagedLocalAIProvider {
     } finally {
       _isGenerating = false;
     }
+  }
+
+  Map<String, Object?> _decodeJsonObject(String response) {
+    try {
+      final exact = jsonDecode(response);
+      if (exact is Map<String, Object?>) return exact;
+      throw const LocalAIException(
+        'La IA local debe devolver un único objeto JSON.',
+      );
+    } on FormatException {
+      // Some small models wrap an otherwise valid JSON object in prose or
+      // Markdown despite constrained decoding. Extract that object below.
+    }
+
+    final candidate = _firstJsonObject(response);
+    if (candidate != null) {
+      try {
+        final extracted = jsonDecode(candidate);
+        if (extracted is Map<String, Object?>) return extracted;
+      } on FormatException {
+        // Report one stable, user-facing error below.
+      }
+    }
+
+    throw const LocalAIException(
+      'La IA local devolvió una intención que no es JSON válido.',
+    );
+  }
+
+  String? _firstJsonObject(String source) {
+    final start = source.indexOf('{');
+    if (start < 0) return null;
+
+    var depth = 0;
+    var inString = false;
+    var escaped = false;
+    for (var index = start; index < source.length; index++) {
+      final character = source[index];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+        } else if (character == r'\') {
+          escaped = true;
+        } else if (character == '"') {
+          inString = false;
+        }
+        continue;
+      }
+      if (character == '"') {
+        inString = true;
+      } else if (character == '{') {
+        depth++;
+      } else if (character == '}') {
+        depth--;
+        if (depth == 0) return source.substring(start, index + 1);
+      }
+    }
+    return null;
   }
 
   @override

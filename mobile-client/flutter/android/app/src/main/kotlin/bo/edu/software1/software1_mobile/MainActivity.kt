@@ -27,6 +27,8 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     private var recognizer: SpeechRecognizer? = null
     private var pendingRecognition: MethodChannel.Result? = null
     private var pendingLocale = DEFAULT_LOCALE
+    private var usingSystemRecognizer = false
+    private var systemFallbackAttempted = false
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -75,20 +77,28 @@ class MainActivity : FlutterActivity(), RecognitionListener {
 
         pendingRecognition = result
         pendingLocale = locale
+        usingSystemRecognizer = false
+        systemFallbackAttempted = false
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M &&
             checkSelfPermission(Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED
         ) {
             requestPermissions(arrayOf(Manifest.permission.RECORD_AUDIO), RECORD_AUDIO_REQUEST)
             return
         }
-        startOnDeviceRecognition()
+        startRecognition()
     }
 
-    private fun startOnDeviceRecognition() {
+    private fun startRecognition(useSystemRecognizer: Boolean = false) {
         if (pendingRecognition == null) return
         try {
-            if (recognizer == null) {
-                recognizer = SpeechRecognizer.createOnDeviceSpeechRecognizer(this).also {
+            if (recognizer == null || usingSystemRecognizer != useSystemRecognizer) {
+                recognizer?.destroy()
+                usingSystemRecognizer = useSystemRecognizer
+                recognizer = if (useSystemRecognizer) {
+                    SpeechRecognizer.createSpeechRecognizer(this)
+                } else {
+                    SpeechRecognizer.createOnDeviceSpeechRecognizer(this)
+                }.also {
                     it.setRecognitionListener(this)
                 }
             }
@@ -103,13 +113,31 @@ class MainActivity : FlutterActivity(), RecognitionListener {
                 putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
             }
             recognizer?.startListening(intent)
-        } catch (_: UnsupportedOperationException) {
-            completeError("OFFLINE_UNAVAILABLE", "On-device recognition is unavailable.")
-        } catch (_: SecurityException) {
+        } catch (error: UnsupportedOperationException) {
+            Log.w(TAG, "On-device speech recognition is unavailable", error)
+            if (!trySystemRecognizerFallback()) {
+                completeError("OFFLINE_UNAVAILABLE", "Speech recognition is unavailable.")
+            }
+        } catch (error: SecurityException) {
+            Log.w(TAG, "Microphone permission was rejected by Android", error)
             completeError("PERMISSION_DENIED", "Microphone permission is required.")
-        } catch (_: RuntimeException) {
-            completeError("RECOGNITION_FAILED", "Could not start on-device recognition.")
+        } catch (error: RuntimeException) {
+            Log.w(TAG, "Could not start speech recognition", error)
+            if (useSystemRecognizer) {
+                completeError("RECOGNITION_FAILED", "Could not start speech recognition.")
+            } else if (!trySystemRecognizerFallback()) {
+                completeError("RECOGNITION_FAILED", "Could not start speech recognition.")
+            }
         }
+    }
+
+    private fun trySystemRecognizerFallback(): Boolean {
+        if (pendingRecognition == null || systemFallbackAttempted) return false
+        systemFallbackAttempted = true
+        recognizer?.destroy()
+        recognizer = null
+        window.decorView.postDelayed({ startRecognition(useSystemRecognizer = true) }, 250L)
+        return true
     }
 
     override fun onRequestPermissionsResult(
@@ -120,7 +148,7 @@ class MainActivity : FlutterActivity(), RecognitionListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode != RECORD_AUDIO_REQUEST || pendingRecognition == null) return
         if (grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
-            startOnDeviceRecognition()
+            startRecognition()
         } else {
             completeError("PERMISSION_DENIED", "Microphone permission was denied.")
         }
@@ -148,7 +176,19 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     }
 
     override fun onError(error: Int) {
-        Log.w(TAG, "On-device speech recognition failed with code $error")
+        Log.w(
+            TAG,
+            "${if (usingSystemRecognizer) "System" else "On-device"} " +
+                "speech recognition failed with code $error",
+        )
+        val canRetryWithSystemRecognizer = error == SpeechRecognizer.ERROR_CLIENT ||
+            error == SpeechRecognizer.ERROR_SERVER ||
+            error == SpeechRecognizer.ERROR_SERVER_DISCONNECTED ||
+            error == SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED ||
+            error == SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE
+        if (!usingSystemRecognizer && canRetryWithSystemRecognizer && trySystemRecognizerFallback()) {
+            return
+        }
         val code = when (error) {
             SpeechRecognizer.ERROR_NETWORK_TIMEOUT,
             SpeechRecognizer.ERROR_NETWORK,
@@ -175,12 +215,14 @@ class MainActivity : FlutterActivity(), RecognitionListener {
     private fun completeError(code: String, message: String) {
         pendingRecognition?.error(code, message, null)
         pendingRecognition = null
+        systemFallbackAttempted = false
     }
 
     private fun releaseRecognizer() {
         recognizer?.cancel()
         recognizer?.destroy()
         recognizer = null
+        usingSystemRecognizer = false
         completeError("CANCELLED", "Recognition was closed.")
     }
 
