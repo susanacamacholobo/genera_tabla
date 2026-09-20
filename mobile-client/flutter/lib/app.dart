@@ -9,6 +9,9 @@ import 'core/config/app_configuration.dart';
 import 'core/dependencies/app_dependencies.dart';
 import 'domain/loading/domain_model_loader.dart';
 import 'navigation/app_router.dart';
+import 'offline/offline_data_coordinator.dart';
+import 'offline/offline_store.dart';
+import 'offline/sqlite_offline_store.dart';
 import 'speech/android_speech_to_text_provider.dart';
 import 'speech/speech_to_text_provider.dart';
 
@@ -19,6 +22,7 @@ class Software1App extends StatefulWidget {
     this.domainModelLoader = const DomainModelLoader(),
     this.speechToTextProvider,
     this.localAIProvider,
+    this.offlineStore,
     super.key,
   });
 
@@ -27,6 +31,7 @@ class Software1App extends StatefulWidget {
   final DomainModelLoader domainModelLoader;
   final SpeechToTextProvider? speechToTextProvider;
   final LocalAIProvider? localAIProvider;
+  final OfflineStore? offlineStore;
 
   @override
   State<Software1App> createState() => _Software1AppState();
@@ -39,11 +44,13 @@ class _Software1AppState extends State<Software1App> {
   late bool _ownsSpeechToTextProvider;
   late LocalAIProvider _localAIProvider;
   late bool _ownsLocalAIProvider;
+  late OfflineDataCoordinator _offlineCoordinator;
 
   @override
   void initState() {
     super.initState();
     _setApiClient();
+    _setOfflineCoordinator();
     _setSpeechToTextProvider();
     _setLocalAIProvider();
   }
@@ -52,9 +59,12 @@ class _Software1AppState extends State<Software1App> {
   void didUpdateWidget(covariant Software1App oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.apiClient != widget.apiClient ||
-        oldWidget.configuration != widget.configuration) {
+        oldWidget.configuration != widget.configuration ||
+        oldWidget.offlineStore != widget.offlineStore) {
+      _offlineCoordinator.dispose();
       if (_ownsApiClient) _apiClient.close();
       _setApiClient();
+      _setOfflineCoordinator();
     }
     if (oldWidget.speechToTextProvider != widget.speechToTextProvider) {
       if (_ownsSpeechToTextProvider) {
@@ -87,8 +97,16 @@ class _Software1AppState extends State<Software1App> {
         widget.apiClient ?? ApiClient(configuration: widget.configuration);
   }
 
+  void _setOfflineCoordinator() {
+    _offlineCoordinator = OfflineDataCoordinator(
+      apiClient: _apiClient,
+      store: widget.offlineStore ?? SqliteOfflineStore(),
+    );
+  }
+
   @override
   void dispose() {
+    _offlineCoordinator.dispose();
     if (_ownsApiClient) _apiClient.close();
     if (_ownsSpeechToTextProvider) {
       unawaited(_speechToTextProvider.dispose());
@@ -109,6 +127,7 @@ class _Software1AppState extends State<Software1App> {
       domainModelLoader: widget.domainModelLoader,
       speechToTextProvider: _speechToTextProvider,
       localAIProvider: _localAIProvider,
+      offlineCoordinator: _offlineCoordinator,
       child: MaterialApp(
         title: 'Software 1 Mobile',
         debugShowCheckedModeBanner: false,

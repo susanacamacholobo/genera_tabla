@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ import '../../ai/llm/local_model_manager.dart';
 import '../../core/dependencies/app_dependencies.dart';
 import '../../domain/loading/domain_model_loader.dart';
 import '../../domain/model/domain_model.dart';
+import '../../offline/offline_data_coordinator.dart';
 
 class AssistantScreen extends StatefulWidget {
   const AssistantScreen({super.key});
@@ -31,6 +33,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     if (_domainModelLoader == loader) return;
     _domainModelLoader = loader;
     _domainModel = loader.loadFromAsset('assets/domain-model.json');
+    unawaited(AppDependencies.of(context).offlineCoordinator.initialize());
   }
 
   Future<void> _acceptInstruction(String instruction) async {
@@ -39,6 +42,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final result = await IntentService(
       provider: dependencies.localAIProvider,
       apiClient: dependencies.apiClient,
+      offlineCoordinator: dependencies.offlineCoordinator,
     ).execute(instruction, domain);
     if (!mounted) return;
     setState(() {
@@ -56,7 +60,8 @@ class _AssistantScreenState extends State<AssistantScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final localAIProvider = AppDependencies.of(context).localAIProvider;
+    final dependencies = AppDependencies.of(context);
+    final localAIProvider = dependencies.localAIProvider;
     return Scaffold(
       appBar: AppBar(title: const Text('Asistente')),
       body: SafeArea(
@@ -71,6 +76,11 @@ class _AssistantScreenState extends State<AssistantScreen> {
               LocalModelSetupCard(provider: localAIProvider),
               const SizedBox(height: 16),
             ],
+            _OfflineStatusCard(
+              coordinator: dependencies.offlineCoordinator,
+              domainModel: _domainModel,
+            ),
+            const SizedBox(height: 16),
             AssistantPanel(
               onSubmit: _acceptInstruction,
               onVoiceInput: _listenOffline,
@@ -107,7 +117,11 @@ class _ExecutionResultCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.check_circle_outline),
+                  Icon(
+                    result.queuedForSync
+                        ? Icons.cloud_upload_outlined
+                        : Icons.check_circle_outline,
+                  ),
                   const SizedBox(width: 10),
                   Expanded(
                     child: Text(
@@ -119,9 +133,7 @@ class _ExecutionResultCard extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text('Instrucción: $instruction'),
-              Text(
-                'Entidad: ${result.intent.entity} · HTTP ${result.statusCode}',
-              ),
+              Text(_metadata()),
               const SizedBox(height: 10),
               SelectableText(_formatData(result.data)),
             ],
@@ -132,6 +144,7 @@ class _ExecutionResultCard extends StatelessWidget {
   }
 
   String _title(IntentOperation operation) => switch (operation) {
+    _ when result.queuedForSync => 'Cambio guardado sin conexión',
     IntentOperation.createEntity => 'Registro creado',
     IntentOperation.getEntity => 'Registro encontrado',
     IntentOperation.listEntities => 'Consulta completada',
@@ -139,6 +152,14 @@ class _ExecutionResultCard extends StatelessWidget {
     IntentOperation.deleteEntity => 'Registro eliminado',
     IntentOperation.searchEntity => 'Búsqueda completada',
   };
+
+  String _metadata() {
+    final origin = result.fromLocalStorage ? 'datos locales' : 'servidor';
+    final pending = result.pendingChanges == 0
+        ? ''
+        : ' · ${result.pendingChanges} pendiente${result.pendingChanges == 1 ? '' : 's'}';
+    return 'Entidad: ${result.intent.entity} · $origin · HTTP ${result.statusCode}$pending';
+  }
 
   String _formatData(Object? data) {
     if (data == null) return 'Operación completada correctamente.';
@@ -152,4 +173,94 @@ class _ExecutionResultCard extends StatelessWidget {
       return data.toString();
     }
   }
+}
+
+class _OfflineStatusCard extends StatelessWidget {
+  const _OfflineStatusCard({
+    required this.coordinator,
+    required this.domainModel,
+  });
+
+  final OfflineDataCoordinator coordinator;
+  final Future<DomainModel> domainModel;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: coordinator,
+      builder: (context, _) {
+        final status = coordinator.connectionState;
+        final pending = coordinator.pendingCount;
+        return Card(
+          child: ListTile(
+            leading: Icon(_icon(status), color: _color(context, status)),
+            title: Text(_titleFor(status)),
+            subtitle: Text(
+              _subtitle(status, pending, coordinator.lastSyncError),
+            ),
+            trailing: pending > 0
+                ? IconButton(
+                    onPressed: status == DataConnectionState.synchronizing
+                        ? null
+                        : () async {
+                            final domain = await domainModel;
+                            await coordinator.synchronize(domain);
+                          },
+                    tooltip: 'Sincronizar cambios pendientes',
+                    icon: status == DataConnectionState.synchronizing
+                        ? const SizedBox.square(
+                            dimension: 20,
+                            child: CircularProgressIndicator(strokeWidth: 2),
+                          )
+                        : const Icon(Icons.sync),
+                  )
+                : null,
+          ),
+        );
+      },
+    );
+  }
+
+  String _titleFor(DataConnectionState status) => switch (status) {
+    DataConnectionState.unknown => 'Conexión sin comprobar',
+    DataConnectionState.online => 'Conectado al servidor',
+    DataConnectionState.offline => 'Modo sin conexión',
+    DataConnectionState.synchronizing => 'Sincronizando…',
+  };
+
+  String _subtitle(
+    DataConnectionState status,
+    int pending,
+    String? lastSyncError,
+  ) {
+    final base = switch (status) {
+      DataConnectionState.unknown =>
+        'La aplicación usará el servidor si está disponible.',
+      DataConnectionState.online =>
+        'Los datos se guardan también en el teléfono.',
+      DataConnectionState.offline =>
+        'Trabajando con la copia guardada en el teléfono.',
+      DataConnectionState.synchronizing =>
+        'Enviando cambios en el orden en que se hicieron.',
+    };
+    final pendingText = pending == 0
+        ? ''
+        : ' $pending cambio${pending == 1 ? '' : 's'} pendiente${pending == 1 ? '' : 's'}.';
+    final errorText = lastSyncError == null ? '' : ' $lastSyncError';
+    return '$base$pendingText$errorText';
+  }
+
+  IconData _icon(DataConnectionState status) => switch (status) {
+    DataConnectionState.unknown => Icons.cloud_queue_outlined,
+    DataConnectionState.online => Icons.cloud_done_outlined,
+    DataConnectionState.offline => Icons.cloud_off_outlined,
+    DataConnectionState.synchronizing => Icons.sync,
+  };
+
+  Color _color(BuildContext context, DataConnectionState status) =>
+      switch (status) {
+        DataConnectionState.offline => Theme.of(context).colorScheme.tertiary,
+        DataConnectionState.online => Colors.green,
+        _ => Theme.of(context).colorScheme.primary,
+      };
 }

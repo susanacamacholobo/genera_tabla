@@ -5,6 +5,7 @@ import 'package:http/testing.dart';
 import 'package:software1_mobile/app.dart';
 import 'package:software1_mobile/core/api/api_client.dart';
 import 'package:software1_mobile/core/config/app_configuration.dart';
+import 'package:software1_mobile/offline/memory_offline_store.dart';
 
 import 'support/fake_local_ai_provider.dart';
 import 'support/fake_speech_to_text_provider.dart';
@@ -41,6 +42,7 @@ void main() {
         apiClient: apiClient,
         speechToTextProvider: speech,
         localAIProvider: localAI,
+        offlineStore: MemoryOfflineStore(),
       ),
     );
     await tester.pumpAndSettle();
