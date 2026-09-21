@@ -79,6 +79,18 @@ def test_generatabla_to_xmi_to_generatabla_is_semantically_equivalent() -> None:
     assert semantic_model(imported) == semantic_model(source)
 
 
+def test_biblioteca_demo_round_trip_preserves_domain_and_relationships() -> None:
+    source = CanonicalProjectModel.model_validate(
+        json.loads((ROOT / "docs" / "examples" / "biblioteca.json").read_text(encoding="utf-8"))
+    )
+
+    imported = XMIImporter().import_bytes(XMIExporter().export_bytes(source))
+
+    assert semantic_model(imported) == semantic_model(source)
+    assert {item.name for item in imported.classes} == {"Socio", "Libro", "Prestamo"}
+    assert len(imported.relationships) == 2
+
+
 def test_ea_to_generatabla_to_xmi_to_generatabla_preserves_meaning_and_identity() -> None:
     importer = XMIImporter()
     source = importer.import_bytes(

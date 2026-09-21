@@ -1,3 +1,4 @@
+import json
 from io import BytesIO
 from pathlib import Path
 from typing import Any
@@ -6,6 +7,18 @@ from zipfile import ZipFile
 import pytest
 
 from spring_generator import SpringGenerator
+
+
+def test_biblioteca_demo_generates_all_required_relationship_fixtures() -> None:
+    example = Path(__file__).parents[3] / "docs" / "examples" / "biblioteca.json"
+    generated = SpringGenerator().generate(json.loads(example.read_text(encoding="utf-8")))
+    path = "src/test/java/com/example/biblioteca/RelationshipPersistenceTests.java"
+    persistence_test = generated.files[path]
+
+    assert "target.setLibro(source);" in persistence_test
+    assert "target.setSocio(source);" in persistence_test
+    assert "target.setSocio(requiredSocio);" in persistence_test
+    assert "target.setLibro(requiredLibro);" in persistence_test
 
 
 def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> None:

@@ -1,0 +1,59 @@
+{
+  "id": "project-biblioteca-demo",
+  "name": "Biblioteca",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-socio",
+      "name": "Socio",
+      "position": { "x": 80, "y": 120 },
+      "attributes": [
+        { "id": "socio-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "socio-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-libro",
+      "name": "Libro",
+      "position": { "x": 420, "y": 120 },
+      "attributes": [
+        { "id": "libro-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "libro-titulo", "name": "titulo", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false },
+        { "id": "libro-isbn", "name": "isbn", "dataType": "String", "nullable": false, "unique": true, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-prestamo",
+      "name": "Prestamo",
+      "position": { "x": 250, "y": 420 },
+      "attributes": [
+        { "id": "prestamo-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "prestamo-fecha-inicio", "name": "fechaInicio", "dataType": "DateTime", "nullable": false, "unique": false, "primaryKey": false },
+        { "id": "prestamo-fecha-devolucion", "name": "fechaDevolucion", "dataType": "DateTime", "nullable": true, "unique": false, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-socio-prestamos",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-socio",
+      "targetClassId": "class-prestamo",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "socio",
+      "targetRole": "prestamos"
+    },
+    {
+      "id": "rel-libro-prestamos",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-libro",
+      "targetClassId": "class-prestamo",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "libro",
+      "targetRole": "prestamos"
+    }
+  ],
+  "enumerations": []
+}

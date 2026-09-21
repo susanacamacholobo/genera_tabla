@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import httpx
@@ -5,8 +6,11 @@ import pytest
 
 from case_backend.api import xmi as xmi_api
 from case_backend.importers.xmi import XMIImporter
+from case_backend.exporters.xmi import XMIExporter
+from case_backend.schemas import CanonicalProjectModel
 
 FIXTURES = Path(__file__).parent / "fixtures" / "enterprise-architect"
+ROOT = Path(__file__).parents[3]
 
 
 @pytest.mark.anyio
@@ -81,3 +85,30 @@ async def test_export_missing_project_returns_404(client: httpx.AsyncClient) -> 
     response = await client.get("/projects/missing/xmi")
 
     assert response.status_code == 404
+
+
+@pytest.mark.anyio
+async def test_biblioteca_demo_import_editable_and_exportable(
+    client: httpx.AsyncClient,
+) -> None:
+    model = CanonicalProjectModel.model_validate(
+        json.loads((ROOT / "docs" / "examples" / "biblioteca.json").read_text(encoding="utf-8"))
+    )
+    xmi = XMIExporter().export_bytes(model)
+
+    created = await client.post(
+        "/projects/xmi/import",
+        files={"file": ("Biblioteca.xmi", xmi, "application/xml")},
+    )
+
+    assert created.status_code == 201
+    project_id = created.json()["project_id"]
+    assert {item["name"] for item in created.json()["model"]["classes"]} == {
+        "Socio", "Libro", "Prestamo"
+    }
+    assert len(created.json()["model"]["relationships"]) == 2
+    exported = await client.get(f"/projects/{project_id}/xmi")
+    assert exported.status_code == 200
+    restored = XMIImporter().import_bytes(exported.content)
+    assert {item.name for item in restored.classes} == {"Socio", "Libro", "Prestamo"}
+    assert len(restored.relationships) == 2
