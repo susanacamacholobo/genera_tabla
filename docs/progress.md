@@ -123,10 +123,6 @@
 - La sincronización conserva operaciones rechazadas por la API para evitar
   pérdida de datos. La resolución asistida de conflictos 409 y la combinación
   automática de ediciones concurrentes quedan fuera de esta fase.
-- Gemma puede variar mayúsculas en nombres propios: el cliente de prueba
-  solicitado como `Prueba Offline` se guardó como `Prueba offline`. Conviene
-  añadir revisión explícita de datos antes de confirmar escrituras en una fase
-  posterior.
 - El reconocimiento on-device exige Android 12/API 31 o posterior y que el
   dispositivo tenga instalado un motor e idioma local compatible. La app
   rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como
