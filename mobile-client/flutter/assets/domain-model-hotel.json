@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0.0",
+  "application": "Hotel",
+  "artifactId": "hotel",
+  "basePath": "/api",
+  "entities": [
+    {
+      "name": "Huesped",
+      "endpoint": "/api/huespedes",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "nombre",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "reservas",
+          "apiField": "reservasIds",
+          "targetEntity": "Reserva",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Habitacion",
+      "endpoint": "/api/habitaciones",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "numero",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": true
+        },
+        {
+          "name": "precioNoche",
+          "type": "Decimal",
+          "required": true,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "reservas",
+          "apiField": "reservasIds",
+          "targetEntity": "Reserva",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Reserva",
+      "endpoint": "/api/reservas",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "fechaEntrada",
+          "type": "Date",
+          "required": true,
+          "generated": false,
+          "unique": false
+        },
+        {
+          "name": "fechaSalida",
+          "type": "Date",
+          "required": true,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "habitacion",
+          "apiField": "habitacionId",
+          "targetEntity": "Habitacion",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        },
+        {
+          "name": "huesped",
+          "apiField": "huespedId",
+          "targetEntity": "Huesped",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        }
+      ]
+    }
+  ]
+}
+

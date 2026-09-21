@@ -1,0 +1,59 @@
+{
+  "id": "project-universidad-demo",
+  "name": "Universidad",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-estudiante",
+      "name": "Estudiante",
+      "position": { "x": 80, "y": 120 },
+      "attributes": [
+        { "id": "estudiante-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "estudiante-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false },
+        { "id": "estudiante-codigo", "name": "codigo", "dataType": "String", "nullable": false, "unique": true, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-curso",
+      "name": "Curso",
+      "position": { "x": 420, "y": 120 },
+      "attributes": [
+        { "id": "curso-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "curso-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false },
+        { "id": "curso-codigo", "name": "codigo", "dataType": "String", "nullable": false, "unique": true, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-matricula",
+      "name": "Matricula",
+      "position": { "x": 250, "y": 420 },
+      "attributes": [
+        { "id": "matricula-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "matricula-fecha", "name": "fechaRegistro", "dataType": "Date", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-estudiante-matriculas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-estudiante",
+      "targetClassId": "class-matricula",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "estudiante",
+      "targetRole": "matriculas"
+    },
+    {
+      "id": "rel-curso-matriculas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-curso",
+      "targetClassId": "class-matricula",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "curso",
+      "targetRole": "matriculas"
+    }
+  ],
+  "enumerations": []
+}

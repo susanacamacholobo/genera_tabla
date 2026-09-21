@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0.0",
+  "application": "Universidad",
+  "artifactId": "universidad",
+  "basePath": "/api",
+  "entities": [
+    {
+      "name": "Estudiante",
+      "endpoint": "/api/estudiantes",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "nombre",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": false
+        },
+        {
+          "name": "codigo",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": true
+        }
+      ],
+      "relationships": [
+        {
+          "name": "matriculas",
+          "apiField": "matriculasIds",
+          "targetEntity": "Matricula",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Curso",
+      "endpoint": "/api/cursos",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "nombre",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": false
+        },
+        {
+          "name": "codigo",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": true
+        }
+      ],
+      "relationships": [
+        {
+          "name": "matriculas",
+          "apiField": "matriculasIds",
+          "targetEntity": "Matricula",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Matricula",
+      "endpoint": "/api/matriculas",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "fechaRegistro",
+          "type": "Date",
+          "required": true,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "curso",
+          "apiField": "cursoId",
+          "targetEntity": "Curso",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        },
+        {
+          "name": "estudiante",
+          "apiField": "estudianteId",
+          "targetEntity": "Estudiante",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        }
+      ]
+    }
+  ]
+}
+

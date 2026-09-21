@@ -1,6 +1,8 @@
 import json
 from pathlib import Path
 
+import pytest
+
 from case_backend.exporters.xmi import XMIExporter
 from case_backend.importers.xmi import XMIImporter
 from case_backend.schemas import CanonicalProjectModel
@@ -88,6 +90,27 @@ def test_biblioteca_demo_round_trip_preserves_domain_and_relationships() -> None
 
     assert semantic_model(imported) == semantic_model(source)
     assert {item.name for item in imported.classes} == {"Socio", "Libro", "Prestamo"}
+    assert len(imported.relationships) == 2
+
+
+@pytest.mark.parametrize(
+    ("filename", "classes"),
+    [
+        ("hotel.json", {"Huesped", "Habitacion", "Reserva"}),
+        ("universidad.json", {"Estudiante", "Curso", "Matricula"}),
+    ],
+)
+def test_remaining_demos_round_trip_preserves_domain_and_relationships(
+    filename: str, classes: set[str]
+) -> None:
+    source = CanonicalProjectModel.model_validate(
+        json.loads((ROOT / "docs" / "examples" / filename).read_text(encoding="utf-8"))
+    )
+
+    imported = XMIImporter().import_bytes(XMIExporter().export_bytes(source))
+
+    assert semantic_model(imported) == semantic_model(source)
+    assert {item.name for item in imported.classes} == classes
     assert len(imported.relationships) == 2
 
 

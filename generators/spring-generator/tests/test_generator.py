@@ -25,6 +25,32 @@ def test_biblioteca_demo_generates_all_required_relationship_fixtures() -> None:
     )
 
 
+@pytest.mark.parametrize(
+    ("domain", "dependent", "parents"),
+    [
+        ("hotel", "Reserva", ("Huesped", "Habitacion")),
+        ("universidad", "Matricula", ("Estudiante", "Curso")),
+    ],
+)
+def test_remaining_demos_generate_complete_relationships(
+    domain: str, dependent: str, parents: tuple[str, str]
+) -> None:
+    root = Path(__file__).parents[3]
+    example = root / "docs" / "examples" / f"{domain}.json"
+    generated = SpringGenerator().generate(json.loads(example.read_text(encoding="utf-8")))
+    persistence = generated.files[
+        f"src/test/java/com/example/{domain}/RelationshipPersistenceTests.java"
+    ]
+    for parent in parents:
+        assert f"new {parent}()" in persistence
+    assert f"new {dependent}()" in persistence
+    assert persistence.count("saveAndFlush(target)") == 2
+    bundled_contract = root / "mobile-client" / "flutter" / "assets" / f"domain-model-{domain}.json"
+    assert json.loads(bundled_contract.read_text(encoding="utf-8")) == json.loads(
+        generated.files["metadata/domain-model.json"]
+    )
+
+
 def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> None:
     generated = SpringGenerator().generate(simple_entity_model)
     root = "src/main/java/com/example/veterinaria"

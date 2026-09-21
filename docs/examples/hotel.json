@@ -1,0 +1,59 @@
+{
+  "id": "project-hotel-demo",
+  "name": "Hotel",
+  "revision": 0,
+  "classes": [
+    {
+      "id": "class-huesped",
+      "name": "Huesped",
+      "position": { "x": 80, "y": 120 },
+      "attributes": [
+        { "id": "huesped-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "huesped-nombre", "name": "nombre", "dataType": "String", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-habitacion",
+      "name": "Habitacion",
+      "position": { "x": 420, "y": 120 },
+      "attributes": [
+        { "id": "habitacion-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "habitacion-numero", "name": "numero", "dataType": "String", "nullable": false, "unique": true, "primaryKey": false },
+        { "id": "habitacion-precio", "name": "precioNoche", "dataType": "Decimal", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    },
+    {
+      "id": "class-reserva",
+      "name": "Reserva",
+      "position": { "x": 250, "y": 420 },
+      "attributes": [
+        { "id": "reserva-id", "name": "id", "dataType": "Long", "nullable": false, "unique": true, "primaryKey": true },
+        { "id": "reserva-entrada", "name": "fechaEntrada", "dataType": "Date", "nullable": false, "unique": false, "primaryKey": false },
+        { "id": "reserva-salida", "name": "fechaSalida", "dataType": "Date", "nullable": false, "unique": false, "primaryKey": false }
+      ]
+    }
+  ],
+  "relationships": [
+    {
+      "id": "rel-huesped-reservas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-huesped",
+      "targetClassId": "class-reserva",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "huesped",
+      "targetRole": "reservas"
+    },
+    {
+      "id": "rel-habitacion-reservas",
+      "type": "ASSOCIATION",
+      "sourceClassId": "class-habitacion",
+      "targetClassId": "class-reserva",
+      "sourceMultiplicity": "1",
+      "targetMultiplicity": "0..*",
+      "sourceRole": "habitacion",
+      "targetRole": "reservas"
+    }
+  ],
+  "enumerations": []
+}

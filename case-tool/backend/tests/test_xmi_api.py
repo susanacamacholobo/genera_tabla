@@ -112,3 +112,34 @@ async def test_biblioteca_demo_import_editable_and_exportable(
     restored = XMIImporter().import_bytes(exported.content)
     assert {item.name for item in restored.classes} == {"Socio", "Libro", "Prestamo"}
     assert len(restored.relationships) == 2
+
+
+@pytest.mark.anyio
+@pytest.mark.parametrize(
+    ("filename", "classes"),
+    [
+        ("hotel.json", {"Huesped", "Habitacion", "Reserva"}),
+        ("universidad.json", {"Estudiante", "Curso", "Matricula"}),
+    ],
+)
+async def test_remaining_demos_import_and_export_through_api(
+    client: httpx.AsyncClient, filename: str, classes: set[str]
+) -> None:
+    model = CanonicalProjectModel.model_validate(
+        json.loads((ROOT / "docs" / "examples" / filename).read_text(encoding="utf-8"))
+    )
+    xmi = XMIExporter().export_bytes(model)
+
+    created = await client.post(
+        "/projects/xmi/import",
+        files={"file": (filename.replace(".json", ".xmi"), xmi, "application/xml")},
+    )
+
+    assert created.status_code == 201
+    project_id = created.json()["project_id"]
+    assert {item["name"] for item in created.json()["model"]["classes"]} == classes
+    exported = await client.get(f"/projects/{project_id}/xmi")
+    assert exported.status_code == 200
+    restored = XMIImporter().import_bytes(exported.content)
+    assert {item.name for item in restored.classes} == classes
+    assert len(restored.relationships) == 2
