@@ -39,7 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadDomainModel() {
     _domainModel = widget.domainModelLoader.loadFromAsset(
-      'assets/domain-model.json',
+      AppConfiguration.domainModelAsset,
     );
   }
 
@@ -116,6 +116,16 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.auto_awesome_outlined),
               label: const Text('Abrir asistente'),
             ),
+            if (const String.fromEnvironment('DEMO_DOMAIN') ==
+                'biblioteca') ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.biblioteca),
+                icon: const Icon(Icons.local_library_outlined),
+                label: const Text('Abrir Biblioteca'),
+              ),
+            ],
           ],
         ),
       ),

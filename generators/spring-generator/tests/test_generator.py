@@ -19,6 +19,10 @@ def test_biblioteca_demo_generates_all_required_relationship_fixtures() -> None:
     assert "target.setSocio(source);" in persistence_test
     assert "target.setSocio(requiredSocio);" in persistence_test
     assert "target.setLibro(requiredLibro);" in persistence_test
+    bundled_contract = Path(__file__).parents[3] / "mobile-client" / "flutter" / "assets" / "domain-model-biblioteca.json"
+    assert json.loads(bundled_contract.read_text(encoding="utf-8")) == json.loads(
+        generated.files["metadata/domain-model.json"]
+    )
 
 
 def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> None:

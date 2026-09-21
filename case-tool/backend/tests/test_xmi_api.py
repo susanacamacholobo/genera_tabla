@@ -5,8 +5,8 @@ import httpx
 import pytest
 
 from case_backend.api import xmi as xmi_api
-from case_backend.importers.xmi import XMIImporter
 from case_backend.exporters.xmi import XMIExporter
+from case_backend.importers.xmi import XMIImporter
 from case_backend.schemas import CanonicalProjectModel
 
 FIXTURES = Path(__file__).parent / "fixtures" / "enterprise-architect"

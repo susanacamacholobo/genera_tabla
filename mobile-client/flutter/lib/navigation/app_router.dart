@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import '../core/config/app_configuration.dart';
 import '../domain/loading/domain_model_loader.dart';
 import '../features/assistant/assistant_screen.dart';
+import '../features/biblioteca/biblioteca_screen.dart';
 import '../features/home/home_screen.dart';
 
 abstract final class AppRoutes {
   static const home = '/';
   static const assistant = '/assistant';
+  static const biblioteca = '/biblioteca';
 }
 
 class AppRouter {
@@ -31,6 +33,10 @@ class AppRouter {
       AppRoutes.assistant => MaterialPageRoute<void>(
         settings: settings,
         builder: (_) => const AssistantScreen(),
+      ),
+      AppRoutes.biblioteca => MaterialPageRoute<void>(
+        settings: settings,
+        builder: (_) => const BibliotecaScreen(),
       ),
       _ => MaterialPageRoute<void>(
         settings: settings,

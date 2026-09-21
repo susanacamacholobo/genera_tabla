@@ -88,11 +88,14 @@
 
 ## IN PROGRESS
 
-- Ninguna fase.
+- Fase 23: simulacro Biblioteca. Modelo UML, ida y vuelta XMI, generación
+  Spring desde XMI, pruebas Maven, CRUD contra PostgreSQL local y pantalla
+  Flutter manual con prueba automatizada. Quedan la prueba física de Biblioteca
+  en Android y los simulacros Hotel/Universidad.
 
 ## TODO
 
-- Fase 23 según el plan maestro.
+- Completar los simulacros restantes de la fase 23.
 
 ## KNOWN ISSUES
 

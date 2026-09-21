@@ -1,0 +1,128 @@
+{
+  "schemaVersion": "1.0.0",
+  "application": "Biblioteca",
+  "artifactId": "biblioteca",
+  "basePath": "/api",
+  "entities": [
+    {
+      "name": "Socio",
+      "endpoint": "/api/socios",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "nombre",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "prestamos",
+          "apiField": "prestamosIds",
+          "targetEntity": "Prestamo",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Libro",
+      "endpoint": "/api/libros",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "titulo",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": false
+        },
+        {
+          "name": "isbn",
+          "type": "String",
+          "required": true,
+          "generated": false,
+          "unique": true
+        }
+      ],
+      "relationships": [
+        {
+          "name": "prestamos",
+          "apiField": "prestamosIds",
+          "targetEntity": "Prestamo",
+          "kind": "ONE_TO_MANY",
+          "many": true,
+          "required": false,
+          "writable": false
+        }
+      ]
+    },
+    {
+      "name": "Prestamo",
+      "endpoint": "/api/prestamos",
+      "idField": "id",
+      "fields": [
+        {
+          "name": "id",
+          "type": "Long",
+          "required": true,
+          "generated": true,
+          "unique": true
+        },
+        {
+          "name": "fechaInicio",
+          "type": "DateTime",
+          "required": true,
+          "generated": false,
+          "unique": false
+        },
+        {
+          "name": "fechaDevolucion",
+          "type": "DateTime",
+          "required": false,
+          "generated": false,
+          "unique": false
+        }
+      ],
+      "relationships": [
+        {
+          "name": "libro",
+          "apiField": "libroId",
+          "targetEntity": "Libro",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        },
+        {
+          "name": "socio",
+          "apiField": "socioId",
+          "targetEntity": "Socio",
+          "kind": "MANY_TO_ONE",
+          "many": false,
+          "required": true,
+          "writable": true
+        }
+      ]
+    }
+  ]
+}
+

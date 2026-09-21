@@ -9,6 +9,7 @@ import '../../assistant/assistant_panel.dart';
 import '../../assistant/local_model_setup_card.dart';
 import '../../ai/llm/local_model_manager.dart';
 import '../../core/dependencies/app_dependencies.dart';
+import '../../core/config/app_configuration.dart';
 import '../../domain/loading/domain_model_loader.dart';
 import '../../domain/model/domain_model.dart';
 import '../../offline/offline_data_coordinator.dart';
@@ -32,7 +33,7 @@ class _AssistantScreenState extends State<AssistantScreen> {
     final loader = AppDependencies.of(context).domainModelLoader;
     if (_domainModelLoader == loader) return;
     _domainModelLoader = loader;
-    _domainModel = loader.loadFromAsset('assets/domain-model.json');
+    _domainModel = loader.loadFromAsset(AppConfiguration.domainModelAsset);
     unawaited(AppDependencies.of(context).offlineCoordinator.initialize());
   }
 

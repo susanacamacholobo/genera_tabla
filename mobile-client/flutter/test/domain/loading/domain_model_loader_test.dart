@@ -21,6 +21,23 @@ void main() {
     );
   });
 
+  test('loads the Biblioteca demo contract', () async {
+    final model = await loader.loadFromAsset(
+      'assets/domain-model-biblioteca.json',
+    );
+
+    expect(model.application, 'Biblioteca');
+    expect(model.entities.length, 3);
+    expect(
+      model.entityNamed('Prestamo')?.relationshipNamed('socioId')?.required,
+      isTrue,
+    );
+    expect(
+      model.entityNamed('Prestamo')?.relationshipNamed('libroId')?.required,
+      isTrue,
+    );
+  });
+
   test('parses fields, relationships and case-insensitive lookups', () {
     final model = loader.loadFromString(jsonEncode(_validContract()));
 
