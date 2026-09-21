@@ -64,6 +64,10 @@ flutter run `
 
 `flutter run` instalará esta variante sobre la app de desarrollo existente;
 para volver a Veterinaria, compila sin `DEMO_DOMAIN` y con la URL de su backend.
+Si Xiaomi cancela la instalación *streaming* pese a tener la opción USB activada,
+usa `adb install -r --no-streaming build/app/outputs/flutter-apk/app-debug.apk`
+después de compilar; esta variante se instaló correctamente así, conservando
+los datos privados de la app.
 Primero crea un socio y un libro, luego usa sus IDs al crear un préstamo. En el
 asistente prueba «lista los socios» y «lista los libros». Para verificarlo sin
 Internet, carga antes el modelo local y una consulta, activa modo avión y repite
@@ -73,7 +77,8 @@ la consulta; la sincronización offline usa la capa SQLite existente.
 
 Verificados: ida y vuelta XMI, importación/exportación por API, backend generado
 desde XMI, tests Maven, CRUD real en PostgreSQL, pantalla Flutter con prueba de
-crear/editar/eliminar socio, y suite Flutter. Pendiente: prueba física de esta
-variante en el teléfono y simulacros Hotel/Universidad. No se afirma soporte
+crear/editar/eliminar socio, suite Flutter, instalación y apertura en el Xiaomi.
+Pendiente: probar manualmente CRUD y asistente Biblioteca en el teléfono, y los
+simulacros Hotel/Universidad. No se afirma soporte
 directo para archivos de repositorio EA ni equivalencia de todas las extensiones
 propietarias de XMI.

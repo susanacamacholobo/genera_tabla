@@ -90,8 +90,9 @@
 
 - Fase 23: simulacro Biblioteca. Modelo UML, ida y vuelta XMI, generación
   Spring desde XMI, pruebas Maven, CRUD contra PostgreSQL local y pantalla
-  Flutter manual con prueba automatizada. Quedan la prueba física de Biblioteca
-  en Android y los simulacros Hotel/Universidad.
+  Flutter manual con prueba automatizada. La variante se instaló y abrió en
+  Android; quedan la interacción física CRUD/asistente y los simulacros
+  Hotel/Universidad.
 
 ## TODO
 
