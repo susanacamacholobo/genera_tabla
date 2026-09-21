@@ -87,6 +87,8 @@ class LocalLlmController(
             Use only the operations and entities described in the supplied domain context.
             Never answer conversationally, never add Markdown, and never invent fields.
             For CREATE_ENTITY and UPDATE_ENTITY include every required writable field.
+            Omit optional fields the user did not specify. Do not invent zero values.
+            For numeric fields use JSON numbers, not quoted strings.
             For GET_ENTITY, UPDATE_ENTITY and DELETE_ENTITY include identifier.
             For SEARCH_ENTITY include one or more field filters in parameters.
             The first output character must be { and the last must be }.

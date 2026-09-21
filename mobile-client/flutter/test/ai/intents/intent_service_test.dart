@@ -91,6 +91,44 @@ void main() {
     expect(result.statusCode, 201);
   });
 
+  test('omits a model-invented optional zero before the API request', () async {
+    late http.Request captured;
+    final client = _client(
+      MockClient((request) async {
+        captured = request;
+        return http.Response(
+          '{"id":9,"nombre":"Prueba Offline"}',
+          201,
+          headers: {'content-type': 'application/json'},
+        );
+      }),
+    );
+    addTearDown(client.close);
+    final provider = FakeLocalAIProvider(
+      response: jsonEncode({
+        'operation': 'CREATE_ENTITY',
+        'entity': 'Cliente',
+        'parameters': {
+          'nombre': 'Prueba Offline',
+          'saldo': '0',
+          'fechaRegistro': '2026-09-21T14:00:00',
+        },
+      }),
+    );
+
+    final result = await IntentService(provider: provider, apiClient: client)
+        .execute(
+          'Crea un cliente llamado Prueba Offline con fecha de registro 2026-09-21T14:00:00',
+          domain,
+        );
+
+    expect(result.statusCode, 201);
+    expect(jsonDecode(captured.body), {
+      'nombre': 'Prueba Offline',
+      'fechaRegistro': '2026-09-21T14:00:00',
+    });
+  });
+
   test('rejects invalid intent before making an HTTP request', () async {
     var requestCount = 0;
     final client = _client(

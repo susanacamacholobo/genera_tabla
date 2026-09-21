@@ -6,6 +6,7 @@ import '../context/domain_context_builder.dart';
 import '../llm/local_ai_provider.dart';
 import 'api_operation_resolver.dart';
 import 'intent_exception.dart';
+import 'intent_normalizer.dart';
 import 'structured_intent.dart';
 import 'structured_intent_parser.dart';
 
@@ -35,6 +36,7 @@ class IntentService {
     required this.apiClient,
     this.offlineCoordinator,
     this.parser = const StructuredIntentParser(),
+    this.normalizer = const IntentNormalizer(),
     this.resolver = const ApiOperationResolver(),
     this.contextBuilder = const DomainContextBuilder(),
   });
@@ -43,6 +45,7 @@ class IntentService {
   final ApiClient apiClient;
   final OfflineDataCoordinator? offlineCoordinator;
   final StructuredIntentParser parser;
+  final IntentNormalizer normalizer;
   final ApiOperationResolver resolver;
   final DomainContextBuilder contextBuilder;
 
@@ -72,7 +75,11 @@ class IntentService {
       );
     }
 
-    final intent = parser.parse(response);
+    final intent = normalizer.normalize(
+      parser.parse(response),
+      domain,
+      instruction: normalizedInstruction,
+    );
     final operation = resolver.resolve(intent, domain);
     final entity = domain.entityNamed(intent.entity)!;
     final offlineExecution = await offlineCoordinator?.execute(
