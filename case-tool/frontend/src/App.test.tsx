@@ -40,3 +40,32 @@ it('labels the local fixture as unsaved demo when the backend is unavailable', a
   expect((await screen.findByTestId('editor')).textContent).toContain('Veterinaria / demo');
   await waitFor(() => expect(screen.getByText(/sin guardar cambios/)).toBeTruthy());
 });
+
+it('imports an Enterprise Architect XMI and offers the reverse export', async () => {
+  const model: ProjectModel = {
+    id: 'from-ea', name: 'Biblioteca EA', revision: 0,
+    classes: [], relationships: [], enumerations: [],
+  };
+  const fetchMock = vi.fn((url: string, options?: RequestInit) => {
+    if (url === '/ai/status') return Promise.resolve({ ok: true, json: async () => ({ configured: false, remote: false }) });
+    if (url === '/projects' && !options) return Promise.resolve({ ok: true, json: async () => [] });
+    if (url === '/projects/xmi/import' && options?.method === 'POST') {
+      expect(options.body).toBeInstanceOf(FormData);
+      expect((options.body as FormData).get('file')).toBeInstanceOf(File);
+      return Promise.resolve({ ok: true, json: async () => ({ project_id: 'from-ea', model }) });
+    }
+    if (url === '/projects/from-ea/model') return Promise.resolve({ ok: true, json: async () => ({ model }) });
+    throw new Error(`Unexpected ${url}`);
+  });
+  vi.stubGlobal('fetch', fetchMock);
+  const user = userEvent.setup();
+  render(<App />);
+  await screen.findByText('Crea un proyecto para comenzar a editar.');
+
+  const file = new File(['<xmi:XMI />'], 'biblioteca.xmi', { type: 'application/xml' });
+  await user.upload(screen.getByLabelText('Archivo XMI de Enterprise Architect'), file);
+  await user.click(screen.getByRole('button', { name: 'Importar XMI' }));
+
+  expect((await screen.findByTestId('editor')).textContent).toContain('Biblioteca EA / guardado');
+  expect(screen.getByRole('link', { name: 'Exportar XMI' }).getAttribute('href')).toBe('/projects/from-ea/xmi');
+});

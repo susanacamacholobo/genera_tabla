@@ -14,6 +14,7 @@ export function App() {
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [snapshot, setSnapshot] = useState<ProjectModel | null>(null);
   const [projectName, setProjectName] = useState('');
+  const [xmiFile, setXmiFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [offline, setOffline] = useState(false);
@@ -86,6 +87,30 @@ export function App() {
     }
   };
 
+  const importXmi = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!xmiFile || busy) return;
+    setBusy(true);
+    try {
+      const form = new FormData();
+      form.append('file', xmiFile);
+      const response = await fetch('/projects/xmi/import', { method: 'POST', body: form });
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as { detail?: string } | null;
+        throw new Error(typeof body?.detail === 'string' ? body.detail : 'No se pudo importar el archivo XMI.');
+      }
+      const imported = await response.json() as { project_id: string; model: ProjectModel };
+      setProjects((current) => [...(current ?? []), { id: imported.project_id, name: imported.model.name }]);
+      setSelectedId(imported.project_id);
+      setXmiFile(null);
+      setError(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'No se pudo importar el archivo XMI.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (offline) return (
     <>
       <div className="project-switcher" role="status">
@@ -123,6 +148,16 @@ export function App() {
           />
           <button className="button" disabled={busy || !projectName.trim()}>Crear proyecto</button>
         </form>
+        <form className="xmi-actions" onSubmit={(event) => void importXmi(event)}>
+          <input
+            aria-label="Archivo XMI de Enterprise Architect"
+            type="file"
+            accept=".xmi,.xml,application/xml,text/xml"
+            onChange={(event) => setXmiFile(event.target.files?.[0] ?? null)}
+          />
+          <button className="button" disabled={busy || !xmiFile}>Importar XMI</button>
+        </form>
+        {selectedId && <a className="button" href={`/projects/${encodeURIComponent(selectedId)}/xmi`}>Exportar XMI</a>}
         {error && <span role="alert">{error}</span>}
       </div>
       {snapshot && session

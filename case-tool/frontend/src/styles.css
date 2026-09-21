@@ -26,12 +26,15 @@ body {
   font-size: 0.8rem;
 }
 .project-switcher form { display: flex; gap: 0.5rem; margin-left: auto; }
+.project-switcher .xmi-actions { margin-left: 0; }
 .project-switcher input, .project-switcher select {
   min-width: 10rem;
   padding: 0.48rem;
   border: 1px solid #cbd5e1;
   border-radius: 0.4rem;
 }
+.project-switcher input[type="file"] { max-width: 12rem; min-width: 0; padding: 0.35rem; }
+.project-switcher a.button { text-decoration: none; white-space: nowrap; }
 .project-switcher [role="alert"] { color: #b42318; }
 .project-empty { padding: 2rem; color: #475569; }
 
