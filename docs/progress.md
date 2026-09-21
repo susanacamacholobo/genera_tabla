@@ -82,8 +82,9 @@
 - Fase 22: almacenamiento SQLite genérico guiado por el contrato de dominio,
   caché de consultas, CRUD local cuando Spring Boot no responde, cola
   persistente FIFO, remapeo de IDs temporales, sincronización automática/manual
-  y estado de conexión visible. Cubierto con pruebas unitarias y de interfaz
-  para el ciclo desconectado → reconectado.
+  y estado de conexión visible. Cubierto con pruebas unitarias y de interfaz.
+  Verificado físicamente en Android: voz e IA en modo avión, lectura SQLite,
+  creación offline y sincronización posterior a PostgreSQL local.
 
 ## IN PROGRESS
 
@@ -122,6 +123,10 @@
 - La sincronización conserva operaciones rechazadas por la API para evitar
   pérdida de datos. La resolución asistida de conflictos 409 y la combinación
   automática de ediciones concurrentes quedan fuera de esta fase.
+- Gemma puede variar mayúsculas en nombres propios: el cliente de prueba
+  solicitado como `Prueba Offline` se guardó como `Prueba offline`. Conviene
+  añadir revisión explícita de datos antes de confirmar escrituras en una fase
+  posterior.
 - El reconocimiento on-device exige Android 12/API 31 o posterior y que el
   dispositivo tenga instalado un motor e idioma local compatible. La app
   rechaza dispositivos sin ese soporte y no usa el reconocedor genérico como

@@ -34,5 +34,9 @@ registro recién creado.
 6. Pulsa el icono de sincronización. El estado debe cambiar a `Conectado al
    servidor` y el contador pendiente desaparecer.
 
+Este recorrido se verificó en un Xiaomi Android: el dictado y Gemma funcionaron
+en modo avión, la consulta leyó SQLite y una creación pendiente se confirmó en
+PostgreSQL local tras restablecer la conexión.
+
 La herramienta CASE web tiene otra frontera: puede utilizar proveedores de voz
 o IA remotos y no tiene el requisito de funcionar sin Internet.
