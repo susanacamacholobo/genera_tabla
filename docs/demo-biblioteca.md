@@ -78,7 +78,8 @@ la consulta; la sincronización offline usa la capa SQLite existente.
 Verificados: ida y vuelta XMI, importación/exportación por API, backend generado
 desde XMI, tests Maven, CRUD real en PostgreSQL, pantalla Flutter con prueba de
 crear/editar/eliminar socio, suite Flutter, instalación y apertura en el Xiaomi.
-Pendiente: probar manualmente CRUD y asistente Biblioteca en el teléfono, y los
-simulacros Hotel/Universidad. No se afirma soporte
+El usuario confirmó que los registros de ejemplo funcionaron en el teléfono y
+que la aplicación continuó funcionando en modo avión. Pendiente: simulacros
+Hotel/Universidad. No se afirma soporte
 directo para archivos de repositorio EA ni equivalencia de todas las extensiones
 propietarias de XMI.
