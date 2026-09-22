@@ -49,9 +49,10 @@ Con el teléfono conectado por USB y el backend Hotel activo:
 ```
 
 Abre la app y pulsa **Abrir Hotel**. Crea un huésped `Ana Pérez`; después una
-habitación `101` con precio por noche `120,50`. En **Reservas**, escribe las
-fechas `2026-09-21` y `2026-09-23` y los IDs que realmente aparezcan para el
-huésped y la habitación. También puedes probar en el asistente «lista los
+habitación `101` con precio por noche `120,50`. En **Reservas**, deja la
+entrada vacía para usar hoy, escribe una fecha de salida posterior en formato
+`AAAA-MM-DD` y usa los IDs que realmente aparezcan para el huésped y la
+habitación. También puedes probar en el asistente «lista los
 huéspedes» o «lista las reservas».
 
 ## Probar Universidad en Android
