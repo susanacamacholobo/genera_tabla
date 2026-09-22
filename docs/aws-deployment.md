@@ -62,6 +62,26 @@ fuera de esta autenticación porque es el contrato consumido por Android. Antes
 de abrir ese endpoint para una prueba real deben usarse datos no sensibles y
 mantener la instancia activa solamente durante el periodo necesario.
 
+## Backend Spring generado
+
+El JAR probado se instala fuera del repositorio y se ejecuta solamente en la
+interfaz local. Su archivo privado `/etc/generatabla/hotel.env` define la base
+`hotel`, el usuario de PostgreSQL y su contraseña.
+
+```bash
+sudo install -d -m 755 -o ubuntu -g ubuntu /opt/generatabla
+sudo install -m 644 -o ubuntu -g ubuntu hotel.jar /opt/generatabla/hotel.jar
+sudo install -m 644 deploy/aws/systemd/generatabla-hotel.service \
+  /etc/systemd/system/generatabla-hotel.service
+sudo systemctl daemon-reload
+sudo systemctl enable --now generatabla-hotel
+curl --fail http://127.0.0.1:8084/api/huespedes
+```
+
+La unidad limita el heap de Java a 512 MiB para convivir con FastAPI,
+PostgreSQL y Nginx en una instancia `t3.small`. Nginx publica únicamente
+`/api/`; el puerto `8084` permanece cerrado en el grupo de seguridad.
+
 Los puertos internos `5432`, `8000` y `8084` nunca deben abrirse en el grupo de
 seguridad. Los puertos públicos `80` y `443` se habilitan únicamente al
 configurar el acceso web; antes de la prueba pública debe agregarse HTTPS.

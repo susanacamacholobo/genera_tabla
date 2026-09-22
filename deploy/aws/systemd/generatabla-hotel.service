@@ -1,0 +1,25 @@
+[Unit]
+Description=GeneraTabla generated Hotel API
+Wants=network-online.target
+After=network-online.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/opt/generatabla
+EnvironmentFile=/etc/generatabla/hotel.env
+Environment=SERVER_PORT=8084
+ExecStart=/usr/bin/java -Xms128m -Xmx512m -XX:+UseSerialGC -jar /opt/generatabla/hotel.jar
+Restart=on-failure
+RestartSec=5
+SuccessExitStatus=143
+UMask=0027
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target
