@@ -42,6 +42,26 @@ class IntentNormalizer {
       parameters[entry.key] = value ?? raw;
     }
 
+    // A small local model can recognize CREATE_ENTITY but omit a plainly
+    // stated name. Recover only a single, explicit value for the selected
+    // entity; the normal validator still rejects every other missing field.
+    if (intent.operation == IntentOperation.createEntity &&
+        _mentionsEntity(instruction, entity.name)) {
+      for (final field in entity.fields) {
+        if (field.name.toLowerCase() != 'nombre' ||
+            field.type != DomainFieldType.string ||
+            !field.required ||
+            field.generated ||
+            parameters.keys.any(
+              (key) => entity.fieldNamed(key)?.name == field.name,
+            )) {
+          continue;
+        }
+        final name = _explicitName(instruction);
+        if (name != null) parameters[field.name] = name;
+      }
+    }
+
     return StructuredIntent(
       operation: intent.operation,
       entity: intent.entity,
@@ -68,4 +88,42 @@ class IntentNormalizer {
       type == DomainFieldType.long ||
       type == DomainFieldType.decimal ||
       type == DomainFieldType.doubleType;
+
+  bool _mentionsEntity(String instruction, String entityName) {
+    String fold(String value) => value
+        .toLowerCase()
+        .replaceAll(RegExp('[áàâä]'), 'a')
+        .replaceAll(RegExp('[éèêë]'), 'e')
+        .replaceAll(RegExp('[íìîï]'), 'i')
+        .replaceAll(RegExp('[óòôö]'), 'o')
+        .replaceAll(RegExp('[úùûü]'), 'u');
+
+    final entity = RegExp.escape(fold(entityName));
+    return RegExp(
+      '(^|[^a-z0-9])$entity([^a-z0-9]|\$)',
+    ).hasMatch(fold(instruction));
+  }
+
+  String? _explicitName(String instruction) {
+    final match = RegExp(
+      r'\b(?:llamad[oa]|nombre\s*[:=]?)\s+(.+?)\s*$',
+      caseSensitive: false,
+    ).firstMatch(instruction);
+    if (match == null) return null;
+    final value = match
+        .group(1)!
+        .trim()
+        .replaceAll(RegExp(r'[.!?]+$'), '')
+        .replaceAll(RegExp(r'^["“”\x27]+|["“”\x27]+$'), '')
+        .trim();
+    if (value.isEmpty ||
+        value.contains(RegExp(r'[,;:]')) ||
+        RegExp(
+          r'\b(?:y|con|para|sin)\b',
+          caseSensitive: false,
+        ).hasMatch(value)) {
+      return null;
+    }
+    return value;
+  }
 }

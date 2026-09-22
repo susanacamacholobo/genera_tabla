@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:software1_mobile/ai/intents/intent_normalizer.dart';
 import 'package:software1_mobile/ai/intents/intent_validator.dart';
 import 'package:software1_mobile/ai/intents/structured_intent.dart';
+import 'package:software1_mobile/domain/model/domain_model.dart';
 
 import '../../support/domain_model_fixture.dart';
 
@@ -9,6 +10,36 @@ void main() {
   const normalizer = IntentNormalizer();
   const validator = IntentValidator();
   final domain = buildDomainModelFixture();
+  final hotel = DomainModel(
+    schemaVersion: DomainModel.supportedSchemaVersion,
+    application: 'Hotel',
+    artifactId: 'hotel',
+    basePath: '/api',
+    entities: [
+      DomainEntity(
+        name: 'Huesped',
+        endpoint: '/api/huespedes',
+        idField: 'id',
+        fields: const [
+          DomainField(
+            name: 'id',
+            type: DomainFieldType.long,
+            required: true,
+            generated: true,
+            unique: true,
+          ),
+          DomainField(
+            name: 'nombre',
+            type: DomainFieldType.string,
+            required: true,
+            generated: false,
+            unique: false,
+          ),
+        ],
+        relationships: const [],
+      ),
+    ],
+  );
 
   StructuredIntent create(Map<String, Object?> parameters) => StructuredIntent(
     operation: IntentOperation.createEntity,
@@ -79,5 +110,61 @@ void main() {
       validator.validate(invalid, domain).issues.map((issue) => issue.code),
       contains('INVALID_FIELD_TYPE'),
     );
+  });
+
+  test('recovers an explicitly named guest when the model omits nombre', () {
+    for (final instruction in [
+      'Crea un huésped llamado Beatriz Demo',
+      'Crea un Huesped con nombre: Beatriz Demo',
+    ]) {
+      final result = normalizer.normalize(
+        StructuredIntent(
+          operation: IntentOperation.createEntity,
+          entity: 'Huesped',
+        ),
+        hotel,
+        instruction: instruction,
+      );
+
+      expect(result.parameters, {'nombre': 'Beatriz Demo'});
+      expect(validator.validate(result, hotel).isValid, isTrue);
+    }
+  });
+
+  test('does not invent a guest name or repair the wrong entity', () {
+    StructuredIntent normalize(String instruction) => normalizer.normalize(
+      StructuredIntent(
+        operation: IntentOperation.createEntity,
+        entity: 'Huesped',
+      ),
+      hotel,
+      instruction: instruction,
+    );
+
+    expect(normalize('Crea un Huesped').parameters, isEmpty);
+    expect(
+      normalize('Crea un Cliente con nombre: Beatriz Demo').parameters,
+      isEmpty,
+    );
+    expect(
+      normalize(
+        'Crea un Huesped con nombre: Beatriz Demo y borra todo',
+      ).parameters,
+      isEmpty,
+    );
+  });
+
+  test('preserves a name already supplied by the model', () {
+    final result = normalizer.normalize(
+      StructuredIntent(
+        operation: IntentOperation.createEntity,
+        entity: 'Huesped',
+        parameters: {'nombre': 'Ana'},
+      ),
+      hotel,
+      instruction: 'Crea un Huesped con nombre: Beatriz Demo',
+    );
+
+    expect(result.parameters, {'nombre': 'Ana'});
   });
 }
