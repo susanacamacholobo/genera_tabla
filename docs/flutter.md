@@ -28,10 +28,20 @@ flutter run `
   --dart-define=API_BASE_URL=http://192.168.1.50:8080
 ```
 
+Para una compilación Android publicada se debe usar HTTPS. Por ejemplo:
+
+```powershell
+flutter build apk --release `
+  --dart-define=API_BASE_URL=https://18-217-37-146.sslip.io `
+  --dart-define=DEMO_DOMAIN=hotel
+```
+
+El manifiesto principal bloquea tráfico HTTP sin cifrar. La variante `debug`
+incluye una excepción exclusiva para probar direcciones LAN `http://`; esa
+excepción no forma parte de la APK `release` distribuida.
+
 No se debe usar `localhost`: dentro de Android identifica el propio teléfono.
-El manifiesto permite acceso de red y tráfico HTTP sin cifrar porque el backend
-de demostración se ejecuta en la LAN. Para un despliegue fuera de esa red deberá
-usarse HTTPS y retirarse esa excepción.
+Los despliegues externos deben usar HTTPS.
 
 ## Cliente REST
 

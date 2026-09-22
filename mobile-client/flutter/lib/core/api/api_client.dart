@@ -114,7 +114,7 @@ class ApiClient {
       throw const NetworkException('El servidor tardó demasiado en responder.');
     } on http.ClientException {
       throw const NetworkException(
-        'No se pudo conectar con el servidor. Verifica la red local y API_BASE_URL.',
+        'No se pudo conectar con el servidor. Verifica tu conexión e inténtalo nuevamente.',
       );
     }
   }

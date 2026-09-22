@@ -149,7 +149,7 @@ void main() {
             isA<NetworkException>().having(
               (error) => error.userMessage,
               'userMessage',
-              contains('red local'),
+              contains('conexión'),
             ),
           ),
         );
