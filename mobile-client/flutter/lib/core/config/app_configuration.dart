@@ -4,8 +4,12 @@ class AppConfiguration {
   AppConfiguration._(this.apiBaseUri);
 
   static const defaultApiBaseUrl = 'http://10.0.2.2:8080';
-  static const domainModelAsset =
-      String.fromEnvironment('DEMO_DOMAIN') == 'biblioteca'
+  static const demoDomain = String.fromEnvironment('DEMO_DOMAIN');
+  static const domainModelAsset = demoDomain == 'hotel'
+      ? 'assets/domain-model-hotel.json'
+      : demoDomain == 'universidad'
+      ? 'assets/domain-model-universidad.json'
+      : demoDomain == 'biblioteca'
       ? 'assets/domain-model-biblioteca.json'
       : 'assets/domain-model.json';
 

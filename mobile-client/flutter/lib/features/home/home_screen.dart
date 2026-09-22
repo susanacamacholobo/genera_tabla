@@ -116,14 +116,31 @@ class _HomeScreenState extends State<HomeScreen> {
               icon: const Icon(Icons.auto_awesome_outlined),
               label: const Text('Abrir asistente'),
             ),
-            if (const String.fromEnvironment('DEMO_DOMAIN') ==
-                'biblioteca') ...[
+            if (AppConfiguration.demoDomain == 'biblioteca') ...[
               const SizedBox(height: 12),
               OutlinedButton.icon(
                 onPressed: () =>
                     Navigator.of(context).pushNamed(AppRoutes.biblioteca),
                 icon: const Icon(Icons.local_library_outlined),
                 label: const Text('Abrir Biblioteca'),
+              ),
+            ],
+            if (AppConfiguration.demoDomain == 'hotel') ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.hotel),
+                icon: const Icon(Icons.hotel_outlined),
+                label: const Text('Abrir Hotel'),
+              ),
+            ],
+            if (AppConfiguration.demoDomain == 'universidad') ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: () =>
+                    Navigator.of(context).pushNamed(AppRoutes.universidad),
+                icon: const Icon(Icons.school_outlined),
+                label: const Text('Abrir Universidad'),
               ),
             ],
           ],

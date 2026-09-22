@@ -92,11 +92,14 @@
   Spring desde XMI, pruebas Maven, CRUD contra PostgreSQL local y pantalla
   Flutter manual con prueba automatizada. La variante se instaló en Android y
   el usuario confirmó que el registro de ejemplo funcionó, también en modo
-  avión. Quedan los simulacros Hotel/Universidad.
+  avión. Hotel y Universidad tienen modelos UML, round-trip XMI, backend
+  generado y probado con PostgreSQL, pantallas Flutter manuales, asistente
+  integrado por metadata y APK compiladas. Falta validarlos interactivamente
+  en el teléfono.
 
 ## TODO
 
-- Completar los simulacros restantes de la fase 23.
+- Completar la prueba física de Hotel y Universidad para cerrar la fase 23.
 
 ## KNOWN ISSUES
 

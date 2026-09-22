@@ -38,6 +38,24 @@ void main() {
     );
   });
 
+  for (final demo in ['Hotel', 'Universidad']) {
+    test('loads the $demo demo contract', () async {
+      final model = await loader.loadFromAsset(
+        'assets/domain-model-${demo.toLowerCase()}.json',
+      );
+
+      expect(model.application, demo);
+      expect(model.entities.length, 3);
+      final dependent = model.entityNamed(
+        demo == 'Hotel' ? 'Reserva' : 'Matricula',
+      );
+      expect(
+        dependent?.relationships.where((item) => item.required),
+        hasLength(2),
+      );
+    });
+  }
+
   test('parses fields, relationships and case-insensitive lookups', () {
     final model = loader.loadFromString(jsonEncode(_validContract()));
 

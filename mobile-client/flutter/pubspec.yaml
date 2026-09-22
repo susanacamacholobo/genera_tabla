@@ -61,6 +61,8 @@ flutter:
   assets:
     - assets/domain-model.json
     - assets/domain-model-biblioteca.json
+    - assets/domain-model-hotel.json
+    - assets/domain-model-universidad.json
 
   # To add assets to your application, add an assets section, like this:
   # assets:
