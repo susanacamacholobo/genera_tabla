@@ -94,13 +94,13 @@
   el usuario confirmó que el registro de ejemplo funcionó, también en modo
   avión. Hotel y Universidad tienen modelos UML, round-trip XMI, backend
   generado y probado con PostgreSQL, pantallas Flutter manuales, asistente
-  integrado por metadata y APK compiladas. Hotel ya se instaló y abrió en
-  Android; Universidad está compilada. Falta validarlos interactivamente en
-  el teléfono.
+  integrado por metadata y APK compiladas. Hotel ya se probó en Android con
+  conexión y sin USB (sin túnel ADB); Universidad está compilada y pendiente
+  de instalación y prueba física.
 
 ## TODO
 
-- Completar la prueba física de Hotel y Universidad para cerrar la fase 23.
+- Completar la prueba física de Universidad para cerrar la fase 23.
 
 ## KNOWN ISSUES
 
