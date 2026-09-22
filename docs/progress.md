@@ -95,8 +95,8 @@
   avión. Hotel y Universidad tienen modelos UML, round-trip XMI, backend
   generado y probado con PostgreSQL, pantallas Flutter manuales, asistente
   integrado por metadata y APK compiladas. Hotel ya se probó en Android con
-  conexión y sin USB (sin túnel ADB); Universidad está compilada y pendiente
-  de instalación y prueba física.
+  conexión y sin USB (sin túnel ADB); Universidad está instalada y abierta en
+  Android, pendiente de la prueba interactiva con y sin conexión.
 
 ## TODO
 

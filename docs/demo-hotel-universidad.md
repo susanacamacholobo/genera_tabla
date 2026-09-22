@@ -85,5 +85,6 @@ pruebas Maven, CRUD con PostgreSQL, pantallas móviles manuales, pruebas del
 asistente con ambas metadata y compilación de las dos APK. La variante Hotel se
 instaló y abrió en el Xiaomi con túnel USB a 8082; el usuario confirmó que
 funcionó tanto conectado como después de desconectar el USB, sin acceso al
-backend mediante ADB. Universidad está preparada en
-`generated/universidad-demo.apk`; falta instalarla y probarla en el teléfono.
+backend mediante ADB. Universidad se instaló y abrió en el mismo Xiaomi con
+túnel USB a 8083; falta probar sus formularios y el asistente en el teléfono,
+con y sin conexión.
