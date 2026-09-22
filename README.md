@@ -5,7 +5,7 @@ Spring Boot y un cliente móvil Flutter reutilizable.
 
 ## Estado actual
 
-Están implementadas las fases 0 a 22, incluida la fase 20.5, además de la preparación 2.5:
+Están implementadas las fases 0 a 23, incluida la fase 20.5, además de la preparación 2.5:
 
 - estructura base de los cuatro proyectos;
 - modelo UML canónico independiente de cualquier librería visual;
@@ -49,10 +49,10 @@ Están implementadas las fases 0 a 22, incluida la fase 20.5, además de la prep
 - persistencia SQLite en Android, consultas locales, cola de escrituras y
   sincronización con Spring Boot al recuperar la conexión.
 
-El [simulacro Biblioteca](docs/demo-biblioteca.md) inicia la fase 23 y documenta
-el recorrido CASE ↔ Enterprise Architect mediante XMI, Spring y Flutter.
-Los [simulacros Hotel y Universidad](docs/demo-hotel-universidad.md) completan
-la implementación técnica pendiente y tienen sus APK listas para probar.
+El [simulacro Biblioteca](docs/demo-biblioteca.md) documenta el recorrido
+CASE ↔ Enterprise Architect mediante XMI, Spring y Flutter. Los
+[simulacros Hotel y Universidad](docs/demo-hotel-universidad.md) completan la
+fase 23; sus APK y backends también se probaron en Android y PostgreSQL local.
 
 La [edición UML asistida por voz en CASE](docs/roadmap-case-voice.md) ya está
 implementada. Para ponerla en marcha, véase [la guía de prueba](docs/case-voice.md).

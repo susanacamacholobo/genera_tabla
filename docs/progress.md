@@ -85,22 +85,21 @@
   y estado de conexión visible. Cubierto con pruebas unitarias y de interfaz.
   Verificado físicamente en Android: voz e IA en modo avión, lectura SQLite,
   creación offline y sincronización posterior a PostgreSQL local.
+- Fase 23: simulacros Veterinaria, Biblioteca, Hotel y Universidad. Biblioteca,
+  Hotel y Universidad tienen modelo UML, round-trip XMI, backend Spring,
+  PostgreSQL y pantalla Flutter manual; se probaron generación, contratos,
+  CRUD y asistente. El usuario confirmó el recorrido de Biblioteca y Hotel,
+  este último también sin USB, y confirmó que Universidad funcionó siguiendo
+  la prueba propuesta en el teléfono.
 
 ## IN PROGRESS
 
-- Fase 23: simulacro Biblioteca. Modelo UML, ida y vuelta XMI, generación
-  Spring desde XMI, pruebas Maven, CRUD contra PostgreSQL local y pantalla
-  Flutter manual con prueba automatizada. La variante se instaló en Android y
-  el usuario confirmó que el registro de ejemplo funcionó, también en modo
-  avión. Hotel y Universidad tienen modelos UML, round-trip XMI, backend
-  generado y probado con PostgreSQL, pantallas Flutter manuales, asistente
-  integrado por metadata y APK compiladas. Hotel ya se probó en Android con
-  conexión y sin USB (sin túnel ADB); Universidad está instalada y abierta en
-  Android, pendiente de la prueba interactiva con y sin conexión.
+- Ninguna fase.
 
 ## TODO
 
-- Completar la prueba física de Universidad para cerrar la fase 23.
+- Ninguna fase del plan maestro. Los perfeccionamientos futuros se definirán
+  aparte según lo que se observe al usar el producto.
 
 ## KNOWN ISSUES
 
