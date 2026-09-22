@@ -4,6 +4,7 @@ from case_backend.api.ai import router as ai_router
 from case_backend.api.collaboration import router as collaboration_router
 from case_backend.api.model_history import router as model_history_router
 from case_backend.api.projects import router as projects_router
+from case_backend.api.spring import router as spring_router
 from case_backend.api.xmi import router as xmi_router
 
 app = FastAPI(title="Software 1 CASE API", version="0.1.0")
@@ -11,6 +12,7 @@ app.include_router(projects_router)
 app.include_router(model_history_router)
 app.include_router(collaboration_router)
 app.include_router(xmi_router)
+app.include_router(spring_router)
 app.include_router(ai_router)
 
 

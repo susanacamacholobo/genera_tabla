@@ -111,6 +111,40 @@ export function App() {
     }
   };
 
+  const downloadSpring = async () => {
+    if (!selectedId || !snapshot || busy) return;
+    setBusy(true);
+    try {
+      const response = await fetch(`/projects/${encodeURIComponent(selectedId)}/spring.zip`);
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as {
+          detail?: string | { path?: string; message: string }[];
+        } | null;
+        const detail = body?.detail;
+        const message = Array.isArray(detail)
+          ? detail.map((issue) => `${issue.path ?? 'modelo'}: ${issue.message}`).join(' ')
+          : typeof detail === 'string' ? detail : 'No se pudo generar el backend Spring.';
+        throw new Error(message);
+      }
+      const url = URL.createObjectURL(await response.blob());
+      try {
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'backend-spring.zip';
+        document.body.append(link);
+        link.click();
+        link.remove();
+      } finally {
+        URL.revokeObjectURL(url);
+      }
+      setError(null);
+    } catch (cause) {
+      setError(cause instanceof Error ? cause.message : 'No se pudo generar el backend Spring.');
+    } finally {
+      setBusy(false);
+    }
+  };
+
   if (offline) return (
     <>
       <div className="project-switcher" role="status">
@@ -158,6 +192,7 @@ export function App() {
           <button className="button" disabled={busy || !xmiFile}>Importar XMI</button>
         </form>
         {selectedId && <a className="button" href={`/projects/${encodeURIComponent(selectedId)}/xmi`}>Exportar XMI</a>}
+        {selectedId && <button className="button" disabled={busy || !snapshot} onClick={() => void downloadSpring()}>Generar backend ZIP</button>}
         {error && <span role="alert">{error}</span>}
       </div>
       {snapshot && session

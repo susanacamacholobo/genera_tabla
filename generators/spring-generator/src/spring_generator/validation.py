@@ -125,6 +125,8 @@ class ModelValidator:
         if not isinstance(classes, list):
             issues.append(issue("INVALID_CLASSES", "classes", "La colección de clases no es válida."))
             return GenerationValidationResult(tuple(issues))
+        if not classes:
+            issues.append(issue("EMPTY_MODEL", "classes", "Agrega al menos una clase antes de generar."))
         if not isinstance(relationships, list):
             issues.append(
                 issue(

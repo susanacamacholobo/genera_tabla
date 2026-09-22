@@ -16,8 +16,9 @@ ejemplos, desde la raíz del repositorio:
 & .\.venv\Scripts\python.exe scripts/export-example-xmi.py docs/examples/universidad.json generated/universidad.xmi
 ```
 
-En la web pulsa **Importar XMI**. Después de editar y exportar, el backend se
-puede generar desde el XMI descargado mediante `scripts/generate-from-xmi.py`.
+En la web pulsa **Importar XMI**. Después de editar, pulsa **Generar backend ZIP**
+para descargar Spring desde la revisión guardada. También puedes exportar el
+XMI y generar desde él mediante `scripts/generate-from-xmi.py`.
 Enterprise Architect importa/exporta ese mismo formato; no se abren
 directamente `.eap`, `.eapx` ni `.qea`. Los round-trips de ambos ejemplos están
 cubiertos por pruebas de API y modelo.

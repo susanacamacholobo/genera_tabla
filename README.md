@@ -28,6 +28,8 @@ Están implementadas las fases 0 a 23, incluida la fase 20.5, además de la prep
   optimista, presencia y movimientos concurrentes *last-write-wins*.
 - importación y exportación XMI 2.1 compatible con Enterprise Architect, con
   round-trip de identidad, tipos, relaciones, herencia, enumeraciones y layout.
+- descarga del backend Spring como ZIP desde el proyecto UML seleccionado en
+  la web CASE, con validación previa del modelo.
 - abstracción asíncrona para interpretar comandos CASE con IA intercambiable,
   salida JSON restringida y resolución segura de nombres. Su implementación
   actual se llama `LocalLLMCommandParser`, pero CASE no exige IA local.

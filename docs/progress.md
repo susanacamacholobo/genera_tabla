@@ -91,6 +91,9 @@
   CRUD y asistente. El usuario confirmó el recorrido de Biblioteca y Hotel,
   este último también sin USB, y confirmó que Universidad funcionó siguiendo
   la prueba propuesta en el teléfono.
+- Cierre de aceptación: descarga del backend Spring como ZIP directamente
+  desde el proyecto persistido en CASE, con validación previa y errores
+  visibles en la web. La generación por CLI permanece disponible.
 
 ## IN PROGRESS
 

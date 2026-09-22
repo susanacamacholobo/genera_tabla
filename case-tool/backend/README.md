@@ -20,6 +20,7 @@ configuración:
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\python.exe -m pip install -e "case-tool/backend[dev]"
+.\.venv\Scripts\python.exe -m pip install -e "generators/spring-generator"
 Copy-Item case-tool/backend/.env.example case-tool/backend/.env
 notepad case-tool/backend/.env
 ```
@@ -68,6 +69,23 @@ curl.exe -o modelo-exportado.xmi `
 La carga máxima es 5 MiB. El parser bloquea DTDs y entidades XML. El alcance y
 las pruebas reales con EA 15 están en
 [docs/enterprise-architect.md](../../docs/enterprise-architect.md).
+
+## Generar Spring desde el proyecto CASE
+
+Con el generador instalado en el mismo entorno Python, la web ofrece
+**Generar backend ZIP** para el proyecto seleccionado. También está disponible
+la API `GET /projects/{project_id}/spring.zip`, que toma la revisión actual
+guardada en PostgreSQL. El ZIP incluye código Spring, tests, OpenAPI y
+`metadata/domain-model.json`. Un modelo incompleto responde `422` con los
+campos que deben corregirse; si falta instalar el paquete del generador,
+responde `503`. No se usa Docker.
+
+Con CASE y PostgreSQL activos, la prueba integrada importa un XMI, verifica
+el ZIP y elimina exclusivamente el proyecto temporal creado por ella:
+
+```powershell
+& .\.venv\Scripts\python.exe scripts/smoke-case-spring.py generated/hotel.xmi
+```
 
 La colaboración usa una room por proyecto:
 

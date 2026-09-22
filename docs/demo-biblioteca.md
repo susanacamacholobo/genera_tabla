@@ -25,8 +25,10 @@ como XMI 2.1 y selecciónalo en **Importar XMI** de la web. No se abren archivos
 
 ## Generar y probar Spring Boot
 
-Tras descargar el XMI actualizado desde CASE, genera el backend desde ese
-archivo (elige un directorio de salida vacío):
+Con el proyecto seleccionado en CASE, pulsa **Generar backend ZIP** para
+descargar el código desde la revisión guardada. Como alternativa, después de
+descargar el XMI actualizado, genera el backend desde ese archivo (elige un
+directorio de salida vacío):
 
 ```powershell
 & .\.venv\Scripts\python.exe scripts/generate-from-xmi.py `

@@ -14,6 +14,13 @@ ModelValidator -> SpringModelMapper -> plantillas Jinja2 -> GeneratedProject
                                                           directorio     ZIP
 ```
 
+La web CASE ofrece **Generar backend ZIP**. Su API
+`GET /projects/{project_id}/spring.zip` lee la última revisión persistida,
+la valida con este mismo `ModelValidator` y usa `GeneratedProject.to_zip_bytes()`.
+El backend CASE debe tener instalado el paquete `software1-spring-generator`
+del monorepo en su entorno Python. Una validación fallida devuelve `422` con
+`code`, `path` y `message`, sin entregar un ZIP parcial.
+
 Además del proyecto Java, `GeneratedProject` contiene dos contratos portables:
 
 ```text

@@ -42,6 +42,11 @@ colección opcional y genérica de referencias externas; no conoce clases ni
 formatos propios de Sparx Systems. Los IDs internos nunca se reemplazan por IDs
 externos.
 
+La descarga Spring es otra frontera del backend: el router toma el snapshot
+canónico vigente y llama al paquete independiente `spring_generator` para
+validar y producir el ZIP. No usa el estado de React Flow ni solicita código a
+un LLM. El generador sigue siendo ejecutable por CLI sin levantar CASE.
+
 El editor visual está aislado en `src/features/diagram`. `ReactFlowAdapter` es
 una transformación pura `ProjectModel -> Node[] / Edge[]`; no reconstruye el
 dominio desde el grafo. `useNodesState` se limita al movimiento visual

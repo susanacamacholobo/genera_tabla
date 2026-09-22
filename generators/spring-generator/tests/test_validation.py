@@ -22,6 +22,13 @@ def test_accepts_supported_associations(association_model: dict[str, Any]) -> No
     assert ModelValidator().validate(association_model).valid
 
 
+def test_rejects_an_empty_project_before_download(simple_entity_model: dict[str, Any]) -> None:
+    model = deepcopy(simple_entity_model)
+    model["classes"] = []
+
+    assert "EMPTY_MODEL" in issue_codes(model)
+
+
 def test_rejects_broken_relationship_references(simple_entity_model: dict[str, Any]) -> None:
     model = deepcopy(simple_entity_model)
     model["relationships"] = [
