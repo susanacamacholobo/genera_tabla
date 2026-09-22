@@ -71,7 +71,9 @@ asistente prueba «lista los estudiantes» o «lista las matrículas».
 
 Las pantallas manuales llaman directamente a Spring y necesitan conexión con
 el backend. Para comprobar el modo avión, usa el **asistente**: haz una consulta
-con conexión para guardar la copia, activa modo avión y repítela. El modelo de
+con conexión para guardar la copia, desconecta el USB o retira el túnel ADB,
+activa modo avión y repítela. Modo avión por sí solo no corta `adb reverse`.
+El modelo de
 IA y el reconocimiento de voz siguen en el teléfono; las escrituras offline
 del asistente usan SQLite y se sincronizan al recuperar conexión.
 

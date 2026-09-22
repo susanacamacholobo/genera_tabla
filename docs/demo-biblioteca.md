@@ -70,8 +70,9 @@ después de compilar; esta variante se instaló correctamente así, conservando
 los datos privados de la app.
 Primero crea un socio y un libro, luego usa sus IDs al crear un préstamo. En el
 asistente prueba «lista los socios» y «lista los libros». Para verificarlo sin
-Internet, carga antes el modelo local y una consulta, activa modo avión y repite
-la consulta; la sincronización offline usa la capa SQLite existente.
+Internet, carga antes el modelo local y una consulta, desconecta el USB o
+retira el túnel ADB, activa modo avión y repite la consulta. El modo avión por
+sí solo no corta `adb reverse`; la sincronización offline usa SQLite.
 
 ## Estado del simulacro
 
