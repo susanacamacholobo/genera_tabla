@@ -38,9 +38,16 @@ curl --fail http://127.0.0.1:8000/health
 ## Nginx
 
 El frontend compilado se copia a `/var/www/generatabla`. La configuración del
-proxy se instala así:
+proxy protege la herramienta CASE con autenticación HTTP. La contraseña se
+solicita de forma interactiva y no se guarda en el repositorio:
 
 ```bash
+sudo apt install -y apache2-utils
+sudo htpasswd -c /etc/nginx/.htpasswd-generatabla susana
+sudo chown root:www-data /etc/nginx/.htpasswd-generatabla
+sudo chmod 640 /etc/nginx/.htpasswd-generatabla
+sudo install -m 644 deploy/aws/nginx/generatabla-auth.conf \
+  /etc/nginx/snippets/generatabla-auth.conf
 sudo install -m 644 deploy/aws/nginx/generatabla.conf \
   /etc/nginx/sites-available/generatabla
 sudo ln -sfn /etc/nginx/sites-available/generatabla \
@@ -49,6 +56,11 @@ sudo rm -f /etc/nginx/sites-enabled/default
 sudo nginx -t
 sudo systemctl reload nginx
 ```
+
+El editor, sus rutas CASE y Swagger requieren la contraseña. `/api/` se deja
+fuera de esta autenticación porque es el contrato consumido por Android. Antes
+de abrir ese endpoint para una prueba real deben usarse datos no sensibles y
+mantener la instancia activa solamente durante el periodo necesario.
 
 Los puertos internos `5432`, `8000` y `8084` nunca deben abrirse en el grupo de
 seguridad. Los puertos públicos `80` y `443` se habilitan únicamente al
