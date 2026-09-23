@@ -122,3 +122,6 @@ flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8080
 Los contratos y decisiones están descritos en [docs/](docs/).
 La preparación del modelo Android está en
 [docs/local-llm-android.md](docs/local-llm-android.md).
+
+El script PostgreSQL completo de la herramienta CASE y sus instrucciones de
+uso están disponibles en [database/](database/README.md).
