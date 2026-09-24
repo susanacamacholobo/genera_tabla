@@ -29,7 +29,12 @@ def main() -> None:
                 raise AssertionError("La respuesta no es un ZIP.")
             with ZipFile(BytesIO(response.content)) as archive:
                 names = set(archive.namelist())
-                required = {"pom.xml", "metadata/domain-model.json", "openapi/openapi.json"}
+                required = {
+                    "pom.xml",
+                    "POSTMAN.md",
+                    "metadata/domain-model.json",
+                    "openapi/openapi.json",
+                }
                 if not required.issubset(names):
                     raise AssertionError(f"Faltan archivos generados: {required - names}")
                 print(f"CASE a Spring ZIP OK: {len(names)} archivos.")

@@ -21,12 +21,19 @@ El backend CASE debe tener instalado el paquete `software1-spring-generator`
 del monorepo en su entorno Python. Una validación fallida devuelve `422` con
 `code`, `path` y `message`, sin entregar un ZIP parcial.
 
-Además del proyecto Java, `GeneratedProject` contiene dos contratos portables:
+Además del proyecto Java, `GeneratedProject` contiene dos contratos portables
+y una guía de verificación manual:
 
 ```text
 openapi/openapi.json
 metadata/domain-model.json
+POSTMAN.md
 ```
+
+`POSTMAN.md` se adapta a cada modelo: explica cómo crear PostgreSQL, configurar
+`.env`, ejecutar las pruebas y levantar Spring Boot. Luego ordena las entidades
+según sus dependencias y genera ejemplos `POST`, `GET`, `PUT` y `DELETE` con los
+campos escalares y los IDs de relación correspondientes.
 
 ## Validación previa
 

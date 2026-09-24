@@ -67,7 +67,12 @@ La salida incluye contratos utilizables sin arrancar el backend:
 ```text
 openapi/openapi.json
 metadata/domain-model.json
+POSTMAN.md
 ```
+
+`POSTMAN.md` incluye los comandos completos para configurar y levantar el
+backend, el orden recomendado de creación y ejemplos Postman para todo el CRUD,
+las validaciones y las relaciones del modelo generado.
 
 La API queda disponible en `http://localhost:8080/api/clientes`. En otra
 terminal se puede crear y consultar un registro:
@@ -112,6 +117,7 @@ Detén la aplicación con `Ctrl+C`.
 - OpenAPI 3.1 determinista con paths CRUD y esquemas DTO.
 - Metadata compacta del dominio para Flutter, IA local y testing.
 - OpenAPI dinámico en `/v3/api-docs` y Swagger UI en `/swagger-ui.html`.
+- Guía `POSTMAN.md` generada con preparación, ejemplos CRUD y orden de relaciones.
 - PostgreSQL local configurado mediante `DB_HOST`, `DB_PORT`, `DB_NAME`,
   `DB_USERNAME` y `DB_PASSWORD`.
 - H2 limitado al alcance `test`; nunca se usa al ejecutar normalmente.

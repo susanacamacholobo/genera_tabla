@@ -1,0 +1,165 @@
+# Pruebas de {{ project.display_name }} con Postman
+
+Esta guía se generó desde el mismo modelo UML que el backend. Permite comprobar
+el CRUD, las validaciones y las relaciones sin exponer las entidades JPA.
+
+## Preparación
+
+Abre PowerShell dentro de la carpeta extraída y confirma que `pom.xml` esté en
+esa misma carpeta:
+
+```powershell
+Test-Path .\pom.xml
+```
+
+El resultado debe ser `True`.
+
+### 1. Crear PostgreSQL
+
+La aplicación usa la base `{{ project.database_name }}`. Con PostgreSQL 17 en
+Windows, créala así:
+
+```powershell
+& "C:\Program Files\PostgreSQL\17\bin\createdb.exe" `
+  --host 127.0.0.1 `
+  --port 5432 `
+  --username postgres `
+  {{ project.database_name }}
+```
+
+El comando solicita la contraseña sin mostrar caracteres. Si esa base ya
+existe, utiliza otro nombre y coloca el mismo nombre en `DB_NAME`.
+
+### 2. Configurar las variables
+
+```powershell
+Copy-Item .env.example .env
+notepad .env
+```
+
+Completa el archivo sin compartir ni subir la contraseña:
+
+```env
+DB_HOST=127.0.0.1
+DB_PORT=5432
+DB_NAME={{ project.database_name }}
+DB_USERNAME=postgres
+DB_PASSWORD=TU_CONTRASEÑA_DE_POSTGRESQL
+SERVER_PORT=8080
+```
+
+Carga el archivo en la PowerShell actual:
+
+```powershell
+Get-Content .env | ForEach-Object {
+  if ($_ -match '^([^#=]+)=(.*)$') {
+    [Environment]::SetEnvironmentVariable(
+      $matches[1].Trim(),
+      $matches[2].Trim(),
+      'Process'
+    )
+  }
+}
+```
+
+### 3. Probar y levantar el backend
+
+```powershell
+mvn clean test
+mvn spring-boot:run
+```
+
+Continúa cuando Maven muestre `BUILD SUCCESS`, `Tomcat started on port 8080` y
+`Started {{ project.application_class }}`. Mantén esa terminal abierta mientras
+usas Postman; `Ctrl+C` detiene el backend.
+
+### 4. Preparar Postman
+
+Usa `http://localhost:8080` como URL base. Si cambiaste `SERVER_PORT`, reemplaza
+`8080` en todas las solicitudes. Para `POST` y `PUT`, selecciona
+**Body → raw → JSON**. Postman enviará `Content-Type: application/json`.
+
+Los ejemplos usan el identificador `1`. Sustitúyelo por el ID que realmente
+devuelva cada solicitud `POST`.
+
+## Orden recomendado de creación
+
+{% for entity in project.postman_creation_order %}
+{{ loop.index }}. `{{ entity.class_name }}` mediante `POST /api/{{ entity.endpoint_name }}`{% if entity.postman_dependencies %}, después de crear {{ entity.postman_dependencies | join(", ") }}{% endif %}.
+{% endfor %}
+
+{% for entity in project.postman_creation_order %}
+## {{ entity.class_name }}
+
+{% if entity.postman_dependencies %}
+Antes de crear este registro, crea {{ entity.postman_dependencies | join(", ") }}
+y usa los identificadores recibidos en los campos de relación.
+
+{% endif %}
+### Crear
+
+```http
+POST http://localhost:8080/api/{{ entity.endpoint_name }}
+Content-Type: application/json
+```
+
+```json
+{{ entity.postman_request_body }}
+```
+
+Resultado esperado: `201 Created`. Conserva el `id` de la respuesta.
+
+### Listar y consultar
+
+```http
+GET http://localhost:8080/api/{{ entity.endpoint_name }}
+GET http://localhost:8080/api/{{ entity.endpoint_name }}/1
+```
+
+Resultado esperado: `200 OK`.
+
+### Actualizar
+
+El `PUT` usa el contrato completo; envía todos los campos aunque sólo cambies
+uno.
+
+```http
+PUT http://localhost:8080/api/{{ entity.endpoint_name }}/1
+Content-Type: application/json
+```
+
+```json
+{{ entity.postman_request_body }}
+```
+
+Resultado esperado: `200 OK`.
+
+### Eliminar
+
+```http
+DELETE http://localhost:8080/api/{{ entity.endpoint_name }}/1
+```
+
+Resultado esperado: `204 No Content`.
+
+{% if entity.has_required_input %}
+### Comprobar validación
+
+Envía `POST /api/{{ entity.endpoint_name }}` con `{}`. Debe responder
+`400 Bad Request` y señalar los campos obligatorios.
+
+{% endif %}
+{% endfor %}
+## Verificaciones finales
+
+- Un ID inexistente debe responder `404 Not Found`.
+- Una referencia a una entidad inexistente debe responder `404 Not Found`.
+- Una solicitud con datos obligatorios ausentes debe responder `400 Bad Request`.
+- Después de crear relaciones, consulta ambos extremos y verifica los campos
+  terminados en `Id` o `Ids`.
+- Para limpiar los datos, elimina primero las entidades dependientes y después
+  las entidades referenciadas, siguiendo el orden de creación a la inversa.
+
+También puedes comparar las solicitudes con Swagger UI en
+`http://localhost:8080/swagger-ui.html` y con el contrato estático
+`openapi/openapi.json`.

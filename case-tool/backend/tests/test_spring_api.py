@@ -35,6 +35,10 @@ async def test_downloads_spring_zip_from_persisted_case_model(client: httpx.Asyn
         assert "src/main/java/com/example/veterinaria/model/Cliente.java" in names
         assert "src/main/java/com/example/veterinaria/model/Mascota.java" in names
         assert "metadata/domain-model.json" in names
+        assert "POSTMAN.md" in names
+        assert "POST http://localhost:8080/api/clientes" in archive.read(
+            "POSTMAN.md"
+        ).decode("utf-8")
         assert "@ManyToOne" in archive.read(
             "src/main/java/com/example/veterinaria/model/Mascota.java"
         ).decode("utf-8")

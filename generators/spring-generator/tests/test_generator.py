@@ -58,6 +58,7 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     assert set(generated.files) == {
         ".env.example",
         ".gitignore",
+        "POSTMAN.md",
         "README.md",
         "pom.xml",
         "openapi/openapi.json",
@@ -130,6 +131,29 @@ def test_generates_complete_simple_crud(simple_entity_model: dict[str, Any]) -> 
     ]
     assert 'post("/api/clientes")' in controller_test
     assert 'delete("/api/clientes/{id}", id)' in controller_test
+    postman = generated.files["POSTMAN.md"]
+    assert "POST http://localhost:8080/api/clientes" in postman
+    assert '"nombre": "example"' in postman
+    assert '"fechaRegistro": "2026-01-15T10:30:00"' in postman
+    assert "createdb.exe" in postman
+    assert "DB_NAME=veterinaria" in postman
+    assert "mvn clean test" in postman
+    assert "mvn spring-boot:run" in postman
+    assert "201 Created" in postman
+    assert "204 No Content" in postman
+
+
+def test_generates_postman_guide_in_relationship_creation_order(
+    one_to_many_model: dict[str, Any],
+) -> None:
+    generated = SpringGenerator().generate(one_to_many_model)
+    postman = generated.files["POSTMAN.md"]
+
+    assert postman.index("`Cliente` mediante") < postman.index("`Mascota` mediante")
+    assert "después de crear Cliente" in postman
+    assert "POST http://localhost:8080/api/mascotas" in postman
+    assert '"clienteId": 1' in postman
+    assert "elimina primero las entidades dependientes" in postman
 
 
 def test_generation_and_zip_are_byte_deterministic(simple_entity_model: dict[str, Any]) -> None:

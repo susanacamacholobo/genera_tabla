@@ -234,6 +234,32 @@ class JavaEntity:
         return json.dumps(values, ensure_ascii=False, separators=(",", ":"))
 
     @property
+    def postman_request_body(self) -> str:
+        values = {
+            field.name: field.json_test_value
+            for field in self.mutable_fields
+        }
+        for association in self.writable_associations:
+            values[association.request_name] = [1] if association.collection else 1
+        return json.dumps(values, ensure_ascii=False, indent=2)
+
+    @property
+    def postman_dependencies(self) -> tuple[str, ...]:
+        return tuple(
+            dict.fromkeys(
+                association.target_class_name
+                for association in self.writable_associations
+                if association.target_class_name != self.class_name
+            )
+        )
+
+    @property
+    def has_required_input(self) -> bool:
+        return any(not field.nullable for field in self.mutable_fields) or any(
+            association.required for association in self.writable_associations
+        )
+
+    @property
     def standalone_creatable(self) -> bool:
         return not any(
             association.owning
@@ -277,6 +303,29 @@ class SpringProject:
     @property
     def package_path(self) -> str:
         return self.package_name.replace(".", "/")
+
+    @property
+    def postman_creation_order(self) -> tuple[JavaEntity, ...]:
+        remaining = list(self.entities)
+        ordered: list[JavaEntity] = []
+        emitted: set[str] = set()
+        while remaining:
+            ready = [
+                entity
+                for entity in remaining
+                if set(entity.postman_dependencies).issubset(emitted)
+            ]
+            if not ready:
+                # A cycle of required references cannot be created in a strict
+                # order. Keep generation deterministic and document the model
+                # order so the user can provide existing identifiers.
+                ordered.extend(remaining)
+                break
+            for entity in ready:
+                ordered.append(entity)
+                emitted.add(entity.class_name)
+                remaining.remove(entity)
+        return tuple(ordered)
 
 
 class SpringModelMapper:

@@ -71,6 +71,7 @@ class SpringGenerator:
         files = {
             ".gitignore": self._render("gitignore.j2", project=project),
             ".env.example": self._render("env.example.j2", project=project),
+            "POSTMAN.md": self._render("postman.md.j2", project=project),
             "README.md": self._render("readme.md.j2", project=project),
             "pom.xml": self._render("pom.xml.j2", project=project),
             "openapi/openapi.json": json_document(build_openapi(project)),
